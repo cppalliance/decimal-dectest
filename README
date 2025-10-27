@@ -1,0 +1,3 @@
+This is an auxiliary test suite for Boost.Decimal to to licensing incompatibilities.
+To use this repo clone it into the test directory of Boost.Decimal
+You can than either use with B2, or CMake with the definition -DBUILD_DECTEST_TESTING=ON which will run the tests in this repo instead of the usual test suite.
