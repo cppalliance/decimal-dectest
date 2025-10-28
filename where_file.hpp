@@ -63,7 +63,7 @@ auto where_file(const std::string& test_vectors_filename) -> std::string
             else
             {
                 // CMake builds
-                test_vectors_filename_relative = "../../../../libs/decimal/test/decimal-dectest/" + test_vectors_filename;
+                test_vectors_filename_relative = "../../../../../libs/decimal/test/decimal-dectest/" + test_vectors_filename;
 
                 std::ifstream in_04(test_vectors_filename_relative.c_str());
 
