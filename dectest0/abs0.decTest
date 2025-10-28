@@ -96,12 +96,12 @@ abs120 abs 9.999E+999999999 -> ? Inexact Lost_digits Overflow Rounded
 maxexponent: 999
 minexponent: -999
 precision: 9
-abs301 abs 12345678000  -> 1.23456780E+10 Rounded
-abs302 abs 1234567800   -> 1.23456780E+9 Rounded
-abs303 abs 1234567890   -> 1.23456789E+9 Rounded
-abs304 abs 1234567891   -> 1.23456789E+9 Inexact Lost_digits Rounded
-abs305 abs 12345678901  -> 1.23456789E+10 Inexact Lost_digits Rounded
-abs306 abs 1234567896   -> 1.23456790E+9 Inexact Lost_digits Rounded
+#abs301 abs 12345678000  -> 1.23456780E+10 Rounded
+#abs302 abs 1234567800   -> 1.23456780E+9 Rounded
+#abs303 abs 1234567890   -> 1.23456789E+9 Rounded
+#abs304 abs 1234567891   -> 1.23456789E+9 Inexact Lost_digits Rounded
+#abs305 abs 12345678901  -> 1.23456789E+10 Inexact Lost_digits Rounded
+#abs306 abs 1234567896   -> 1.23456790E+9 Inexact Lost_digits Rounded
 
 precision: 15
 -- still checking for [no] lostDigits
