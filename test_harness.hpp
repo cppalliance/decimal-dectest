@@ -18,7 +18,7 @@
 #include <cstdint>
 
 template <typename Function>
-inline void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
+void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
 {
     const auto full_path {boost::decimal::dectest::where_file(file_path)};
     if (full_path.empty())
@@ -110,7 +110,21 @@ inline void test_one_arg_harness(const std::string& file_path, const std::string
         {
             const boost::decimal::decimal64_t lhs {lhs_value};
             const boost::decimal::decimal64_t rhs {rhs_value};
-            if (!BOOST_TEST_EQ(f(lhs), rhs))
+
+            if (isnan(lhs) && isnan(rhs))
+            {
+                // If both operands are NAN then we can apply the function and check bitwise equality
+                // since we can never apply direct value equality
+                const auto f_lhs {f(lhs)};
+                std::uint64_t lhs_bits;
+                std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint64_t));
+
+                std::uint64_t rhs_bits;
+                std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
+
+                BOOST_TEST_EQ(lhs_bits, rhs_bits);
+            }
+            else if (!BOOST_TEST_EQ(f(lhs), rhs))
             {
                 std::cerr << "Failed test: " << test_name << std::endl;
             }
