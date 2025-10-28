@@ -126,12 +126,13 @@ absx240 abs -0.0001E-999      ->   0E-1001   Inexact Rounded Subnormal Underflow
 maxexponent: 999
 minexponent: -999
 precision: 9
-absx301 abs 12345678000  -> 1.23456780E+10 Rounded
-absx302 abs 1234567800   -> 1.23456780E+9 Rounded
-absx303 abs 1234567890   -> 1.23456789E+9 Rounded
-absx304 abs 1234567891   -> 1.23456789E+9 Inexact Rounded
-absx305 abs 12345678901  -> 1.23456789E+10 Inexact Rounded
-absx306 abs 1234567896   -> 1.23456790E+9 Inexact Rounded
+# We don't have a type with precision 9 to check proper rounding
+#absx301 abs 12345678000  -> 1.23456780E+10 Rounded
+#absx302 abs 1234567800   -> 1.23456780E+9 Rounded
+#absx303 abs 1234567890   -> 1.23456789E+9 Rounded
+#absx304 abs 1234567891   -> 1.23456789E+9 Inexact Rounded
+#absx305 abs 12345678901  -> 1.23456789E+10 Inexact Rounded
+#absx306 abs 1234567896   -> 1.23456790E+9 Inexact Rounded
 
 precision: 15
 absx321 abs 12345678000  -> 12345678000
