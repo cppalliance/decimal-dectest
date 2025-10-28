@@ -45,6 +45,8 @@ run quick.cpp ;
 
 # From dectest0 (subset tests)
 
-run abs0.cpp ;
-
 # From dectest (complete tests)
+
+# Combined Testing
+
+run test_abs.cpp ;

@@ -10,5 +10,7 @@
 int main()
 {
     test_one_arg_harness("dectest0/abs0.decTest", "abs", [](const auto x) { return boost::decimal::abs(x); });
+    test_one_arg_harness("dectest/abs.decTest", "abs", [](const auto x) { return boost::decimal::abs(x); });
+
     return boost::report_errors();
 }
