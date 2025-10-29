@@ -39,11 +39,39 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
     std::size_t num_tests_found {};
     std::size_t invalid_tests {};
     std::string line;
+    int current_precision = 16; // Default precision
+
     while (std::getline(in, line))
     {
         // Skip commented lines
         if (line.find("#") != std::string::npos)
         {
+            continue;
+        }
+
+        // Check for precision specification
+        auto precision_pos = line.find("precision:");
+        if (precision_pos != std::string::npos)
+        {
+            auto precision_start = precision_pos + 10; // Skip "precision:"
+
+            // Skip whitespace
+            while (precision_start < line.length() && std::isspace(line[precision_start]))
+            {
+                precision_start++;
+            }
+
+            // Extract precision value
+            std::string precision_str;
+            while (precision_start < line.length() && std::isdigit(line[precision_start]))
+            {
+                precision_str += line[precision_start++];
+            }
+
+            if (!precision_str.empty())
+            {
+                current_precision = std::stoi(precision_str);
+            }
             continue;
         }
 
@@ -107,28 +135,74 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
             rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
         }
 
-        // Now we can utilize the string constructors to form the values
+        // Select appropriate decimal type based on precision
         try
         {
-            const boost::decimal::decimal64_t lhs {lhs_value};
-            const boost::decimal::decimal64_t rhs {rhs_value};
-
-            if (isnan(lhs) && isnan(rhs))
+            if (current_precision < 9)
             {
-                // If both operands are NAN then we can apply the function and check bitwise equality
-                // since we can never apply direct value equality
-                const auto f_lhs {f(lhs)};
-                std::uint64_t lhs_bits;
-                std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint64_t));
+                // Use decimal32_t
+                const boost::decimal::decimal32_t lhs {lhs_value};
+                const boost::decimal::decimal32_t rhs {rhs_value};
 
-                std::uint64_t rhs_bits;
-                std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
+                if (isnan(lhs) && isnan(rhs))
+                {
+                    const auto f_lhs {f(lhs)};
+                    std::uint32_t lhs_bits;
+                    std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint32_t));
 
-                BOOST_TEST_EQ(lhs_bits, rhs_bits);
+                    std::uint32_t rhs_bits;
+                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint32_t));
+
+                    BOOST_TEST_EQ(lhs_bits, rhs_bits);
+                }
+                else if (!BOOST_TEST_EQ(f(lhs), rhs))
+                {
+                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
             }
-            else if (!BOOST_TEST_EQ(f(lhs), rhs))
+            else if (current_precision < 16)
             {
-                std::cerr << "Failed test: " << test_name << std::endl;
+                // Use decimal64_t
+                const boost::decimal::decimal64_t lhs {lhs_value};
+                const boost::decimal::decimal64_t rhs {rhs_value};
+
+                if (isnan(lhs) && isnan(rhs))
+                {
+                    const auto f_lhs {f(lhs)};
+                    std::uint64_t lhs_bits;
+                    std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint64_t));
+
+                    std::uint64_t rhs_bits;
+                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
+
+                    BOOST_TEST_EQ(lhs_bits, rhs_bits);
+                }
+                else if (!BOOST_TEST_EQ(f(lhs), rhs))
+                {
+                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
+            }
+            else
+            {
+                // Use decimal128_t
+                const boost::decimal::decimal128_t lhs {lhs_value};
+                const boost::decimal::decimal128_t rhs {rhs_value};
+
+                if (isnan(lhs) && isnan(rhs))
+                {
+                    const auto f_lhs {f(lhs)};
+                    boost::int128::uint128_t lhs_bits;
+                    std::memcpy(&lhs_bits, &f_lhs, sizeof(boost::int128::uint128_t));
+
+                    boost::int128::uint128_t rhs_bits;
+                    std::memcpy(&rhs_bits, &rhs, sizeof(boost::int128::uint128_t));
+
+                    BOOST_TEST_EQ(lhs_bits, rhs_bits);
+                }
+                else if (!BOOST_TEST_EQ(f(lhs), rhs))
+                {
+                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
             }
         }
         catch (...)
