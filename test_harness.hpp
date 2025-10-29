@@ -164,11 +164,41 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
     std::size_t num_tests_found {};
     std::size_t invalid_tests {};
     std::string line;
+    int current_precision = 16;
+
     while (std::getline(in, line))
     {
         // Skip commented lines
         if (line.find("#") != std::string::npos)
         {
+            continue;
+        }
+
+        // Check for precision specification
+        // When the precision is specified we ust that one until it is specified again
+        // Some of these test sets assume precisions we don't offer so this is the best effort
+        auto precision_pos = line.find("precision:");
+        if (precision_pos != std::string::npos)
+        {
+            auto precision_start = precision_pos + 10; // Skip "precision:"
+
+            // Skip whitespace
+            while (precision_start < line.length() && std::isspace(line[precision_start]))
+            {
+                precision_start++;
+            }
+
+            // Extract precision value
+            std::string precision_str;
+            while (precision_start < line.length() && std::isdigit(line[precision_start]))
+            {
+                precision_str += line[precision_start++];
+            }
+
+            if (!precision_str.empty())
+            {
+                current_precision = std::stoi(precision_str);
+            }
             continue;
         }
 
@@ -194,7 +224,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
         }
 
         // Extract the substring containing both LHS values
-        auto operands_start = pos_test + function_name.length() + 1; // Skip function name and space
+        auto operands_start = pos_test + function_name.length() + 1;
         auto operands_end = arrow_pos;
 
         // Trim trailing whitespace
@@ -224,12 +254,12 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             if (quote_end != std::string::npos)
             {
                 lhs1_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1; // Skip closing quote
+                i = quote_end + 1;
             }
         }
         else
         {
-            // Unquoted value - read until whitespace
+            // Unquoted value
             std::size_t start = i;
             while (i < operands_str.length() && !std::isspace(operands_str[i]))
             {
@@ -253,12 +283,12 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             if (quote_end != std::string::npos)
             {
                 lhs2_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1; // Skip closing quote
+                i = quote_end + 1;
             }
         }
         else
         {
-            // Unquoted value - read remaining non-whitespace
+            // Unquoted value
             std::size_t start = i;
             while (i < operands_str.length() && !std::isspace(operands_str[i]))
             {
@@ -289,28 +319,77 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
         }
 
-        // Now we can utilize the string constructors to form the values
+        // Select appropriate decimal type based on precision
         try
         {
-            const boost::decimal::decimal64_t lhs1 {lhs1_value};
-            const boost::decimal::decimal64_t lhs2 {lhs2_value};
-            const boost::decimal::decimal64_t rhs {rhs_value};
-
-            if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+            if (current_precision <= 9)
             {
-                // If all operands are NAN then we can apply the function and check bitwise equality
-                const auto f_result {f(lhs1, lhs2)};
-                std::uint64_t result_bits;
-                std::memcpy(&result_bits, &f_result, sizeof(std::uint64_t));
+                // Use decimal32_t
+                const boost::decimal::decimal32_t lhs1 {lhs1_value};
+                const boost::decimal::decimal32_t lhs2 {lhs2_value};
+                const boost::decimal::decimal32_t rhs {rhs_value};
 
-                std::uint64_t rhs_bits;
-                std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
+                if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+                {
+                    const auto f_result {f(lhs1, lhs2)};  // Generic lambda works here
+                    std::uint32_t result_bits;
+                    std::memcpy(&result_bits, &f_result, sizeof(std::uint32_t));
 
-                BOOST_TEST_EQ(result_bits, rhs_bits);
+                    std::uint32_t rhs_bits;
+                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint32_t));
+
+                    BOOST_TEST_EQ(result_bits, rhs_bits);
+                }
+                else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))  // Generic lambda works here
+                {
+                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
             }
-            else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))
+            else if (current_precision < 16)
             {
-                std::cerr << "Failed test: " << test_name << std::endl;
+                // Use decimal64_t
+                const boost::decimal::decimal64_t lhs1 {lhs1_value};
+                const boost::decimal::decimal64_t lhs2 {lhs2_value};
+                const boost::decimal::decimal64_t rhs {rhs_value};
+
+                if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+                {
+                    const auto f_result {f(lhs1, lhs2)};
+                    std::uint64_t result_bits;
+                    std::memcpy(&result_bits, &f_result, sizeof(std::uint64_t));
+
+                    std::uint64_t rhs_bits;
+                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
+
+                    BOOST_TEST_EQ(result_bits, rhs_bits);
+                }
+                else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))
+                {
+                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
+            }
+            else
+            {
+                // Use decimal128_t
+                const boost::decimal::decimal128_t lhs1 {lhs1_value};
+                const boost::decimal::decimal128_t lhs2 {lhs2_value};
+                const boost::decimal::decimal128_t rhs {rhs_value};
+
+                if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+                {
+                    const auto f_result {f(lhs1, lhs2)};
+                    boost::int128::uint128_t result_bits;
+                    std::memcpy(&result_bits, &f_result, sizeof(boost::int128::uint128_t));
+
+                    boost::int128::uint128_t rhs_bits;
+                    std::memcpy(&rhs_bits, &rhs, sizeof(boost::int128::uint128_t));
+
+                    BOOST_TEST_EQ(result_bits, rhs_bits);
+                }
+                else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))
+                {
+                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
             }
         }
         catch (...)
