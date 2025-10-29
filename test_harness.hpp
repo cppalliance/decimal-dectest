@@ -37,6 +37,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
     }
 
     std::size_t num_tests_found {};
+    std::size_t invalid_tests {};
     std::string line;
     while (std::getline(in, line))
     {
@@ -63,6 +64,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
         if (arrow_pos == std::string::npos)
         {
             std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
+            ++invalid_tests;
             continue;
         }
 
@@ -132,11 +134,12 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
         catch (...)
         {
             // Invalid construction is supposed to throw
-            BOOST_TEST(true);
+            ++invalid_tests;
         }
     }
 
     BOOST_TEST_GT(num_tests_found, 0U);
+    BOOST_TEST_LT(invalid_tests, num_tests_found);
 }
 
 template <typename Function>
@@ -159,6 +162,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
     }
 
     std::size_t num_tests_found {};
+    std::size_t invalid_tests {};
     std::string line;
     while (std::getline(in, line))
     {
@@ -185,6 +189,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
         if (arrow_pos == std::string::npos)
         {
             std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
+            ++invalid_tests;
             continue;
         }
 
@@ -311,11 +316,12 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
         catch (...)
         {
             // Invalid construction is supposed to throw
-            BOOST_TEST(true);
+            ++invalid_tests;
         }
     }
 
     BOOST_TEST_GT(num_tests_found, 0U);
+    BOOST_TEST_LT(invalid_tests, num_tests_found);
 }
 
 #endif // BOOST_DECIMAL_DECTEST_TEST_HARNESS_HPP
