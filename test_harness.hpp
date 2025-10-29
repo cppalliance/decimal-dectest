@@ -160,7 +160,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
             }
-            else if (current_precision < 16)
+            else if (current_precision <= 16)
             {
                 // Use decimal64_t
                 const boost::decimal::decimal64_t lhs {lhs_value};
@@ -419,7 +419,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
             }
-            else if (current_precision < 16)
+            else if (current_precision <= 16)
             {
                 // Use decimal64_t
                 const boost::decimal::decimal64_t lhs1 {lhs1_value};
