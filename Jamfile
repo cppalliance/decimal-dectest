@@ -43,11 +43,6 @@ project : requirements
 
 run quick.cpp ;
 
-# From dectest0 (subset tests)
-
-# From dectest (complete tests)
-
-# Combined Testing
-
 run test_abs.cpp ;
 run test_add.cpp ;
+run test_base.cpp ;
