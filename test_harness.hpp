@@ -139,4 +139,183 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
     BOOST_TEST_GT(num_tests_found, 0U);
 }
 
+template <typename Function>
+void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
+{
+    const auto full_path {boost::decimal::dectest::where_file(file_path)};
+    if (full_path.empty())
+    {
+        std::cerr << "Failed to find file: " << file_path << std::endl;
+        BOOST_TEST(false);
+        return;
+    }
+
+    std::ifstream in(full_path.c_str());
+    if (!in.is_open())
+    {
+        std::cerr << "Failed to open file: " << full_path << std::endl;
+        BOOST_TEST(false);
+        return;
+    }
+
+    std::size_t num_tests_found {};
+    std::string line;
+    while (std::getline(in, line))
+    {
+        // Skip commented lines
+        if (line.find("#") != std::string::npos)
+        {
+            continue;
+        }
+
+        const auto first_space = line.find(" ");
+        const auto test_name = line.substr(0, first_space);
+
+        // Check if this line contains our function
+        const auto pos_test = line.find(function_name + " ");
+        if (pos_test == std::string::npos)
+        {
+            continue;
+        }
+
+        ++num_tests_found;
+
+        // Find the arrow separator
+        const auto arrow_pos = line.find("->");
+        if (arrow_pos == std::string::npos)
+        {
+            std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
+            continue;
+        }
+
+        // Extract the substring containing both LHS values
+        auto operands_start = pos_test + function_name.length() + 1; // Skip function name and space
+        auto operands_end = arrow_pos;
+
+        // Trim trailing whitespace
+        while (operands_end > operands_start && std::isspace(line[operands_end - 1]))
+        {
+            operands_end--;
+        }
+
+        std::string operands_str = line.substr(operands_start, operands_end - operands_start);
+
+        // Parse the two operands from the string
+        std::string lhs1_value, lhs2_value;
+        std::size_t i = 0;
+
+        // Skip leading whitespace
+        while (i < operands_str.length() && std::isspace(operands_str[i]))
+        {
+            i++;
+        }
+
+        // Parse first operand
+        if (i < operands_str.length() && operands_str[i] == '\'')
+        {
+            // Quoted value
+            i++; // Skip opening quote
+            std::size_t quote_end = operands_str.find('\'', i);
+            if (quote_end != std::string::npos)
+            {
+                lhs1_value = operands_str.substr(i, quote_end - i);
+                i = quote_end + 1; // Skip closing quote
+            }
+        }
+        else
+        {
+            // Unquoted value - read until whitespace
+            std::size_t start = i;
+            while (i < operands_str.length() && !std::isspace(operands_str[i]))
+            {
+                i++;
+            }
+            lhs1_value = operands_str.substr(start, i - start);
+        }
+
+        // Skip whitespace between operands
+        while (i < operands_str.length() && std::isspace(operands_str[i]))
+        {
+            i++;
+        }
+
+        // Parse second operand
+        if (i < operands_str.length() && operands_str[i] == '\'')
+        {
+            // Quoted value
+            i++; // Skip opening quote
+            std::size_t quote_end = operands_str.find('\'', i);
+            if (quote_end != std::string::npos)
+            {
+                lhs2_value = operands_str.substr(i, quote_end - i);
+                i = quote_end + 1; // Skip closing quote
+            }
+        }
+        else
+        {
+            // Unquoted value - read remaining non-whitespace
+            std::size_t start = i;
+            while (i < operands_str.length() && !std::isspace(operands_str[i]))
+            {
+                i++;
+            }
+            lhs2_value = operands_str.substr(start, i - start);
+        }
+
+        // Extract RHS value (after ->)
+        auto rhs_start = arrow_pos + 2; // Skip "->"
+        auto rhs_end = line.length();
+
+        // Trim whitespace
+        while (rhs_start < rhs_end && std::isspace(line[rhs_start]))
+        {
+            rhs_start++;
+        }
+        while (rhs_end > rhs_start && std::isspace(line[rhs_end - 1]))
+        {
+            rhs_end--;
+        }
+
+        std::string rhs_value = line.substr(rhs_start, rhs_end - rhs_start);
+
+        // Remove quotes if present
+        if (!rhs_value.empty() && rhs_value.front() == '\'' && rhs_value.back() == '\'')
+        {
+            rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
+        }
+
+        // Now we can utilize the string constructors to form the values
+        try
+        {
+            const boost::decimal::decimal64_t lhs1 {lhs1_value};
+            const boost::decimal::decimal64_t lhs2 {lhs2_value};
+            const boost::decimal::decimal64_t rhs {rhs_value};
+
+            if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+            {
+                // If all operands are NAN then we can apply the function and check bitwise equality
+                const auto f_result {f(lhs1, lhs2)};
+                std::uint64_t result_bits;
+                std::memcpy(&result_bits, &f_result, sizeof(std::uint64_t));
+
+                std::uint64_t rhs_bits;
+                std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
+
+                BOOST_TEST_EQ(result_bits, rhs_bits);
+            }
+            else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))
+            {
+                std::cerr << "Failed test: " << test_name << std::endl;
+            }
+        }
+        catch (...)
+        {
+            // Invalid construction is supposed to throw
+            BOOST_TEST(true);
+        }
+    }
+
+    BOOST_TEST_GT(num_tests_found, 0U);
+}
+
 #endif // BOOST_DECIMAL_DECTEST_TEST_HARNESS_HPP
