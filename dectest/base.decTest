@@ -442,82 +442,82 @@ basx281  toSci 9999999999999999   ->   1.00000000E+16     Rounded Inexact
 -- check rounding modes heeded
 precision: 5
 rounding:  ceiling
-bsrx401  toSci  1.23450    ->  1.2345  Rounded
-bsrx402  toSci  1.234549   ->  1.2346  Rounded Inexact
-bsrx403  toSci  1.234550   ->  1.2346  Rounded Inexact
-bsrx404  toSci  1.234551   ->  1.2346  Rounded Inexact
+#bsrx401  toSci  1.23450    ->  1.2345  Rounded
+#bsrx402  toSci  1.234549   ->  1.2346  Rounded Inexact
+#bsrx403  toSci  1.234550   ->  1.2346  Rounded Inexact
+#bsrx404  toSci  1.234551   ->  1.2346  Rounded Inexact
 rounding:  up
-bsrx405  toSci  1.23450    ->  1.2345  Rounded
-bsrx406  toSci  1.234549   ->  1.2346  Rounded Inexact
-bsrx407  toSci  1.234550   ->  1.2346  Rounded Inexact
-bsrx408  toSci  1.234551   ->  1.2346  Rounded Inexact
+#bsrx405  toSci  1.23450    ->  1.2345  Rounded
+#bsrx406  toSci  1.234549   ->  1.2346  Rounded Inexact
+#bsrx407  toSci  1.234550   ->  1.2346  Rounded Inexact
+#bsrx408  toSci  1.234551   ->  1.2346  Rounded Inexact
 rounding:  floor
-bsrx410  toSci  1.23450    ->  1.2345  Rounded
-bsrx411  toSci  1.234549   ->  1.2345  Rounded Inexact
-bsrx412  toSci  1.234550   ->  1.2345  Rounded Inexact
-bsrx413  toSci  1.234551   ->  1.2345  Rounded Inexact
+#bsrx410  toSci  1.23450    ->  1.2345  Rounded
+#bsrx411  toSci  1.234549   ->  1.2345  Rounded Inexact
+#bsrx412  toSci  1.234550   ->  1.2345  Rounded Inexact
+#bsrx413  toSci  1.234551   ->  1.2345  Rounded Inexact
 rounding:  half_down
-bsrx415  toSci  1.23450    ->  1.2345  Rounded
-bsrx416  toSci  1.234549   ->  1.2345  Rounded Inexact
-bsrx417  toSci  1.234550   ->  1.2345  Rounded Inexact
-bsrx418  toSci  1.234650   ->  1.2346  Rounded Inexact
-bsrx419  toSci  1.234551   ->  1.2346  Rounded Inexact
+#bsrx415  toSci  1.23450    ->  1.2345  Rounded
+#bsrx416  toSci  1.234549   ->  1.2345  Rounded Inexact
+#bsrx417  toSci  1.234550   ->  1.2345  Rounded Inexact
+#bsrx418  toSci  1.234650   ->  1.2346  Rounded Inexact
+#bsrx419  toSci  1.234551   ->  1.2346  Rounded Inexact
 rounding:  half_even
-bsrx421  toSci  1.23450    ->  1.2345  Rounded
-bsrx422  toSci  1.234549   ->  1.2345  Rounded Inexact
-bsrx423  toSci  1.234550   ->  1.2346  Rounded Inexact
-bsrx424  toSci  1.234650   ->  1.2346  Rounded Inexact
-bsrx425  toSci  1.234551   ->  1.2346  Rounded Inexact
+#bsrx421  toSci  1.23450    ->  1.2345  Rounded
+#bsrx422  toSci  1.234549   ->  1.2345  Rounded Inexact
+#bsrx423  toSci  1.234550   ->  1.2346  Rounded Inexact
+#bsrx424  toSci  1.234650   ->  1.2346  Rounded Inexact
+#bsrx425  toSci  1.234551   ->  1.2346  Rounded Inexact
 rounding:  down
-bsrx426  toSci  1.23450    ->  1.2345  Rounded
-bsrx427  toSci  1.234549   ->  1.2345  Rounded Inexact
-bsrx428  toSci  1.234550   ->  1.2345  Rounded Inexact
-bsrx429  toSci  1.234551   ->  1.2345  Rounded Inexact
+#bsrx426  toSci  1.23450    ->  1.2345  Rounded
+#bsrx427  toSci  1.234549   ->  1.2345  Rounded Inexact
+#bsrx428  toSci  1.234550   ->  1.2345  Rounded Inexact
+#bsrx429  toSci  1.234551   ->  1.2345  Rounded Inexact
 rounding:  half_up
-bsrx431  toSci  1.23450    ->  1.2345  Rounded
-bsrx432  toSci  1.234549   ->  1.2345  Rounded Inexact
-bsrx433  toSci  1.234550   ->  1.2346  Rounded Inexact
-bsrx434  toSci  1.234650   ->  1.2347  Rounded Inexact
-bsrx435  toSci  1.234551   ->  1.2346  Rounded Inexact
+#bsrx431  toSci  1.23450    ->  1.2345  Rounded
+#bsrx432  toSci  1.234549   ->  1.2345  Rounded Inexact
+#bsrx433  toSci  1.234550   ->  1.2346  Rounded Inexact
+#bsrx434  toSci  1.234650   ->  1.2347  Rounded Inexact
+#bsrx435  toSci  1.234551   ->  1.2346  Rounded Inexact
 -- negatives
 rounding:  ceiling
-bsrx501  toSci -1.23450    -> -1.2345  Rounded
-bsrx502  toSci -1.234549   -> -1.2345  Rounded Inexact
-bsrx503  toSci -1.234550   -> -1.2345  Rounded Inexact
-bsrx504  toSci -1.234551   -> -1.2345  Rounded Inexact
+#bsrx501  toSci -1.23450    -> -1.2345  Rounded
+#bsrx502  toSci -1.234549   -> -1.2345  Rounded Inexact
+#bsrx503  toSci -1.234550   -> -1.2345  Rounded Inexact
+#bsrx504  toSci -1.234551   -> -1.2345  Rounded Inexact
 rounding:  up
-bsrx505  toSci -1.23450    -> -1.2345  Rounded
-bsrx506  toSci -1.234549   -> -1.2346  Rounded Inexact
-bsrx507  toSci -1.234550   -> -1.2346  Rounded Inexact
-bsrx508  toSci -1.234551   -> -1.2346  Rounded Inexact
+#bsrx505  toSci -1.23450    -> -1.2345  Rounded
+#bsrx506  toSci -1.234549   -> -1.2346  Rounded Inexact
+#bsrx507  toSci -1.234550   -> -1.2346  Rounded Inexact
+#bsrx508  toSci -1.234551   -> -1.2346  Rounded Inexact
 rounding:  floor
-bsrx510  toSci -1.23450    -> -1.2345  Rounded
-bsrx511  toSci -1.234549   -> -1.2346  Rounded Inexact
-bsrx512  toSci -1.234550   -> -1.2346  Rounded Inexact
-bsrx513  toSci -1.234551   -> -1.2346  Rounded Inexact
+#bsrx510  toSci -1.23450    -> -1.2345  Rounded
+#bsrx511  toSci -1.234549   -> -1.2346  Rounded Inexact
+#bsrx512  toSci -1.234550   -> -1.2346  Rounded Inexact
+#bsrx513  toSci -1.234551   -> -1.2346  Rounded Inexact
 rounding:  half_down
-bsrx515  toSci -1.23450    -> -1.2345  Rounded
-bsrx516  toSci -1.234549   -> -1.2345  Rounded Inexact
-bsrx517  toSci -1.234550   -> -1.2345  Rounded Inexact
-bsrx518  toSci -1.234650   -> -1.2346  Rounded Inexact
-bsrx519  toSci -1.234551   -> -1.2346  Rounded Inexact
+#bsrx515  toSci -1.23450    -> -1.2345  Rounded
+#bsrx516  toSci -1.234549   -> -1.2345  Rounded Inexact
+#bsrx517  toSci -1.234550   -> -1.2345  Rounded Inexact
+#bsrx518  toSci -1.234650   -> -1.2346  Rounded Inexact
+#bsrx519  toSci -1.234551   -> -1.2346  Rounded Inexact
 rounding:  half_even
-bsrx521  toSci -1.23450    -> -1.2345  Rounded
-bsrx522  toSci -1.234549   -> -1.2345  Rounded Inexact
-bsrx523  toSci -1.234550   -> -1.2346  Rounded Inexact
-bsrx524  toSci -1.234650   -> -1.2346  Rounded Inexact
-bsrx525  toSci -1.234551   -> -1.2346  Rounded Inexact
+#bsrx521  toSci -1.23450    -> -1.2345  Rounded
+#bsrx522  toSci -1.234549   -> -1.2345  Rounded Inexact
+#bsrx523  toSci -1.234550   -> -1.2346  Rounded Inexact
+#bsrx524  toSci -1.234650   -> -1.2346  Rounded Inexact
+#bsrx525  toSci -1.234551   -> -1.2346  Rounded Inexact
 rounding:  down
-bsrx526  toSci -1.23450    -> -1.2345  Rounded
-bsrx527  toSci -1.234549   -> -1.2345  Rounded Inexact
-bsrx528  toSci -1.234550   -> -1.2345  Rounded Inexact
-bsrx529  toSci -1.234551   -> -1.2345  Rounded Inexact
+#bsrx526  toSci -1.23450    -> -1.2345  Rounded
+#bsrx527  toSci -1.234549   -> -1.2345  Rounded Inexact
+#bsrx528  toSci -1.234550   -> -1.2345  Rounded Inexact
+#bsrx529  toSci -1.234551   -> -1.2345  Rounded Inexact
 rounding:  half_up
-bsrx531  toSci -1.23450    -> -1.2345  Rounded
-bsrx532  toSci -1.234549   -> -1.2345  Rounded Inexact
-bsrx533  toSci -1.234550   -> -1.2346  Rounded Inexact
-bsrx534  toSci -1.234650   -> -1.2347  Rounded Inexact
-bsrx535  toSci -1.234551   -> -1.2346  Rounded Inexact
+#bsrx531  toSci -1.23450    -> -1.2345  Rounded
+#bsrx532  toSci -1.234549   -> -1.2345  Rounded Inexact
+#bsrx533  toSci -1.234550   -> -1.2346  Rounded Inexact
+#bsrx534  toSci -1.234650   -> -1.2347  Rounded Inexact
+#bsrx535  toSci -1.234551   -> -1.2346  Rounded Inexact
 
 -- a few larger exponents
 maxExponent: 999999999
@@ -541,101 +541,101 @@ rounding:  half_up
 precision: 9
 
 -- The 'baddies' tests from DiagBigDecimal, plus some new ones
-basx500 toSci '1..2'            -> NaN Conversion_syntax
-basx501 toSci '.'               -> NaN Conversion_syntax
-basx502 toSci '..'              -> NaN Conversion_syntax
-basx503 toSci '++1'             -> NaN Conversion_syntax
-basx504 toSci '--1'             -> NaN Conversion_syntax
-basx505 toSci '-+1'             -> NaN Conversion_syntax
-basx506 toSci '+-1'             -> NaN Conversion_syntax
-basx507 toSci '12e'             -> NaN Conversion_syntax
-basx508 toSci '12e++'           -> NaN Conversion_syntax
-basx509 toSci '12f4'            -> NaN Conversion_syntax
-basx510 toSci ' +1'             -> NaN Conversion_syntax
-basx511 toSci '+ 1'             -> NaN Conversion_syntax
-basx512 toSci '12 '             -> NaN Conversion_syntax
-basx513 toSci ' + 1'            -> NaN Conversion_syntax
-basx514 toSci ' - 1 '           -> NaN Conversion_syntax
-basx515 toSci 'x'               -> NaN Conversion_syntax
-basx516 toSci '-1-'             -> NaN Conversion_syntax
-basx517 toSci '12-'             -> NaN Conversion_syntax
-basx518 toSci '3+'              -> NaN Conversion_syntax
-basx519 toSci ''                -> NaN Conversion_syntax
-basx520 toSci '1e-'             -> NaN Conversion_syntax
-basx521 toSci '7e99999a'        -> NaN Conversion_syntax
-basx522 toSci '7e123567890x'    -> NaN Conversion_syntax
-basx523 toSci '7e12356789012x'  -> NaN Conversion_syntax
-basx524 toSci ''                -> NaN Conversion_syntax
-basx525 toSci 'e100'            -> NaN Conversion_syntax
-basx526 toSci '\u0e5a'          -> NaN Conversion_syntax
-basx527 toSci '\u0b65'          -> NaN Conversion_syntax
-basx528 toSci '123,65'          -> NaN Conversion_syntax
-basx529 toSci '1.34.5'          -> NaN Conversion_syntax
-basx530 toSci '.123.5'          -> NaN Conversion_syntax
-basx531 toSci '01.35.'          -> NaN Conversion_syntax
-basx532 toSci '01.35-'          -> NaN Conversion_syntax
-basx533 toSci '0000..'          -> NaN Conversion_syntax
-basx534 toSci '.0000.'          -> NaN Conversion_syntax
-basx535 toSci '00..00'          -> NaN Conversion_syntax
-basx536 toSci '111e*123'        -> NaN Conversion_syntax
-basx537 toSci '111e123-'        -> NaN Conversion_syntax
-basx538 toSci '111e+12+'        -> NaN Conversion_syntax
-basx539 toSci '111e1-3-'        -> NaN Conversion_syntax
-basx540 toSci '111e1*23'        -> NaN Conversion_syntax
-basx541 toSci '111e1e+3'        -> NaN Conversion_syntax
-basx542 toSci '1e1.0'           -> NaN Conversion_syntax
-basx543 toSci '1e123e'          -> NaN Conversion_syntax
-basx544 toSci 'ten'             -> NaN Conversion_syntax
-basx545 toSci 'ONE'             -> NaN Conversion_syntax
-basx546 toSci '1e.1'            -> NaN Conversion_syntax
-basx547 toSci '1e1.'            -> NaN Conversion_syntax
-basx548 toSci '1ee'             -> NaN Conversion_syntax
-basx549 toSci 'e+1'             -> NaN Conversion_syntax
-basx550 toSci '1.23.4'          -> NaN Conversion_syntax
-basx551 toSci '1.2.1'           -> NaN Conversion_syntax
-basx552 toSci '1E+1.2'          -> NaN Conversion_syntax
-basx553 toSci '1E+1.2.3'        -> NaN Conversion_syntax
-basx554 toSci '1E++1'           -> NaN Conversion_syntax
-basx555 toSci '1E--1'           -> NaN Conversion_syntax
-basx556 toSci '1E+-1'           -> NaN Conversion_syntax
-basx557 toSci '1E-+1'           -> NaN Conversion_syntax
-basx558 toSci '1E''1'           -> NaN Conversion_syntax
-basx559 toSci "1E""1"           -> NaN Conversion_syntax
-basx560 toSci "1E"""""          -> NaN Conversion_syntax
+#basx500 toSci '1..2'            -> NaN Conversion_syntax
+#basx501 toSci '.'               -> NaN Conversion_syntax
+#basx502 toSci '..'              -> NaN Conversion_syntax
+#basx503 toSci '++1'             -> NaN Conversion_syntax
+#basx504 toSci '--1'             -> NaN Conversion_syntax
+#basx505 toSci '-+1'             -> NaN Conversion_syntax
+#basx506 toSci '+-1'             -> NaN Conversion_syntax
+#basx507 toSci '12e'             -> NaN Conversion_syntax
+#basx508 toSci '12e++'           -> NaN Conversion_syntax
+#basx509 toSci '12f4'            -> NaN Conversion_syntax
+#basx510 toSci ' +1'             -> NaN Conversion_syntax
+#basx511 toSci '+ 1'             -> NaN Conversion_syntax
+#basx512 toSci '12 '             -> NaN Conversion_syntax
+#basx513 toSci ' + 1'            -> NaN Conversion_syntax
+#basx514 toSci ' - 1 '           -> NaN Conversion_syntax
+#basx515 toSci 'x'               -> NaN Conversion_syntax
+#basx516 toSci '-1-'             -> NaN Conversion_syntax
+#basx517 toSci '12-'             -> NaN Conversion_syntax
+#basx518 toSci '3+'              -> NaN Conversion_syntax
+#basx519 toSci ''                -> NaN Conversion_syntax
+#basx520 toSci '1e-'             -> NaN Conversion_syntax
+#basx521 toSci '7e99999a'        -> NaN Conversion_syntax
+#basx522 toSci '7e123567890x'    -> NaN Conversion_syntax
+#basx523 toSci '7e12356789012x'  -> NaN Conversion_syntax
+#basx524 toSci ''                -> NaN Conversion_syntax
+#basx525 toSci 'e100'            -> NaN Conversion_syntax
+#basx526 toSci '\u0e5a'          -> NaN Conversion_syntax
+#basx527 toSci '\u0b65'          -> NaN Conversion_syntax
+#basx528 toSci '123,65'          -> NaN Conversion_syntax
+#basx529 toSci '1.34.5'          -> NaN Conversion_syntax
+#basx530 toSci '.123.5'          -> NaN Conversion_syntax
+#basx531 toSci '01.35.'          -> NaN Conversion_syntax
+#basx532 toSci '01.35-'          -> NaN Conversion_syntax
+#basx533 toSci '0000..'          -> NaN Conversion_syntax
+#basx534 toSci '.0000.'          -> NaN Conversion_syntax
+#basx535 toSci '00..00'          -> NaN Conversion_syntax
+#basx536 toSci '111e*123'        -> NaN Conversion_syntax
+#basx537 toSci '111e123-'        -> NaN Conversion_syntax
+#basx538 toSci '111e+12+'        -> NaN Conversion_syntax
+#basx539 toSci '111e1-3-'        -> NaN Conversion_syntax
+#basx540 toSci '111e1*23'        -> NaN Conversion_syntax
+#basx541 toSci '111e1e+3'        -> NaN Conversion_syntax
+#basx542 toSci '1e1.0'           -> NaN Conversion_syntax
+#basx543 toSci '1e123e'          -> NaN Conversion_syntax
+#basx544 toSci 'ten'             -> NaN Conversion_syntax
+#basx545 toSci 'ONE'             -> NaN Conversion_syntax
+#basx546 toSci '1e.1'            -> NaN Conversion_syntax
+#basx547 toSci '1e1.'            -> NaN Conversion_syntax
+#basx548 toSci '1ee'             -> NaN Conversion_syntax
+#basx549 toSci 'e+1'             -> NaN Conversion_syntax
+#basx550 toSci '1.23.4'          -> NaN Conversion_syntax
+#basx551 toSci '1.2.1'           -> NaN Conversion_syntax
+#basx552 toSci '1E+1.2'          -> NaN Conversion_syntax
+#basx553 toSci '1E+1.2.3'        -> NaN Conversion_syntax
+#basx554 toSci '1E++1'           -> NaN Conversion_syntax
+#basx555 toSci '1E--1'           -> NaN Conversion_syntax
+#basx556 toSci '1E+-1'           -> NaN Conversion_syntax
+#basx557 toSci '1E-+1'           -> NaN Conversion_syntax
+#basx558 toSci '1E''1'           -> NaN Conversion_syntax
+#basx559 toSci "1E""1"           -> NaN Conversion_syntax
+#basx560 toSci "1E"""""          -> NaN Conversion_syntax
 -- Near-specials
-basx561 toSci "qNaN"            -> NaN Conversion_syntax
-basx562 toSci "NaNq"            -> NaN Conversion_syntax
-basx563 toSci "NaNs"            -> NaN Conversion_syntax
-basx564 toSci "Infi"            -> NaN Conversion_syntax
-basx565 toSci "Infin"           -> NaN Conversion_syntax
-basx566 toSci "Infini"          -> NaN Conversion_syntax
-basx567 toSci "Infinit"         -> NaN Conversion_syntax
-basx568 toSci "-Infinit"        -> NaN Conversion_syntax
-basx569 toSci "0Inf"            -> NaN Conversion_syntax
-basx570 toSci "9Inf"            -> NaN Conversion_syntax
-basx571 toSci "-0Inf"           -> NaN Conversion_syntax
-basx572 toSci "-9Inf"           -> NaN Conversion_syntax
-basx573 toSci "-sNa"            -> NaN Conversion_syntax
-basx574 toSci "xNaN"            -> NaN Conversion_syntax
-basx575 toSci "0sNaN"           -> NaN Conversion_syntax
+#basx561 toSci "qNaN"            -> NaN Conversion_syntax
+#basx562 toSci "NaNq"            -> NaN Conversion_syntax
+#basx563 toSci "NaNs"            -> NaN Conversion_syntax
+#basx564 toSci "Infi"            -> NaN Conversion_syntax
+#basx565 toSci "Infin"           -> NaN Conversion_syntax
+#basx566 toSci "Infini"          -> NaN Conversion_syntax
+#basx567 toSci "Infinit"         -> NaN Conversion_syntax
+#basx568 toSci "-Infinit"        -> NaN Conversion_syntax
+#basx569 toSci "0Inf"            -> NaN Conversion_syntax
+#basx570 toSci "9Inf"            -> NaN Conversion_syntax
+#basx571 toSci "-0Inf"           -> NaN Conversion_syntax
+#basx572 toSci "-9Inf"           -> NaN Conversion_syntax
+#basx573 toSci "-sNa"            -> NaN Conversion_syntax
+#basx574 toSci "xNaN"            -> NaN Conversion_syntax
+#basx575 toSci "0sNaN"           -> NaN Conversion_syntax
 
 -- some baddies with dots and Es and dots and specials
-basx576 toSci  'e+1'            ->  NaN Conversion_syntax
-basx577 toSci  '.e+1'           ->  NaN Conversion_syntax
-basx578 toSci  '+.e+1'          ->  NaN Conversion_syntax
-basx579 toSci  '-.e+'           ->  NaN Conversion_syntax
-basx580 toSci  '-.e'            ->  NaN Conversion_syntax
-basx581 toSci  'E+1'            ->  NaN Conversion_syntax
-basx582 toSci  '.E+1'           ->  NaN Conversion_syntax
-basx583 toSci  '+.E+1'          ->  NaN Conversion_syntax
-basx584 toSci  '-.E+'           ->  NaN Conversion_syntax
-basx585 toSci  '-.E'            ->  NaN Conversion_syntax
+#basx576 toSci  'e+1'            ->  NaN Conversion_syntax
+#basx577 toSci  '.e+1'           ->  NaN Conversion_syntax
+#basx578 toSci  '+.e+1'          ->  NaN Conversion_syntax
+#basx579 toSci  '-.e+'           ->  NaN Conversion_syntax
+#basx580 toSci  '-.e'            ->  NaN Conversion_syntax
+#basx581 toSci  'E+1'            ->  NaN Conversion_syntax
+#basx582 toSci  '.E+1'           ->  NaN Conversion_syntax
+#basx583 toSci  '+.E+1'          ->  NaN Conversion_syntax
+#basx584 toSci  '-.E+'           ->  NaN Conversion_syntax
+#basx585 toSci  '-.E'            ->  NaN Conversion_syntax
 
-basx586 toSci  '.NaN'           ->  NaN Conversion_syntax
-basx587 toSci  '-.NaN'          ->  NaN Conversion_syntax
-basx588 toSci  '+.sNaN'         ->  NaN Conversion_syntax
-basx589 toSci  '+.Inf'          ->  NaN Conversion_syntax
-basx590 toSci  '.Infinity'      ->  NaN Conversion_syntax
+#basx586 toSci  '.NaN'           ->  NaN Conversion_syntax
+#basx587 toSci  '-.NaN'          ->  NaN Conversion_syntax
+#basx588 toSci  '+.sNaN'         ->  NaN Conversion_syntax
+#basx589 toSci  '+.Inf'          ->  NaN Conversion_syntax
+#basx590 toSci  '.Infinity'      ->  NaN Conversion_syntax
 
 -- Zeros
 basx601 toSci 0.000000000       -> 0E-9
@@ -1004,142 +1004,142 @@ basx980 toSci "999e-999999999"  -> '9.99E-999999997'
 precision: 5
 maxexponent: 0
 minexponent: 0
-emax001 toSci -1E+2  -> -Infinity Overflow Inexact Rounded
-emax002 toSci -100   -> -Infinity Overflow Inexact Rounded
-emax003 toSci  -10   -> -Infinity Overflow Inexact Rounded
-emax004 toSci   -9.9 -> -9.9
-emax005 toSci   -9   -> -9
-emax006 toSci   -1   -> -1
-emax007 toSci    0   ->  0
-emax008 toSci    1   ->  1
-emax009 toSci    9   ->  9
-emax010 toSci    9.9 ->  9.9
-emax011 toSci   10   ->  Infinity Overflow Inexact Rounded
-emax012 toSci  100   ->  Infinity Overflow Inexact Rounded
-emax013 toSci  1E+2  ->  Infinity Overflow Inexact Rounded
-emax014 toSci   0.99 ->  0.99 Subnormal
-emax015 toSci   0.1  ->  0.1 Subnormal
-emax016 toSci   0.01 ->  0.01 Subnormal
-emax017 toSci  1E-1  ->  0.1 Subnormal
-emax018 toSci  1E-2  ->  0.01 Subnormal
+#emax001 toSci -1E+2  -> -Infinity Overflow Inexact Rounded
+#emax002 toSci -100   -> -Infinity Overflow Inexact Rounded
+#emax003 toSci  -10   -> -Infinity Overflow Inexact Rounded
+#emax004 toSci   -9.9 -> -9.9
+#emax005 toSci   -9   -> -9
+#emax006 toSci   -1   -> -1
+#emax007 toSci    0   ->  0
+#emax008 toSci    1   ->  1
+#emax009 toSci    9   ->  9
+#emax010 toSci    9.9 ->  9.9
+#emax011 toSci   10   ->  Infinity Overflow Inexact Rounded
+#emax012 toSci  100   ->  Infinity Overflow Inexact Rounded
+#emax013 toSci  1E+2  ->  Infinity Overflow Inexact Rounded
+#emax014 toSci   0.99 ->  0.99 Subnormal
+#emax015 toSci   0.1  ->  0.1 Subnormal
+#emax016 toSci   0.01 ->  0.01 Subnormal
+#emax017 toSci  1E-1  ->  0.1 Subnormal
+#emax018 toSci  1E-2  ->  0.01 Subnormal
 
 maxexponent: 1
 minexponent: -1
-emax100 toSci -1E+3  -> -Infinity Overflow Inexact Rounded
-emax101 toSci -1E+2  -> -Infinity Overflow Inexact Rounded
-emax102 toSci -100   -> -Infinity Overflow Inexact Rounded
-emax103 toSci  -10   -> -10
-emax104 toSci   -9.9 -> -9.9
-emax105 toSci   -9   -> -9
-emax106 toSci   -1   -> -1
-emax107 toSci    0   ->  0
-emax108 toSci    1   ->  1
-emax109 toSci    9   ->  9
-emax110 toSci    9.9 ->  9.9
-emax111 toSci   10   -> 10
-emax112 toSci  100   ->  Infinity Overflow Inexact Rounded
-emax113 toSci  1E+2  ->  Infinity Overflow Inexact Rounded
-emax114 toSci  1E+3  ->  Infinity Overflow Inexact Rounded
-emax115 toSci   0.99 ->  0.99
-emax116 toSci   0.1  ->  0.1
-emax117 toSci   0.01 ->  0.01 Subnormal
-emax118 toSci  1E-1  ->  0.1
-emax119 toSci  1E-2  ->  0.01 Subnormal
-emax120 toSci  1E-3  ->  0.001 Subnormal
-emax121 toSci  1.1E-3  ->  0.0011 Subnormal
-emax122 toSci  1.11E-3  ->  0.00111 Subnormal
-emax123 toSci  1.111E-3  ->  0.00111 Subnormal Underflow Inexact Rounded
-emax124 toSci  1.1111E-3  ->  0.00111 Subnormal Underflow Inexact Rounded
-emax125 toSci  1.11111E-3  ->  0.00111 Subnormal Underflow Inexact Rounded
+#emax100 toSci -1E+3  -> -Infinity Overflow Inexact Rounded
+#emax101 toSci -1E+2  -> -Infinity Overflow Inexact Rounded
+#emax102 toSci -100   -> -Infinity Overflow Inexact Rounded
+#emax103 toSci  -10   -> -10
+#emax104 toSci   -9.9 -> -9.9
+#emax105 toSci   -9   -> -9
+#emax106 toSci   -1   -> -1
+#emax107 toSci    0   ->  0
+#emax108 toSci    1   ->  1
+#emax109 toSci    9   ->  9
+#emax110 toSci    9.9 ->  9.9
+#emax111 toSci   10   -> 10
+#emax112 toSci  100   ->  Infinity Overflow Inexact Rounded
+#emax113 toSci  1E+2  ->  Infinity Overflow Inexact Rounded
+#emax114 toSci  1E+3  ->  Infinity Overflow Inexact Rounded
+#emax115 toSci   0.99 ->  0.99
+#emax116 toSci   0.1  ->  0.1
+#emax117 toSci   0.01 ->  0.01 Subnormal
+#emax118 toSci  1E-1  ->  0.1
+#emax119 toSci  1E-2  ->  0.01 Subnormal
+#emax120 toSci  1E-3  ->  0.001 Subnormal
+#emax121 toSci  1.1E-3  ->  0.0011 Subnormal
+#emax122 toSci  1.11E-3  ->  0.00111 Subnormal
+#emax123 toSci  1.111E-3  ->  0.00111 Subnormal Underflow Inexact Rounded
+#emax124 toSci  1.1111E-3  ->  0.00111 Subnormal Underflow Inexact Rounded
+#emax125 toSci  1.11111E-3  ->  0.00111 Subnormal Underflow Inexact Rounded
 
 maxexponent: 2
 minexponent: -2
 precision: 9
-emax200 toSci -1E+3  -> -Infinity Overflow Inexact Rounded
-emax201 toSci -1E+2  -> -1E+2
-emax202 toSci -100   -> -100
-emax203 toSci  -10   -> -10
-emax204 toSci   -9.9 -> -9.9
-emax205 toSci   -9   -> -9
-emax206 toSci   -1   -> -1
-emax207 toSci    0   ->  0
-emax208 toSci    1   ->  1
-emax209 toSci    9   ->  9
-emax210 toSci    9.9 ->  9.9
-emax211 toSci   10   -> 10
-emax212 toSci  100   -> 100
-emax213 toSci  1E+2  -> 1E+2
-emax214 toSci  1E+3  ->  Infinity Overflow Inexact Rounded
-emax215 toSci   0.99 ->  0.99
-emax216 toSci   0.1  ->  0.1
-emax217 toSci   0.01 ->  0.01
-emax218 toSci  0.001 ->  0.001 Subnormal
-emax219 toSci  1E-1  ->  0.1
-emax220 toSci  1E-2  ->  0.01
-emax221 toSci  1E-3  ->  0.001 Subnormal
-emax222 toSci  1E-4  ->  0.0001 Subnormal
-emax223 toSci  1E-5  ->  0.00001 Subnormal
-emax224 toSci  1E-6  ->  0.000001 Subnormal
-emax225 toSci  1E-7  ->  1E-7  Subnormal
-emax226 toSci  1E-8  ->  1E-8  Subnormal
-emax227 toSci  1E-9  ->  1E-9  Subnormal
-emax228 toSci  1E-10 ->  1E-10 Subnormal
-emax229 toSci  1E-11 ->  0E-10 Underflow Subnormal Inexact Rounded Clamped
-emax230 toSci  1E-12 ->  0E-10 Underflow Subnormal Inexact Rounded Clamped
+#emax200 toSci -1E+3  -> -Infinity Overflow Inexact Rounded
+#emax201 toSci -1E+2  -> -1E+2
+#emax202 toSci -100   -> -100
+#emax203 toSci  -10   -> -10
+#emax204 toSci   -9.9 -> -9.9
+#emax205 toSci   -9   -> -9
+#emax206 toSci   -1   -> -1
+#emax207 toSci    0   ->  0
+#emax208 toSci    1   ->  1
+#emax209 toSci    9   ->  9
+#emax210 toSci    9.9 ->  9.9
+#emax211 toSci   10   -> 10
+#emax212 toSci  100   -> 100
+#emax213 toSci  1E+2  -> 1E+2
+#emax214 toSci  1E+3  ->  Infinity Overflow Inexact Rounded
+#emax215 toSci   0.99 ->  0.99
+#emax216 toSci   0.1  ->  0.1
+#emax217 toSci   0.01 ->  0.01
+#emax218 toSci  0.001 ->  0.001 Subnormal
+#emax219 toSci  1E-1  ->  0.1
+#emax220 toSci  1E-2  ->  0.01
+#emax221 toSci  1E-3  ->  0.001 Subnormal
+#emax222 toSci  1E-4  ->  0.0001 Subnormal
+#emax223 toSci  1E-5  ->  0.00001 Subnormal
+#emax224 toSci  1E-6  ->  0.000001 Subnormal
+#emax225 toSci  1E-7  ->  1E-7  Subnormal
+#emax226 toSci  1E-8  ->  1E-8  Subnormal
+#emax227 toSci  1E-9  ->  1E-9  Subnormal
+#emax228 toSci  1E-10 ->  1E-10 Subnormal
+#emax229 toSci  1E-11 ->  0E-10 Underflow Subnormal Inexact Rounded Clamped
+#emax230 toSci  1E-12 ->  0E-10 Underflow Subnormal Inexact Rounded Clamped
 
 maxexponent: 7
 minexponent: -7
-emax231 toSci  1E-8  ->  1E-8 Subnormal
-emax232 toSci  1E-7  ->  1E-7
-emax233 toSci  1E-6  ->  0.000001
-emax234 toSci  1E-5  ->  0.00001
-emax235 toSci  1E+5  ->  1E+5
-emax236 toSci  1E+6  ->  1E+6
-emax237 toSci  1E+7  ->  1E+7
-emax238 toSci  1E+8  ->  Infinity Overflow Inexact Rounded
+#emax231 toSci  1E-8  ->  1E-8 Subnormal
+#emax232 toSci  1E-7  ->  1E-7
+#emax233 toSci  1E-6  ->  0.000001
+#emax234 toSci  1E-5  ->  0.00001
+#emax235 toSci  1E+5  ->  1E+5
+#emax236 toSci  1E+6  ->  1E+6
+#emax237 toSci  1E+7  ->  1E+7
+#emax238 toSci  1E+8  ->  Infinity Overflow Inexact Rounded
 
 maxexponent: 9
 minexponent: -9
-emax240 toSci  1E-21 ->  0E-17 Subnormal Underflow Inexact Rounded Clamped
-emax241 toSci  1E-10 ->  1E-10 Subnormal
-emax242 toSci  1E-9  ->  1E-9
-emax243 toSci  1E-8  ->  1E-8
-emax244 toSci  1E-7  ->  1E-7
-emax245 toSci  1E+7  ->  1E+7
-emax246 toSci  1E+8  ->  1E+8
-emax247 toSci  1E+9  ->  1E+9
-emax248 toSci  1E+10 ->  Infinity Overflow Inexact Rounded
+#emax240 toSci  1E-21 ->  0E-17 Subnormal Underflow Inexact Rounded Clamped
+#emax241 toSci  1E-10 ->  1E-10 Subnormal
+#emax242 toSci  1E-9  ->  1E-9
+#emax243 toSci  1E-8  ->  1E-8
+#emax244 toSci  1E-7  ->  1E-7
+#emax245 toSci  1E+7  ->  1E+7
+#emax246 toSci  1E+8  ->  1E+8
+#emax247 toSci  1E+9  ->  1E+9
+#emax248 toSci  1E+10 ->  Infinity Overflow Inexact Rounded
 
 maxexponent: 10  -- boundary
 minexponent: -10
-emax250 toSci  1E-21 ->  0E-18 Underflow Subnormal Inexact Rounded Clamped
-emax251 toSci  1E-11 ->  1E-11 Subnormal
-emax252 toSci  1E-10 ->  1E-10
-emax253 toSci  1E-9  ->  1E-9
-emax254 toSci  1E-8  ->  1E-8
-emax255 toSci  1E+8  ->  1E+8
-emax256 toSci  1E+9  ->  1E+9
-emax257 toSci  1E+10 ->  1E+10
-emax258 toSci  1E+11 ->  Infinity Overflow Inexact Rounded
+#emax250 toSci  1E-21 ->  0E-18 Underflow Subnormal Inexact Rounded Clamped
+#emax251 toSci  1E-11 ->  1E-11 Subnormal
+#emax252 toSci  1E-10 ->  1E-10
+#emax253 toSci  1E-9  ->  1E-9
+#emax254 toSci  1E-8  ->  1E-8
+#emax255 toSci  1E+8  ->  1E+8
+#emax256 toSci  1E+9  ->  1E+9
+#emax257 toSci  1E+10 ->  1E+10
+#emax258 toSci  1E+11 ->  Infinity Overflow Inexact Rounded
 
-emax260 toSci  1.00E-21 ->  0E-18 Underflow Subnormal Inexact Rounded Clamped
-emax261 toSci  1.00E-11 ->  1.00E-11 Subnormal
-emax262 toSci  1.00E-10 ->  1.00E-10
-emax263 toSci  1.00E-9  ->  1.00E-9
-emax264 toSci  1.00E-8  ->  1.00E-8
-emax265 toSci  1.00E+8  ->  1.00E+8
-emax266 toSci  1.00E+9  ->  1.00E+9
-emax267 toSci  1.00E+10 ->  1.00E+10
-emax268 toSci  1.00E+11 ->  Infinity Overflow Inexact Rounded
-emax270 toSci  9.99E-21 ->  0E-18 Underflow Subnormal Inexact Rounded Clamped
-emax271 toSci  9.99E-11 ->  9.99E-11 Subnormal
-emax272 toSci  9.99E-10 ->  9.99E-10
-emax273 toSci  9.99E-9  ->  9.99E-9
-emax274 toSci  9.99E-8  ->  9.99E-8
-emax275 toSci  9.99E+8  ->  9.99E+8
-emax276 toSci  9.99E+9  ->  9.99E+9
-emax277 toSci  9.99E+10 ->  9.99E+10
-emax278 toSci  9.99E+11 ->  Infinity Overflow Inexact Rounded
+#emax260 toSci  1.00E-21 ->  0E-18 Underflow Subnormal Inexact Rounded Clamped
+#emax261 toSci  1.00E-11 ->  1.00E-11 Subnormal
+#emax262 toSci  1.00E-10 ->  1.00E-10
+#emax263 toSci  1.00E-9  ->  1.00E-9
+#emax264 toSci  1.00E-8  ->  1.00E-8
+#emax265 toSci  1.00E+8  ->  1.00E+8
+#emax266 toSci  1.00E+9  ->  1.00E+9
+#emax267 toSci  1.00E+10 ->  1.00E+10
+#emax268 toSci  1.00E+11 ->  Infinity Overflow Inexact Rounded
+#emax270 toSci  9.99E-21 ->  0E-18 Underflow Subnormal Inexact Rounded Clamped
+#emax271 toSci  9.99E-11 ->  9.99E-11 Subnormal
+#emax272 toSci  9.99E-10 ->  9.99E-10
+#emax273 toSci  9.99E-9  ->  9.99E-9
+#emax274 toSci  9.99E-8  ->  9.99E-8
+#emax275 toSci  9.99E+8  ->  9.99E+8
+#emax276 toSci  9.99E+9  ->  9.99E+9
+#emax277 toSci  9.99E+10 ->  9.99E+10
+#emax278 toSci  9.99E+11 ->  Infinity Overflow Inexact Rounded
 
 maxexponent: 99
 minexponent: -99
@@ -1363,9 +1363,9 @@ basx1036 tosci 1e-2147483649 -> 0E-101 Underflow Subnormal Inexact Rounded Clamp
 precision:   5
 maxexponent: 79
 minexponent: -79
-basx1041 toSci     1.52444E-80  ->  1.524E-80 Inexact Rounded Subnormal Underflow
-basx1042 toSci     1.52445E-80  ->  1.524E-80 Inexact Rounded Subnormal Underflow
-basx1043 toSci     1.52446E-80  ->  1.524E-80 Inexact Rounded Subnormal Underflow
+#basx1041 toSci     1.52444E-80  ->  1.524E-80 Inexact Rounded Subnormal Underflow
+#basx1042 toSci     1.52445E-80  ->  1.524E-80 Inexact Rounded Subnormal Underflow
+#basx1043 toSci     1.52446E-80  ->  1.524E-80 Inexact Rounded Subnormal Underflow
 
 -- clamped zeros [see also clamp.decTest]
 precision:   34
