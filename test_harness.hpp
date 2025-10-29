@@ -138,7 +138,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
         // Select appropriate decimal type based on precision
         try
         {
-            if (current_precision < 9)
+            if (current_precision <= 9)
             {
                 // Use decimal32_t
                 const boost::decimal::decimal32_t lhs {lhs_value};
