@@ -10,6 +10,7 @@ int main()
 {
     // Effectively NOOP since we are already performing this string manipulation in the constructors
     test_one_arg_harness("dectest0/base0.decTest", "toSci", [](const auto x) { return x; });
+    test_one_arg_harness("dectest/base.decTest", "toSci", [](const auto x) { return x; });
 
     return boost::report_errors();
 }
