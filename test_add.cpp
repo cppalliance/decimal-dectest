@@ -8,8 +8,7 @@
 
 int main()
 {
-    test_one_arg_harness("dectest0/abs0.decTest", "abs", [](const auto x) { return boost::decimal::abs(x); });
-    test_one_arg_harness("dectest/abs.decTest", "abs", [](const auto x) { return boost::decimal::abs(x); });
+    test_two_arg_harness("dectest0/add0.decTest", "addition", [](const auto x, const auto y) { return x + y; });
 
     return boost::report_errors();
 }

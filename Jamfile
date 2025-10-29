@@ -50,3 +50,4 @@ run quick.cpp ;
 # Combined Testing
 
 run test_abs.cpp ;
+run test_add.cpp ;
