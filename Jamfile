@@ -46,3 +46,4 @@ run quick.cpp ;
 run test_abs.cpp ;
 run test_add.cpp ;
 run test_base.cpp ;
+run test_clamp.cpp ;
