@@ -668,15 +668,24 @@ inline void test_comparisons(const std::string& file_path, const std::string& fu
 
                 if (rhs_value == eq)
                 {
-                    BOOST_TEST_EQ(lhs1, lhs2);
+                    if (!BOOST_TEST_EQ(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (rhs_value == gt)
                 {
-                    BOOST_TEST_GT(lhs1, lhs2);
+                    if (!BOOST_TEST_GT(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (rhs_value == lt)
                 {
-                    BOOST_TEST_LT(lhs1, lhs2);
+                    if (!BOOST_TEST_LT(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else
                 {
@@ -691,15 +700,24 @@ inline void test_comparisons(const std::string& file_path, const std::string& fu
 
                 if (rhs_value == eq)
                 {
-                    BOOST_TEST_EQ(lhs1, lhs2);
+                    if (!BOOST_TEST_EQ(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (rhs_value == gt)
                 {
-                    BOOST_TEST_GT(lhs1, lhs2);
+                    if (!BOOST_TEST_GT(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (rhs_value == lt)
                 {
-                    BOOST_TEST_LT(lhs1, lhs2);
+                    if (!BOOST_TEST_LT(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else
                 {
@@ -714,15 +732,24 @@ inline void test_comparisons(const std::string& file_path, const std::string& fu
 
                 if (rhs_value == eq)
                 {
-                    BOOST_TEST_EQ(lhs1, lhs2);
+                    if (!BOOST_TEST_EQ(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (rhs_value == gt)
                 {
-                    BOOST_TEST_GT(lhs1, lhs2);
+                    if (!BOOST_TEST_GT(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (rhs_value == lt)
                 {
-                    BOOST_TEST_LT(lhs1, lhs2);
+                    if (!BOOST_TEST_LT(lhs1, lhs2))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else
                 {
