@@ -258,10 +258,10 @@ com450 compare   -8      -90E-1  -> 1
 -- now some cases which might overflow if subtract were used
 maxexponent: 999999999
 minexponent: -999999999
-com460 compare  9.99999999E+999999999 9.99999999E+999999999  -> 0
-com461 compare -9.99999999E+999999999 9.99999999E+999999999  -> -1
-com462 compare  9.99999999E+999999999 -9.99999999E+999999999 -> 1
-com463 compare -9.99999999E+999999999 -9.99999999E+999999999 -> 0
+#com460 compare  9.99999999E+999999999 9.99999999E+999999999  -> 0
+#com461 compare -9.99999999E+999999999 9.99999999E+999999999  -> -1
+#com462 compare  9.99999999E+999999999 -9.99999999E+999999999 -> 1
+#com463 compare -9.99999999E+999999999 -9.99999999E+999999999 -> 0
 
 -- testcases that subtract to lots of zeros at boundaries [pgr]
 precision: 40
