@@ -657,8 +657,8 @@ inline void test_comparisons(const std::string& file_path, const std::string& fu
         try
         {
             const std::string eq = "0";
-            const std::string gt = "-1";
-            const std::string lt = "1";
+            const std::string gt = "1";
+            const std::string lt = "-1";
 
             if (current_precision <= 9)
             {
