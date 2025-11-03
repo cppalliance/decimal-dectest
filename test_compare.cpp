@@ -11,5 +11,7 @@ int main()
     test_comparisons("dectest0/compare0.decTest", "compare");
     test_comparisons("dectest/compare.decTest", "compare");
 
+    test_comparisons("dectest/comparesig.decTest", "comparesig");
+
     return boost::report_errors();
 }
