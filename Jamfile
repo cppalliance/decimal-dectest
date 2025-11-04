@@ -48,3 +48,4 @@ run test_add.cpp ;
 run test_base.cpp ;
 run test_clamp.cpp ;
 run test_compare.cpp ;
+run test_comparetotal.cpp ;
