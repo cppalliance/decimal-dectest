@@ -959,21 +959,21 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
                 if (rhs_value == eq)
                 {
-                    if (BOOST_TEST(!boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(!boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
                 else if (rhs_value == gt)
                 {
-                    if (BOOST_TEST(!boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
                 else if (rhs_value == lt)
                 {
-                    if (BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(!boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
@@ -991,21 +991,21 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
                 if (rhs_value == eq)
                 {
-                    if (BOOST_TEST(!boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(!boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
                 else if (rhs_value == gt)
                 {
-                    if (BOOST_TEST(!boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
                 else if (rhs_value == lt)
                 {
-                    if (BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(!boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
@@ -1023,21 +1023,21 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
                 if (rhs_value == eq)
                 {
-                    if (BOOST_TEST(!boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(!boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
                 else if (rhs_value == gt)
                 {
-                    if (BOOST_TEST(!boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
                 else if (rhs_value == lt)
                 {
-                    if (BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(!boost::decimal::comparetotal(lhs2, lhs1)))
+                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
