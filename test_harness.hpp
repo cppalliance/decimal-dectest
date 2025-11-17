@@ -178,7 +178,10 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     std::uint64_t rhs_bits;
                     std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
 
-                    BOOST_TEST_EQ(lhs_bits, rhs_bits);
+                    if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
                 {
@@ -200,7 +203,10 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     boost::int128::uint128_t rhs_bits;
                     std::memcpy(&rhs_bits, &rhs, sizeof(boost::int128::uint128_t));
 
-                    BOOST_TEST_EQ(lhs_bits, rhs_bits);
+                    if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
                 {
