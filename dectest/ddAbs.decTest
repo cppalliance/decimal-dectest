@@ -111,14 +111,24 @@ ddabs137 abs  -1E-383                  -> 1E-383
 ddabs138 abs  -9.999999999999999E+384  -> 9.999999999999999E+384
 
 -- specials
+# The changes below are implementation defined
 ddabs520 abs 'Inf'    -> 'Infinity'
 ddabs521 abs '-Inf'   -> 'Infinity'
-ddabs522 abs   NaN    ->  NaN
-ddabs523 abs  sNaN    ->  NaN   Invalid_operation
+ddabs522 abs   NaN    ->  NaN]
+
+#ddabs523 abs  sNaN    ->  NaN   Invalid_operation
+ddabs523 abs  sNaN    ->  sNaN   Invalid_operation
+
 ddabs524 abs   NaN22  ->  NaN22
-ddabs525 abs  sNaN33  ->  NaN33 Invalid_operation
-ddabs526 abs  -NaN22  -> -NaN22
-ddabs527 abs -sNaN33  -> -NaN33 Invalid_operation
+
+#ddabs525 abs  sNaN33  ->  NaN33 Invalid_operation
+ddabs525 abs  sNaN33  ->  sNaN33 Invalid_operation
+
+#ddabs526 abs  -NaN22  -> -NaN22
+ddabs526 abs  -NaN22  -> NaN22
+
+#ddabs527 abs -sNaN33  -> -NaN33 Invalid_operation
+ddabs527 abs -sNaN33  -> sNaN33 Invalid_operation
 
 -- Null tests
 ddabs900 abs  # -> NaN Invalid_operation
