@@ -10,5 +10,8 @@ int main()
 {
     test_two_arg_harness("dectest0/add0.decTest", "add", [](const auto x, const auto y) { return x + y; });
 
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal64_t>::max_digits10);
+    test_two_arg_harness("dectest/ddAdd.decTest", "add", [](const auto x, const auto y) { return x + y; });
+
     return boost::report_errors();
 }
