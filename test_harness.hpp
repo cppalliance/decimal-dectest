@@ -434,19 +434,22 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 const boost::decimal::decimal64_t lhs1 {lhs1_value};
                 const boost::decimal::decimal64_t lhs2 {lhs2_value};
                 const boost::decimal::decimal64_t rhs {rhs_value};
+                const auto f_result {f(lhs1, lhs2)};
 
-                if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+                if ((isnan(lhs1) && isnan(lhs2)) || isnan(rhs))
                 {
-                    const auto f_result {f(lhs1, lhs2)};
                     std::uint64_t result_bits;
                     std::memcpy(&result_bits, &f_result, sizeof(std::uint64_t));
 
                     std::uint64_t rhs_bits;
                     std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
 
-                    BOOST_TEST_EQ(result_bits, rhs_bits);
+                    if (!BOOST_TEST_EQ(result_bits, rhs_bits))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
-                else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))
+                else if (!BOOST_TEST_EQ(f_result, rhs))
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
