@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdint>
+#include <functional>
 
 template <typename Function>
 void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
@@ -225,7 +226,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
     BOOST_TEST_LT(invalid_tests, num_tests_found);
 }
 
-template <typename Function>
+template <bool allow_rounding_changes = false, typename Function = std::minus<>()>
 void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
 {
     const auto full_path {boost::decimal::dectest::where_file(file_path)};
@@ -248,6 +249,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
     std::size_t invalid_tests {};
     std::string line;
     int current_precision = 16;
+    bool skip = false;
 
     while (std::getline(in, line))
     {
@@ -282,6 +284,59 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             {
                 current_precision = std::stoi(precision_str);
             }
+            continue;
+        }
+
+        // Check for rounding mode changes
+        BOOST_DECIMAL_IF_CONSTEXPR (allow_rounding_changes)
+        {
+            auto rounding_pos = line.find("rounding:");
+            if (rounding_pos != std::string::npos)
+            {
+                auto rounding_start = rounding_pos + 10;
+                auto rounding_end = line.length();
+
+                while (rounding_start < line.length() && std::isspace(line[rounding_start]))
+                {
+                    rounding_start++;
+                }
+
+                // Extract the rounding mode
+                const std::string rounding_str {line.substr(rounding_start, rounding_end - rounding_start - 1u)};
+
+                if (rounding_str == "floor" || rounding_str == "down")
+                {
+                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_downward);
+                    skip = false;
+                }
+                else if (rounding_str == "ceiling" || rounding_str == "up")
+                {
+                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_upward);
+                    skip = false;
+                }
+                else if (rounding_str == "half_up")
+                {
+                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_to_nearest_from_zero);
+                    skip = false;
+                }
+                else if (rounding_str == "half_even")
+                {
+                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_to_nearest);
+                    skip = false;
+                }
+                else
+                {
+                    std::cerr << "Invalid rounding mode: " << rounding_str << std::endl;
+                    skip = true;
+                }
+
+                continue;
+            }
+        }
+
+        if (skip)
+        {
+            // Testing of unsupported rounding modes should be completely skipped
             continue;
         }
 
