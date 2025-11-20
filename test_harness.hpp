@@ -328,13 +328,13 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else
                 {
-                    std::cerr << "Invalid rounding mode: " << rounding_str << std::endl;
+                    std::cerr << "\nInvalid rounding mode: " << rounding_str << std::endl;
                     skip = true;
                 }
 
                 if (!skip && skip_counter > 0U)
                 {
-                    std::cerr << "Skipped: " << skip_counter << " due to invalid rounding mode." << std::endl;
+                    std::cerr << "Skipped: " << skip_counter << " due to invalid rounding mode.\n" << std::endl;
                     num_tests_found += skip_counter;
                     total_skipped_tests += skip_counter;
                     skip_counter = 0U;
@@ -549,6 +549,12 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             // Invalid construction is supposed to throw
             ++invalid_tests;
         }
+    }
+
+    if (skip_counter > 0U)
+    {
+        std::cerr << "Skipped: " << skip_counter << " due to invalid rounding mode.\n";
+        total_skipped_tests += skip_counter;
     }
 
     std::cerr << "\nTotal number of tests: " << num_tests_found << "\n";
