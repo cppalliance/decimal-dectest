@@ -250,6 +250,8 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
     std::string line;
     int current_precision = 16;
     bool skip = false;
+    BOOST_DECIMAL_ATTRIBUTE_UNUSED unsigned skip_counter {};
+    BOOST_DECIMAL_ATTRIBUTE_UNUSED unsigned total_skipped_tests {};
 
     while (std::getline(in, line))
     {
@@ -330,6 +332,14 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     skip = true;
                 }
 
+                if (!skip && skip_counter > 0U)
+                {
+                    std::cerr << "Skipped: " << skip_counter << " due to invalid rounding mode." << std::endl;
+                    num_tests_found += skip_counter;
+                    total_skipped_tests += skip_counter;
+                    skip_counter = 0U;
+                }
+
                 continue;
             }
         }
@@ -337,6 +347,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
         if (skip)
         {
             // Testing of unsupported rounding modes should be completely skipped
+            ++skip_counter;
             continue;
         }
 
@@ -539,6 +550,9 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             ++invalid_tests;
         }
     }
+
+    std::cerr << "\nTotal number of tests: " << num_tests_found << "\n";
+    std::cerr << "Total number of skipped tests: " << total_skipped_tests << "\n" << std::endl;
 
     BOOST_TEST_GT(num_tests_found, 0U);
     BOOST_TEST_LT(invalid_tests, num_tests_found);
