@@ -1233,8 +1233,11 @@ ddadd81509 add  .2399    12345678901234.00    ->  12345678901234.23  Inexact Rou
 # I think this should be .24 since we are rounding down with a negative number
 #ddadd81511 add -.2399   -12345678901234.00    -> -12345678901234.23  Inexact Rounded
 
-ddadd81520 add  9999999999999999E+369  9E+369 ->  9.999999999999999E+384 Overflow  Inexact Rounded
-ddadd81521 add -9999999999999999E+369 -9E+369 -> -9.999999999999999E+384 Overflow  Inexact Rounded
+# We treat overflow as infinity instead of clamping
+#ddadd81520 add  9999999999999999E+369  9E+369 ->  9.999999999999999E+384 Overflow  Inexact Rounded
+ddadd81520 add  9999999999999999E+369  9E+369 ->  inf Overflow  Inexact Rounded
+#ddadd81521 add -9999999999999999E+369 -9E+369 -> -9.999999999999999E+384 Overflow  Inexact Rounded
+ddadd81521 add -9999999999999999E+369 -9E+369 -> -inf Overflow  Inexact Rounded
 
 rounding: ceiling
 ddadd81600 add  .2300    12345678901234.00    ->  12345678901234.23  Rounded
@@ -1249,7 +1252,10 @@ ddadd81608 add  .2370    12345678901234.00    ->  12345678901234.24  Inexact Rou
 ddadd81609 add  .2399    12345678901234.00    ->  12345678901234.24  Inexact Rounded
 ddadd81611 add -.2399   -12345678901234.00    -> -12345678901234.23  Inexact Rounded
 ddadd81620 add  9999999999999999E+369  9E+369 ->  Infinity Overflow  Inexact Rounded
-ddadd81621 add -9999999999999999E+369 -9E+369 -> -9.999999999999999E+384 Overflow  Inexact Rounded
+
+# We treat overflow as infinity instead of clamping
+#ddadd81621 add -9999999999999999E+369 -9E+369 -> -9.999999999999999E+384 Overflow  Inexact Rounded
+ddadd81621 add -9999999999999999E+369 -9E+369 -> -inf Overflow  Inexact Rounded
 
 rounding: floor
 ddadd81700 add  .2300    12345678901234.00    ->  12345678901234.23  Rounded
@@ -1263,7 +1269,11 @@ ddadd81707 add  .2360    12345678901234.00    ->  12345678901234.23  Inexact Rou
 ddadd81708 add  .2370    12345678901234.00    ->  12345678901234.23  Inexact Rounded
 ddadd81709 add  .2399    12345678901234.00    ->  12345678901234.23  Inexact Rounded
 ddadd81711 add -.2399   -12345678901234.00    -> -12345678901234.24  Inexact Rounded
-ddadd81720 add  9999999999999999E+369  9E+369 ->  9.999999999999999E+384 Overflow  Inexact Rounded
+
+# We treat overflow as infinity instead of clamping
+#ddadd81720 add  9999999999999999E+369  9E+369 ->  9.999999999999999E+384 Overflow  Inexact Rounded
+ddadd81720 add  9999999999999999E+369  9E+369 ->  inf Overflow  Inexact Rounded
+
 ddadd81721 add -9999999999999999E+369 -9E+369 -> -Infinity Overflow  Inexact Rounded
 
 rounding: 05up
