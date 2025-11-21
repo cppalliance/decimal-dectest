@@ -477,19 +477,22 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 const boost::decimal::decimal32_t lhs1 {lhs1_value};
                 const boost::decimal::decimal32_t lhs2 {lhs2_value};
                 const boost::decimal::decimal32_t rhs {rhs_value};
+                const auto f_result {f(lhs1, lhs2)};  // Generic lambda works here
 
-                if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+                if ((isnan(lhs1) && isnan(lhs2)) || isnan(rhs))
                 {
-                    const auto f_result {f(lhs1, lhs2)};  // Generic lambda works here
                     std::uint32_t result_bits;
                     std::memcpy(&result_bits, &f_result, sizeof(std::uint32_t));
 
                     std::uint32_t rhs_bits;
                     std::memcpy(&rhs_bits, &rhs, sizeof(std::uint32_t));
 
-                    BOOST_TEST_EQ(result_bits, rhs_bits);
+                    if (!BOOST_TEST_EQ(result_bits, rhs_bits))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
-                else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))  // Generic lambda works here
+                else if (!BOOST_TEST_EQ(f_result, rhs))  // Generic lambda works here
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
@@ -526,19 +529,22 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 const boost::decimal::decimal128_t lhs1 {lhs1_value};
                 const boost::decimal::decimal128_t lhs2 {lhs2_value};
                 const boost::decimal::decimal128_t rhs {rhs_value};
+                const auto f_result {f(lhs1, lhs2)};
 
-                if (isnan(lhs1) && isnan(lhs2) && isnan(rhs))
+                if ((isnan(lhs1) && isnan(lhs2)) || isnan(rhs))
                 {
-                    const auto f_result {f(lhs1, lhs2)};
                     boost::int128::uint128_t result_bits;
                     std::memcpy(&result_bits, &f_result, sizeof(boost::int128::uint128_t));
 
                     boost::int128::uint128_t rhs_bits;
                     std::memcpy(&rhs_bits, &rhs, sizeof(boost::int128::uint128_t));
 
-                    BOOST_TEST_EQ(result_bits, rhs_bits);
+                    if (!BOOST_TEST_EQ(result_bits, rhs_bits))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
-                else if (!BOOST_TEST_EQ(f(lhs1, lhs2), rhs))
+                else if (!BOOST_TEST_EQ(f_result, rhs))
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
