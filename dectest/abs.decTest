@@ -147,19 +147,14 @@ absx326 abs 1234567896   -> 1234567896
 precision:   9
 
 -- specials
-# 4 Tests are commented out because per IEEE 754 6.3 the standard does not specify an operation
-# We choose to always clear the signbit in the abs case
 absx520 abs 'Inf'    -> 'Infinity'
 absx521 abs '-Inf'   -> 'Infinity'
 absx522 abs   NaN    ->  NaN
-#absx523 abs  sNaN    ->  NaN   Invalid_operation
-absx523a abs sNaN -> sNaN
+absx523 abs  sNaN    ->  NaN   Invalid_operation
 absx524 abs   NaN22  ->  NaN22
-#absx525 abs  sNaN33  ->  NaN33 Invalid_operation
-absx525a abs sNaN33 -> sNaN33
-#absx526 abs  -NaN22  -> -NaN22
-#absx527 abs -sNaN33  -> -NaN33 Invalid_operation
-absx527a abs -sNaN33 -> sNaN33
+absx525 abs  sNaN33  ->  NaN33 Invalid_operation
+absx526 abs  -NaN22  -> -NaN22
+absx527 abs -sNaN33  -> -NaN33 Invalid_operation
 
 -- Null tests
 absx900 abs  # -> NaN Invalid_operation
