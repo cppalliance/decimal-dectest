@@ -6,8 +6,31 @@
 #include <boost/core/lightweight_test.hpp>
 #include "test_harness.hpp"
 
+template <typename T>
+void test_edges(const char* lhs_str, const char* rhs_str, const char* res_str, const boost::decimal::rounding_mode round)
+{
+    const auto current_round {boost::decimal::fesetround(round)};
+    BOOST_TEST(current_round == round);
+
+    const T lhs {lhs_str};
+    const T rhs {rhs_str};
+    const T expected_res {res_str};
+
+    const T res {lhs + rhs};
+
+    BOOST_TEST_EQ(res, expected_res);
+}
+
 int main()
 {
+    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
+
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+    test_edges<boost::decimal::decimal64_t>("1E16", "-0.51", "9999999999999999", boost::decimal::rounding_mode::fe_dec_to_nearest);
+    test_edges<boost::decimal::decimal128_t>("1E34", "-0.51", "9999999999999999999999999999999999", boost::decimal::rounding_mode::fe_dec_to_nearest);
+
+    #endif
+
     test_two_arg_harness("dectest0/add0.decTest", "add", [](const auto x, const auto y) { return x + y; });
 
     // Requires rounding-mode changes
