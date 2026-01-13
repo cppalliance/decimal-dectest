@@ -191,6 +191,11 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
             }
             else
             {
+                #ifdef __GNUC__
+                #  pragma GCC diagnostic push
+                #  pragma GCC diagnostic ignored "-Wclass-memaccess"
+                #endif
+
                 // Use decimal128_t
                 const boost::decimal::decimal128_t lhs {lhs_value};
                 const boost::decimal::decimal128_t rhs {rhs_value};
@@ -213,6 +218,10 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
+                
+                #ifdef __GNUC__
+                #  pragma GCC diagnostic pop
+                #endif
             }
         }
         catch (...)
@@ -525,6 +534,11 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             }
             else
             {
+                #ifdef __GNUC__
+                #  pragma GCC diagnostic push
+                #  pragma GCC diagnostic ignored "-Wclass-memaccess"
+                #endif
+
                 // Use decimal128_t
                 const boost::decimal::decimal128_t lhs1 {lhs1_value};
                 const boost::decimal::decimal128_t lhs2 {lhs2_value};
@@ -548,6 +562,10 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
+
+                #ifdef __GNUC__
+                #  pragma GCC diagnostic pop
+                #endif
             }
         }
         catch (...)
