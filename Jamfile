@@ -52,3 +52,4 @@ run test_comparetotal.cpp ;
 run test_divide.cpp ;
 run test_max.cpp ;
 run test_min.cpp ;
+run test_minus.cpp ;
