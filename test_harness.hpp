@@ -17,6 +17,32 @@
 #include <cstdio>
 #include <cstdint>
 #include <functional>
+#include <utility>
+
+template <typename T>
+std::size_t ulp_distance(T lhs, T rhs) noexcept
+{
+    if (lhs == rhs)
+    {
+        return 0;
+    }
+    else if (lhs < rhs)
+    {
+        std::swap(lhs, rhs);
+    }
+
+
+    for (std::size_t i {}; i < 10'000; ++i)
+    {
+        lhs = nextafter(lhs, rhs);
+        if (lhs == rhs)
+        {
+            return i;
+        }
+    }
+
+    return std::numeric_limits<std::size_t>::max();
+}
 
 template <typename Function>
 void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
@@ -236,7 +262,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
 }
 
 template <bool allow_rounding_changes = false, typename Function = std::minus<>()>
-void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
+void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0)
 {
     const auto full_path {boost::decimal::dectest::where_file(file_path)};
     if (full_path.empty())
@@ -501,6 +527,15 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
                 }
+                else if (ulp_tol != 0)
+                {
+                    const auto dist {ulp_distance(f_result, rhs)};
+                    if (!BOOST_TEST_LE(dist, ulp_tol))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
+                                  << "Got: " << f_result << "\nExpected: " << rhs;
+                    }
+                }
                 else if (!BOOST_TEST_EQ(f_result, rhs))  // Generic lambda works here
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
@@ -525,6 +560,15 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_EQ(result_bits, rhs_bits))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
+                }
+                else if (ulp_tol != 0)
+                {
+                    const auto dist {ulp_distance(f_result, rhs)};
+                    if (!BOOST_TEST_LE(dist, ulp_tol))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
+                                  << "Got: " << f_result << "\nExpected: " << rhs;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f_result, rhs))
@@ -556,6 +600,15 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_EQ(result_bits, rhs_bits))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
+                }
+                else if (ulp_tol != 0)
+                {
+                    const auto dist {ulp_distance(f_result, rhs)};
+                    if (!BOOST_TEST_LE(dist, ulp_tol))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
+                                  << "Got: " << f_result << "\nExpected: " << rhs;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f_result, rhs))
