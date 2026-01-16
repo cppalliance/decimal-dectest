@@ -11,5 +11,8 @@ int main()
     std::cerr << std::setprecision(17);
     test_two_arg_harness("dectest0/multiply0.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
 
+    std::cerr << std::setprecision(34);
+    test_two_arg_harness("dectest/multiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
+
     return boost::report_errors();
 }
