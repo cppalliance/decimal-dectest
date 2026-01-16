@@ -54,3 +54,4 @@ run test_max.cpp ;
 run test_min.cpp ;
 run test_minus.cpp ;
 run test_multiply.cpp ;
+run test_plus.cpp ;
