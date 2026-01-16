@@ -20,7 +20,7 @@
 #include <utility>
 
 template <typename T>
-std::size_t ulp_distance(T lhs, T rhs) noexcept
+std::size_t ulp_distance(T lhs, T rhs, const std::size_t tol) noexcept
 {
     if (lhs == rhs)
     {
@@ -32,7 +32,7 @@ std::size_t ulp_distance(T lhs, T rhs) noexcept
     }
 
 
-    for (std::size_t i {}; i < 10'000; ++i)
+    for (std::size_t i {}; i < tol; ++i)
     {
         lhs = nextafter(lhs, rhs);
         if (lhs == rhs)
@@ -529,7 +529,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_result, rhs)};
+                    const auto dist {ulp_distance(f_result, rhs, ulp_tol)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -564,7 +564,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_result, rhs)};
+                    const auto dist {ulp_distance(f_result, rhs, ulp_tol)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -604,7 +604,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_result, rhs)};
+                    const auto dist {ulp_distance(f_result, rhs, ulp_tol)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
