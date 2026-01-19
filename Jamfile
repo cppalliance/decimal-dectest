@@ -58,3 +58,4 @@ run test_plus.cpp ;
 run test_pow.cpp ;
 run test_squareroot.cpp ;
 run test_subtract.cpp ;
+run test_tointegral.cpp ;
