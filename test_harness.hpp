@@ -22,6 +22,18 @@
 template <typename T>
 std::size_t ulp_distance(T lhs, T rhs, const std::size_t tol) noexcept
 {
+    if (!isfinite(lhs) || !isfinite(rhs))
+    {
+        if (isinf(lhs) && isinf(rhs))
+        {
+            return 0;
+        }
+        else
+        {
+            return std::numeric_limits<std::size_t>::max();
+        }
+    }
+
     if (lhs == rhs)
     {
         return 0;
@@ -30,7 +42,6 @@ std::size_t ulp_distance(T lhs, T rhs, const std::size_t tol) noexcept
     {
         std::swap(lhs, rhs);
     }
-
 
     for (std::size_t i {}; i < tol; ++i)
     {
