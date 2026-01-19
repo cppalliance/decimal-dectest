@@ -45,7 +45,7 @@ std::size_t ulp_distance(T lhs, T rhs, const std::size_t tol) noexcept
 }
 
 template <typename Function>
-void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f)
+void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
 {
     const auto full_path {boost::decimal::dectest::where_file(file_path)};
     if (full_path.empty())
@@ -170,10 +170,10 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 // Use decimal32_t
                 const boost::decimal::decimal32_t lhs {lhs_value};
                 const boost::decimal::decimal32_t rhs {rhs_value};
+                const auto f_lhs {f(lhs)};
 
                 if (isnan(lhs) && isnan(rhs))
                 {
-                    const auto f_lhs {f(lhs)};
                     std::uint32_t lhs_bits;
                     std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint32_t));
 
@@ -183,6 +183,15 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
+                }
+                else if (ulp_tol != 0)
+                {
+                    const auto dist {ulp_distance(f_lhs, rhs, ulp_tol)};
+                    if (!BOOST_TEST_LE(dist, ulp_tol))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
+                                  << "Got: " << f_lhs << "\nExpected: " << rhs;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
@@ -195,10 +204,10 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 // Use decimal64_t
                 const boost::decimal::decimal64_t lhs {lhs_value};
                 const boost::decimal::decimal64_t rhs {rhs_value};
+                const auto f_lhs {f(lhs)};
 
                 if (isnan(lhs) && isnan(rhs))
                 {
-                    const auto f_lhs {f(lhs)};
                     std::uint64_t lhs_bits;
                     std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint64_t));
 
@@ -208,6 +217,15 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
+                }
+                else if (ulp_tol != 0)
+                {
+                    const auto dist {ulp_distance(f_lhs, rhs, ulp_tol)};
+                    if (!BOOST_TEST_LE(dist, ulp_tol))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
+                                  << "Got: " << f_lhs << "\nExpected: " << rhs;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
@@ -225,10 +243,10 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 // Use decimal128_t
                 const boost::decimal::decimal128_t lhs {lhs_value};
                 const boost::decimal::decimal128_t rhs {rhs_value};
+                const auto f_lhs {f(lhs)};
 
                 if (isnan(lhs) && isnan(rhs))
                 {
-                    const auto f_lhs {f(lhs)};
                     boost::int128::uint128_t lhs_bits;
                     std::memcpy(&lhs_bits, &f_lhs, sizeof(boost::int128::uint128_t));
 
@@ -238,6 +256,15 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
+                }
+                else if (ulp_tol != 0)
+                {
+                    const auto dist {ulp_distance(f_lhs, rhs, ulp_tol)};
+                    if (!BOOST_TEST_LE(dist, ulp_tol))
+                    {
+                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
+                                  << "Got: " << f_lhs << "\nExpected: " << rhs;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
