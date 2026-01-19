@@ -191,7 +191,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_lhs << "\nExpected: " << rhs;
+                                  << "Got: " << f_lhs << "\nExpected: " << rhs << std::endl;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
@@ -225,7 +225,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_lhs << "\nExpected: " << rhs;
+                                  << "Got: " << f_lhs << "\nExpected: " << rhs << std::endl;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
@@ -264,7 +264,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_lhs << "\nExpected: " << rhs;
+                                  << "Got: " << f_lhs << "\nExpected: " << rhs << std::endl;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f(lhs), rhs))
@@ -560,7 +560,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_result << "\nExpected: " << rhs;
+                                  << "Got: " << f_result << "\nExpected: " << rhs << std::endl;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f_result, rhs))  // Generic lambda works here
@@ -595,7 +595,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_result << "\nExpected: " << rhs;
+                                  << "Got: " << f_result << "\nExpected: " << rhs << std::endl;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f_result, rhs))
@@ -635,7 +635,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_result << "\nExpected: " << rhs;
+                                  << "Got: " << f_result << "\nExpected: " << rhs << std::endl;
                     }
                 }
                 else if (!BOOST_TEST_EQ(f_result, rhs))
