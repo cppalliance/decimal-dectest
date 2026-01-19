@@ -55,6 +55,12 @@ std::size_t ulp_distance(T lhs, T rhs, const std::size_t tol) noexcept
     return std::numeric_limits<std::size_t>::max();
 }
 
+template <typename T, typename U>
+std::size_t ulp_distance(T, U, const std::size_t) noexcept
+{
+    return std::numeric_limits<std::size_t>::max();
+}
+
 template <typename Function>
 void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
 {
@@ -249,6 +255,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 #ifdef __GNUC__
                 #  pragma GCC diagnostic push
                 #  pragma GCC diagnostic ignored "-Wclass-memaccess"
+                #  pragma GCC diagnostic ignored "-Wstringop-overread"
                 #endif
 
                 // Use decimal128_t
