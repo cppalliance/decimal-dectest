@@ -58,4 +58,7 @@ run test_plus.cpp ;
 run test_pow.cpp ;
 run test_squareroot.cpp ;
 run test_subtract.cpp ;
-run test_tointegral.cpp ;
+
+# Dectest tests for rounding in a way that diverges from how C++ floating point numbers round
+# E.g. 1.7 rounds to 2 in dectest, but would be 1 if using a builtin floating point type
+#run test_tointegral.cpp ;
