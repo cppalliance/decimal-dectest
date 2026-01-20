@@ -252,7 +252,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
             }
             else
             {
-                #ifdef __GNUC__
+                #if defined(__GNUC__) && !defined(__clang__)
                 #  pragma GCC diagnostic push
                 #  pragma GCC diagnostic ignored "-Wclass-memaccess"
                 #  pragma GCC diagnostic ignored "-Wstringop-overread"
@@ -623,7 +623,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
             }
             else
             {
-                #ifdef __GNUC__
+                #if defined(__GNUC__) && !defined(__clang__)
                 #  pragma GCC diagnostic push
                 #  pragma GCC diagnostic ignored "-Wclass-memaccess"
                 #endif
