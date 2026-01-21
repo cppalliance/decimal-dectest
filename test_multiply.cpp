@@ -14,5 +14,11 @@ int main()
     std::cerr << std::setprecision(34);
     test_two_arg_harness("dectest/multiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
 
+    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
+
+    test_two_arg_harness<true>("dectest/ddMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
+
+    #endif
+
     return boost::report_errors();
 }
