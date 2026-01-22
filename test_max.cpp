@@ -11,6 +11,10 @@ int main()
     std::cerr << std::setprecision(17);
     test_two_arg_harness("dectest0/max0.decTest", "max", [](const auto x, const auto y) { return boost::decimal::fmax(x, y); });
     test_two_arg_harness("dectest/max.decTest", "max", [](const auto x, const auto y) { return boost::decimal::fmax(x, y); });
+    test_two_arg_harness("dectest/ddMax.decTest", "max", [](const auto x, const auto y) { return boost::decimal::fmax(x, y); });
+
+    std::cerr << std::setprecision(34);
+    test_two_arg_harness("dectest/dqMax.decTest", "max", [](const auto x, const auto y) { return boost::decimal::fmax(x, y); });
 
     return boost::report_errors();
 }
