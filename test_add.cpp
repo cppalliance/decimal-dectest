@@ -32,6 +32,7 @@ int main()
     #endif
 
     test_two_arg_harness("dectest0/add0.decTest", "add", [](const auto x, const auto y) { return x + y; });
+    test_two_arg_harness("dectest0/inexact0.decTest", "add", [](const auto x, const auto y) { return x + y; });
 
     // Requires rounding-mode changes
     #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
