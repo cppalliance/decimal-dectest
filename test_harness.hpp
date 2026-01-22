@@ -20,43 +20,26 @@
 #include <utility>
 
 template <typename T>
-std::size_t ulp_distance(T lhs, T rhs, const std::size_t tol) noexcept
+std::size_t ulp_distance(T lhs, T rhs) noexcept
 {
-    if (!isfinite(lhs) || !isfinite(rhs))
+    if (isinf(lhs) && isinf(rhs))
     {
-        if (isinf(lhs) && isinf(rhs))
-        {
-            return 0;
-        }
-        else
-        {
-            return std::numeric_limits<std::size_t>::max();
-        }
+        return 0u;
+    }
+    else if (lhs == 0U && rhs == 0U)
+    {
+        return 0u;
+    }
+    else if (isnan(lhs) || isnan(rhs))
+    {
+        return std::numeric_limits<std::size_t>::max();
     }
 
-    if (lhs == rhs)
-    {
-        return 0;
-    }
-    else if (lhs < rhs)
-    {
-        std::swap(lhs, rhs);
-    }
-
-    for (std::size_t i {}; i < tol; ++i)
-    {
-        lhs = nextafter(lhs, rhs);
-        if (lhs == rhs)
-        {
-            return i;
-        }
-    }
-
-    return std::numeric_limits<std::size_t>::max();
+    return static_cast<std::size_t>(boost::decimal::abs((lhs - rhs) / std::min(lhs, rhs)) / std::numeric_limits<T>::epsilon());
 }
 
 template <typename T, typename U>
-std::size_t ulp_distance(T, U, const std::size_t) noexcept
+std::size_t ulp_distance(T, U) noexcept
 {
     return std::numeric_limits<std::size_t>::max();
 }
@@ -204,7 +187,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_lhs, rhs, ulp_tol)};
+                    const auto dist {ulp_distance(f_lhs, rhs)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -238,7 +221,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_lhs, rhs, ulp_tol)};
+                    const auto dist {ulp_distance(f_lhs, rhs)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -278,7 +261,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_lhs, rhs, ulp_tol)};
+                    const auto dist {ulp_distance(f_lhs, rhs)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -574,7 +557,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_result, rhs, ulp_tol)};
+                    const auto dist {ulp_distance(f_result, rhs)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -609,7 +592,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_result, rhs, ulp_tol)};
+                    const auto dist {ulp_distance(f_result, rhs)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
@@ -649,7 +632,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (ulp_tol != 0)
                 {
-                    const auto dist {ulp_distance(f_result, rhs, ulp_tol)};
+                    const auto dist {ulp_distance(f_result, rhs)};
                     if (!BOOST_TEST_LE(dist, ulp_tol))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
