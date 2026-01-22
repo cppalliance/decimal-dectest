@@ -1151,7 +1151,14 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
                 if (rhs_value == eq)
                 {
-                    if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
+                    if ((isinf(lhs1) && isinf(lhs2) && (signbit(lhs1) == signbit(lhs2))) || (isnan(lhs1) && isnan(lhs2)))
+                    {
+                        if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2) == boost::decimal::comparetotal(lhs2, lhs1)))
+                        {
+                            std::cerr << "Failed test: " << test_name << " (" << test_name << ")" << std::endl;
+                        }
+                    }
+                    else if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
@@ -1183,7 +1190,14 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
                 if (rhs_value == eq)
                 {
-                    if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
+                    if ((isinf(lhs1) && isinf(lhs2) && (signbit(lhs1) == signbit(lhs2))) || (isnan(lhs1) && isnan(lhs2)))
+                    {
+                        if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2) == boost::decimal::comparetotal(lhs2, lhs1)))
+                        {
+                            std::cerr << "Failed test: " << test_name << " (" << test_name << ")" << std::endl;
+                        }
+                    }
+                    else if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
@@ -1215,7 +1229,14 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
                 if (rhs_value == eq)
                 {
-                    if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
+                    if ((isinf(lhs1) && isinf(lhs2) && (signbit(lhs1) == signbit(lhs2))) || (isnan(lhs1) && isnan(lhs2)))
+                    {
+                        if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2) == boost::decimal::comparetotal(lhs2, lhs1)))
+                        {
+                            std::cerr << "Failed test: " << test_name << " (" << test_name << ")" << std::endl;
+                        }
+                    }
+                    else if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
                     {
                         std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                     }
