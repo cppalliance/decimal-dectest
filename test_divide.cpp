@@ -15,6 +15,9 @@ int main()
 
     test_two_arg_harness<true>("dectest/ddDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
 
+    std::cerr << std::setprecision(34);
+    test_two_arg_harness<true>("dectest/ddDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
+
     #endif
 
     return boost::report_errors();
