@@ -11,6 +11,10 @@ int main()
     std::cerr << std::setprecision(17);
     test_two_arg_harness("dectest0/min0.decTest", "min", [](const auto x, const auto y) { return boost::decimal::fmin(x, y); });
     test_two_arg_harness("dectest/min.decTest", "min", [](const auto x, const auto y) { return boost::decimal::fmin(x, y); });
+    test_two_arg_harness("dectest/ddMin.decTest", "min", [](const auto x, const auto y) { return boost::decimal::fmin(x, y); });
+
+    std::cerr << std::setprecision(34);
+    test_two_arg_harness("dectest/dqMin.decTest", "min", [](const auto x, const auto y) { return boost::decimal::fmin(x, y); });
 
     return boost::report_errors();
 }
