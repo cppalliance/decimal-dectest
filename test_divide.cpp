@@ -11,5 +11,11 @@ int main()
     std::cerr << std::setprecision(17);
     test_two_arg_harness("dectest0/divide0.decTest", "divide", [](const auto x, const auto y) { return x / y; });
 
+    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
+
+    test_two_arg_harness<true>("dectest/ddDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
+
+    #endif
+
     return boost::report_errors();
 }
