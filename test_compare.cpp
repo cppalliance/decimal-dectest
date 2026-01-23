@@ -14,8 +14,8 @@ int main()
     test_comparisons("dectest/dqCompare.decTest", "compare");
 
     test_comparisons("dectest/comparesig.decTest", "comparesig");
-    test_comparisons("dectest/ddComparesig.decTest", "comparesig");
-    test_comparisons("dectest/dqComparesig.decTest", "comparesig");
+    test_comparisons("dectest/ddCompareSig.decTest", "comparesig");
+    test_comparisons("dectest/dqCompareSig.decTest", "comparesig");
 
     return boost::report_errors();
 }
