@@ -10,7 +10,15 @@ int main()
 {
     std::cerr << std::setprecision(17);
     test_two_arg_harness("dectest0/remainder0.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
+
+    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
+
     test_two_arg_harness<true>("dectest/ddRemainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
+
+    std::cerr << std::setprecision(34);
+    test_two_arg_harness<true>("dectest/dqRemainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
+
+    #endif // BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
 
     return boost::report_errors();
 }
