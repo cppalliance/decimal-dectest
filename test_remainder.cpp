@@ -10,6 +10,7 @@ int main()
 {
     std::cerr << std::setprecision(17);
     test_two_arg_harness("dectest0/remainder0.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
+    test_two_arg_harness<true>("dectest/ddRemainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
 
     return boost::report_errors();
 }
