@@ -56,6 +56,7 @@ run test_minus.cpp ;
 run test_multiply.cpp ;
 run test_plus.cpp ;
 run test_pow.cpp ;
+run test_remainder.cpp ;
 run test_squareroot.cpp ;
 run test_subtract.cpp ;
 
