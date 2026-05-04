@@ -395,14 +395,28 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 // Extract the rounding mode
                 const std::string rounding_str {line.substr(rounding_start, rounding_end - rounding_start - 1u)};
 
-                if (rounding_str == "floor" || rounding_str == "down")
+                if (rounding_str == "floor")
                 {
                     boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_downward);
                     skip = false;
                 }
-                else if (rounding_str == "ceiling" || rounding_str == "up")
+                else if (rounding_str == "down")
+                {
+                    // dectest "down" rounds toward zero (truncation), distinct
+                    // from "floor" which rounds toward -infinity.
+                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_toward_zero);
+                    skip = false;
+                }
+                else if (rounding_str == "ceiling")
                 {
                     boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_upward);
+                    skip = false;
+                }
+                else if (rounding_str == "up")
+                {
+                    // dectest "up" rounds away from zero unconditionally,
+                    // distinct from "ceiling" which rounds toward +infinity.
+                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_away_from_zero);
                     skip = false;
                 }
                 else if (rounding_str == "half_up")
