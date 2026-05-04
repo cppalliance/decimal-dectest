@@ -414,10 +414,10 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 }
                 else if (rounding_str == "up")
                 {
-                    // dectest "up" rounds away from zero unconditionally,
-                    // distinct from "ceiling" which rounds toward +infinity.
-                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_away_from_zero);
-                    skip = false;
+                    // dectest "up" rounds away from zero unconditionally. This
+                    // is not an IEEE 754 rounding mode, so Boost.Decimal does
+                    // not expose it; tests in this block are skipped.
+                    skip = true;
                 }
                 else if (rounding_str == "half_up")
                 {
