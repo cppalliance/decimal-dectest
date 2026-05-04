@@ -70,10 +70,23 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
 
     while (std::getline(in, line))
     {
-        // Skip commented lines
+        // Skip commented lines. The dectest format uses "--" as a line
+        // comment marker (including for explicitly disabled test cases
+        // like "--ddqua1032 ...").
         if (line.find("#") != std::string::npos)
         {
             continue;
+        }
+        {
+            std::size_t comment_pos {};
+            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
+            {
+                ++comment_pos;
+            }
+            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
+            {
+                continue;
+            }
         }
 
         // Check for precision specification
@@ -318,10 +331,23 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
 
     while (std::getline(in, line))
     {
-        // Skip commented lines
+        // Skip commented lines. The dectest format uses "--" as a line
+        // comment marker (including for explicitly disabled test cases
+        // like "--ddqua1032 ...").
         if (line.find("#") != std::string::npos)
         {
             continue;
+        }
+        {
+            std::size_t comment_pos {};
+            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
+            {
+                ++comment_pos;
+            }
+            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
+            {
+                continue;
+            }
         }
 
         // Check for precision specification
@@ -694,10 +720,23 @@ inline void test_comparisons(const std::string& file_path, const std::string& fu
 
     while (std::getline(in, line))
     {
-        // Skip commented lines
+        // Skip commented lines. The dectest format uses "--" as a line
+        // comment marker (including for explicitly disabled test cases
+        // like "--ddqua1032 ...").
         if (line.find("#") != std::string::npos)
         {
             continue;
+        }
+        {
+            std::size_t comment_pos {};
+            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
+            {
+                ++comment_pos;
+            }
+            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
+            {
+                continue;
+            }
         }
 
         // Check for precision specification
@@ -985,10 +1024,23 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
 
     while (std::getline(in, line))
     {
-        // Skip commented lines
+        // Skip commented lines. The dectest format uses "--" as a line
+        // comment marker (including for explicitly disabled test cases
+        // like "--ddqua1032 ...").
         if (line.find("#") != std::string::npos)
         {
             continue;
+        }
+        {
+            std::size_t comment_pos {};
+            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
+            {
+                ++comment_pos;
+            }
+            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
+            {
+                continue;
+            }
         }
 
         // Check for precision specification
