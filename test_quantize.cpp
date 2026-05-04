@@ -9,6 +9,7 @@
 int main()
 {
     test_two_arg_harness<true>("dectest0/quantize0.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
+    test_two_arg_harness<true>("dectest/ddQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
 
     return boost::report_errors();
 }
