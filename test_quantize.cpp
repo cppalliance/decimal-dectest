@@ -8,9 +8,11 @@
 
 int main()
 {
-    test_two_arg_harness<true>("dectest0/quantize0.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
-    test_two_arg_harness<true>("dectest/ddQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
-    test_two_arg_harness<true>("dectest/dqQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
+    // Quantize must produce a result whose cohort matches the rhs (IEEE 754-2008 5.3.2),
+    // so enable strict_cohort_compare alongside the value check.
+    test_two_arg_harness<true, true>("dectest0/quantize0.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
+    test_two_arg_harness<true, true>("dectest/ddQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
+    test_two_arg_harness<true, true>("dectest/dqQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
 
     return boost::report_errors();
 }

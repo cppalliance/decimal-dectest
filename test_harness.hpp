@@ -302,7 +302,11 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
     BOOST_TEST_LT(invalid_tests, num_tests_found);
 }
 
-template <bool allow_rounding_changes = false, typename Function = std::minus<>()>
+// strict_cohort_compare: when true, in addition to mathematical equality the test verifies that
+// the result has the same quantum (cohort) as the expected rhs. Use this for operations like
+// quantize where IEEE 754-2008 specifies the exponent of the result, so a zero with the wrong
+// cohort must not silently pass.
+template <bool allow_rounding_changes = false, bool strict_cohort_compare = false, typename Function = std::minus<>()>
 void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0)
 {
     const auto full_path {boost::decimal::dectest::where_file(file_path)};
@@ -608,6 +612,13 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
                 }
+                BOOST_DECIMAL_IF_CONSTEXPR (strict_cohort_compare)
+                {
+                    if (!BOOST_TEST(boost::decimal::samequantum(f_result, rhs)))
+                    {
+                        std::cerr << "Failed cohort: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
+                }
             }
             else if (current_precision <= 16)
             {
@@ -642,6 +653,13 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 else if (!BOOST_TEST_EQ(f_result, rhs))
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
+                BOOST_DECIMAL_IF_CONSTEXPR (strict_cohort_compare)
+                {
+                    if (!BOOST_TEST(boost::decimal::samequantum(f_result, rhs)))
+                    {
+                        std::cerr << "Failed cohort: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
             }
             else
@@ -682,6 +700,13 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
                 else if (!BOOST_TEST_EQ(f_result, rhs))
                 {
                     std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                }
+                BOOST_DECIMAL_IF_CONSTEXPR (strict_cohort_compare)
+                {
+                    if (!BOOST_TEST(boost::decimal::samequantum(f_result, rhs)))
+                    {
+                        std::cerr << "Failed cohort: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                    }
                 }
 
                 #ifdef __GNUC__
