@@ -361,8 +361,19 @@ inline bool has_condition(const test_line& parsed, const std::string& name)
 // at precision 9 says nothing about a type carrying 7 digits, and a Clamped or Subnormal
 // result depends on the exponent range it was produced in.
 template <typename T>
-bool fits_format(const test_line& parsed, const scan_context& ctx)
+bool fits_format(const test_line& parsed, const scan_context& ctx, const bool format_specific = false)
 {
+    // Some operations are defined by the format itself rather than by the operand values:
+    // one step of nextplus is one ulp of the format, so a precision-9 answer says nothing
+    // about a 16-digit type even though every literal on the line fits it.
+    if (format_specific &&
+        (ctx.precision != std::numeric_limits<T>::digits ||
+         ctx.max_exponent != std::numeric_limits<T>::max_exponent ||
+         ctx.min_exponent != std::numeric_limits<T>::min_exponent))
+    {
+        return false;
+    }
+
     auto representable = [](const std::string& text)
     {
         const auto profile {profile_value(text)};

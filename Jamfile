@@ -47,20 +47,26 @@ run test_abs.cpp ;
 run test_add.cpp ;
 run test_base.cpp ;
 run test_clamp.cpp ;
+run test_class.cpp ;
 run test_compare.cpp ;
 run test_comparetotal.cpp ;
+run test_copysign.cpp ;
 run test_divide.cpp ;
+run test_fma.cpp ;
+run test_logb.cpp ;
 run test_max.cpp ;
 run test_min.cpp ;
 run test_minus.cpp ;
 run test_multiply.cpp ;
+run test_next.cpp ;
 run test_plus.cpp ;
 run test_pow.cpp ;
 run test_quantize.cpp ;
+run test_reduce.cpp ;
 run test_remainder.cpp ;
+run test_remaindernear.cpp ;
+run test_samequantum.cpp ;
+run test_scaleb.cpp ;
 run test_squareroot.cpp ;
 run test_subtract.cpp ;
-
-# Dectest tests for rounding in a way that diverges from how C++ floating point numbers round
-# E.g. 1.7 rounds to 2 in dectest, but would be 1 if using a builtin floating point type
-#run test_tointegral.cpp ;
+run test_tointegral.cpp ;

@@ -225,7 +225,7 @@ inline bool accept_line(const test_line& parsed, const std::string& op, const st
     body(boost::decimal::decimal64_t{});                       \
     body(boost::decimal::decimal128_t{});
 
-template <typename Function>
+template <bool format_specific = false, typename Function>
 void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
 {
     using namespace boost::decimal::dectest;
@@ -256,7 +256,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
         {
             using T = decltype(tag);
 
-            if (!fits_format<T>(parsed, ctx))
+            if (!fits_format<T>(parsed, ctx, format_specific))
             {
                 return;
             }
@@ -293,7 +293,7 @@ void test_one_arg_harness(const std::string& file_path, const std::string& funct
 // the result has the same quantum (cohort) as the expected rhs. Use this for operations like
 // quantize where IEEE 754-2008 specifies the exponent of the result, so a zero with the wrong
 // cohort must not silently pass.
-template <bool strict_cohort_compare = false, typename Function = std::minus<>>
+template <bool strict_cohort_compare = false, bool format_specific = false, typename Function = std::minus<>>
 void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
 {
     using namespace boost::decimal::dectest;
@@ -324,7 +324,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
         {
             using T = decltype(tag);
 
-            if (!fits_format<T>(parsed, ctx))
+            if (!fits_format<T>(parsed, ctx, format_specific))
             {
                 return;
             }
@@ -358,7 +358,7 @@ void test_two_arg_harness(const std::string& file_path, const std::string& funct
     report_counters(file_path, function_name, counters);
 }
 
-template <typename Function>
+template <bool format_specific = false, typename Function>
 void test_three_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
 {
     using namespace boost::decimal::dectest;
@@ -389,7 +389,7 @@ void test_three_arg_harness(const std::string& file_path, const std::string& fun
         {
             using T = decltype(tag);
 
-            if (!fits_format<T>(parsed, ctx))
+            if (!fits_format<T>(parsed, ctx, format_specific))
             {
                 return;
             }
@@ -592,6 +592,259 @@ inline void test_comparetotal(const std::string& file_path, const std::string& f
                     std::cerr << "Failed test: " << parsed.id << " (precision: " << ctx.precision << ")" << std::endl;
                 }
 
+                ++counters.verified;
+            }
+            catch (...)
+            {
+                ++counters.skip_unconstructible;
+            }
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
+        {
+            ++counters.skip_wrong_format;
+        }
+    }
+
+    report_counters(file_path, function_name, counters);
+}
+
+// decTest "class" names the IEEE 754 class of a value as a string, so it checks
+// fpclassify, signbit and the signalling-NaN predicate together.
+inline void test_class_harness(const std::string& file_path, const std::string& function_name)
+{
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
+    {
+        return;
+    }
+
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
+
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
+
+    while (std::getline(in, line))
+    {
+        const auto parsed {parse_line(line)};
+
+        if (!accept_line(parsed, function_name, 1U, ctx, counters))
+        {
+            continue;
+        }
+
+        auto applied {false};
+        const auto run = [&](auto tag)
+        {
+            using T = decltype(tag);
+
+            // The class of a value depends on the format's own exponent range
+            if (!fits_format<T>(parsed, ctx, true))
+            {
+                return;
+            }
+
+            applied = true;
+
+            try
+            {
+                const T value {parsed.operands[0]};
+                const auto negative {static_cast<bool>(signbit(value))};
+
+                std::string actual {};
+                if (isnan(value))
+                {
+                    actual = issignaling(value) ? "sNaN" : "NaN";
+                }
+                else if (isinf(value))
+                {
+                    actual = negative ? "-Infinity" : "+Infinity";
+                }
+                else if (value == T{0})
+                {
+                    actual = negative ? "-Zero" : "+Zero";
+                }
+                else if (isnormal(value))
+                {
+                    actual = negative ? "-Normal" : "+Normal";
+                }
+                else
+                {
+                    actual = negative ? "-Subnormal" : "+Subnormal";
+                }
+
+                if (!BOOST_TEST_EQ(actual, parsed.expected))
+                {
+                    std::cerr << "Failed test: " << parsed.id << " (precision: " << ctx.precision << ")" << std::endl;
+                }
+
+                ++counters.verified;
+            }
+            catch (...)
+            {
+                ++counters.skip_unconstructible;
+            }
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
+        {
+            ++counters.skip_wrong_format;
+        }
+    }
+
+    report_counters(file_path, function_name, counters);
+}
+
+// decTest predicates (samequantum) answer 1 or 0 rather than a value.
+inline void test_predicate_harness(const std::string& file_path, const std::string& function_name)
+{
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
+    {
+        return;
+    }
+
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
+
+    while (std::getline(in, line))
+    {
+        const auto parsed {parse_line(line)};
+
+        if (!accept_line(parsed, function_name, 2U, ctx, counters))
+        {
+            continue;
+        }
+
+        if (parsed.expected != "0" && parsed.expected != "1")
+        {
+            ++counters.skip_unsupported;
+            continue;
+        }
+
+        auto applied {false};
+        const auto run = [&](auto tag)
+        {
+            using T = decltype(tag);
+
+            // A quantum only exists relative to the format's own exponent range
+            if (!fits_format<T>(parsed, ctx, true))
+            {
+                return;
+            }
+
+            applied = true;
+
+            try
+            {
+                const T lhs {parsed.operands[0]};
+                const T rhs {parsed.operands[1]};
+                const auto expected {parsed.expected == "1"};
+
+                if (!BOOST_TEST_EQ(boost::decimal::samequantum(lhs, rhs), expected))
+                {
+                    std::cerr << "Failed test: " << parsed.id << " (precision: " << ctx.precision << ")" << std::endl;
+                }
+
+                ++counters.verified;
+            }
+            catch (...)
+            {
+                ++counters.skip_unconstructible;
+            }
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
+        {
+            ++counters.skip_wrong_format;
+        }
+    }
+
+    report_counters(file_path, function_name, counters);
+}
+
+// decTest scaleb takes an integer power of ten as its second operand, which maps onto
+// scalbn rather than onto a second decimal.
+inline void test_scaleb_harness(const std::string& file_path, const std::string& function_name)
+{
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
+    {
+        return;
+    }
+
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
+
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
+
+    while (std::getline(in, line))
+    {
+        const auto parsed {parse_line(line)};
+
+        if (!accept_line(parsed, function_name, 2U, ctx, counters))
+        {
+            continue;
+        }
+
+        // scalbn takes an int, so decTest's cases with a non-integral second operand test a
+        // signature the library does not offer. Skip them rather than truncate the operand.
+        const auto& shift_text {parsed.operands[1]};
+        auto integral_shift {!shift_text.empty()};
+        for (std::size_t i {}; i < shift_text.size(); ++i)
+        {
+            const auto c {shift_text[i]};
+            const auto sign_position {i == 0U && (c == '+' || c == '-')};
+
+            if (!sign_position && (std::isdigit(static_cast<unsigned char>(c)) == 0))
+            {
+                integral_shift = false;
+                break;
+            }
+        }
+
+        if (!integral_shift)
+        {
+            ++counters.skip_unsupported;
+            continue;
+        }
+
+        auto applied {false};
+        const auto run = [&](auto tag)
+        {
+            using T = decltype(tag);
+
+            // The shift saturates against the format's own exponent range
+            if (!fits_format<T>(parsed, ctx, true))
+            {
+                return;
+            }
+
+            applied = true;
+
+            try
+            {
+                const T value {parsed.operands[0]};
+                const T expected {parsed.expected};
+                const auto shift {std::stoi(shift_text)};
+                const auto result {boost::decimal::scalbn(value, shift)};
+
+                check_result(parsed.id, ctx.precision, result, expected, 0U, false);
                 ++counters.verified;
             }
             catch (...)

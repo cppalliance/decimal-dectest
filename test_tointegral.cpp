@@ -8,8 +8,20 @@
 
 int main()
 {
-    std::cerr << std::setprecision(17);
-    test_one_arg_harness("dectest0/tointegral0.decTest", "tointegral", [](const auto x) { return static_cast<std::int64_t>(x); });
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+
+    // Both decTest spellings round to an integral value under the context rounding mode
+    // and differ only in whether Inexact is signalled, which we do not model. rint
+    // follows the current mode, unlike a cast to an integer type which always truncates.
+    const auto op = [](const auto x) { return boost::decimal::rint(x); };
+
+    test_one_arg_harness("dectest0/tointegral0.decTest", "tointegral", op);
+    test_one_arg_harness("dectest/tointegral.decTest", "tointegral", op);
+
+    // The dd/dq files spell every case tointegralx, which differs only in signalling Inexact
+    test_one_arg_harness("dectest/tointegralx.decTest", "tointegralx", op);
+    test_one_arg_harness("dectest/ddToIntegral.decTest", "tointegralx", op);
+    test_one_arg_harness("dectest/dqToIntegral.decTest", "tointegralx", op);
 
     return boost::report_errors();
 }
