@@ -8,8 +8,13 @@
 
 int main()
 {
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+
     test_one_arg_harness("dectest0/plus0.decTest", "plus", [](const auto x) { return +x; });
     test_one_arg_harness("dectest0/inexact0.decTest", "plus", [](const auto x) { return +x; });
+    test_one_arg_harness("dectest/plus.decTest", "plus", [](const auto x) { return +x; });
+    test_one_arg_harness("dectest/ddPlus.decTest", "plus", [](const auto x) { return +x; });
+    test_one_arg_harness("dectest/dqPlus.decTest", "plus", [](const auto x) { return +x; });
 
     return boost::report_errors();
 }

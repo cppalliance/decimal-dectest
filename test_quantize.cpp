@@ -8,9 +8,12 @@
 
 int main()
 {
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+
     // Quantize must produce a result whose cohort matches the rhs (IEEE 754-2008 5.3.2),
     // so enable strict_cohort_compare alongside the value check.
     test_two_arg_harness<true>("dectest0/quantize0.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
+    test_two_arg_harness<true>("dectest/quantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
     test_two_arg_harness<true>("dectest/ddQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
     test_two_arg_harness<true>("dectest/dqQuantize.decTest", "quantize", [](const auto x, const auto y) { return boost::decimal::quantize(x, y); });
 

@@ -8,18 +8,13 @@
 
 int main()
 {
-    std::cerr << std::setprecision(17);
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+
     test_two_arg_harness("dectest0/divide0.decTest", "divide", [](const auto x, const auto y) { return x / y; });
     test_two_arg_harness("dectest0/inexact0.decTest", "divide", [](const auto x, const auto y) { return x / y; });
-
-    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
-
+    test_two_arg_harness("dectest/divide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
     test_two_arg_harness("dectest/ddDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
-
-    std::cerr << std::setprecision(34);
-    test_two_arg_harness("dectest/ddDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
-
-    #endif
+    test_two_arg_harness("dectest/dqDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
 
     return boost::report_errors();
 }

@@ -31,21 +31,13 @@ int main()
 
     #endif
 
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+
     test_two_arg_harness("dectest0/add0.decTest", "add", [](const auto x, const auto y) { return x + y; });
     test_two_arg_harness("dectest0/inexact0.decTest", "add", [](const auto x, const auto y) { return x + y; });
-
-    // Requires rounding-mode changes
-    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
-
-    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
-    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal64_t>::max_digits10);
+    test_two_arg_harness("dectest/add.decTest", "add", [](const auto x, const auto y) { return x + y; });
     test_two_arg_harness("dectest/ddAdd.decTest", "add", [](const auto x, const auto y) { return x + y; });
-
-    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
-    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
     test_two_arg_harness("dectest/dqAdd.decTest", "add", [](const auto x, const auto y) { return x + y; });
-
-    #endif // BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
 
     return boost::report_errors();
 }

@@ -8,19 +8,15 @@
 
 int main()
 {
-    std::cerr << std::setprecision(17);
+    std::cerr << std::setprecision(std::numeric_limits<boost::decimal::decimal128_t>::max_digits10);
+
     test_two_arg_harness("dectest0/multiply0.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
     test_two_arg_harness("dectest0/inexact0.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
 
-    std::cerr << std::setprecision(34);
     test_two_arg_harness("dectest/multiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
-
-    #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
 
     test_two_arg_harness("dectest/ddMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
     test_two_arg_harness("dectest/dqMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
-
-    #endif
 
     return boost::report_errors();
 }
