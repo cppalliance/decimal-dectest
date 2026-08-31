@@ -1,0 +1,164 @@
+------------------------------------------------------------------------
+-- dsLogB.decTest                                                     --
+-- Generated for Boost.Decimal from ddLogB.decTest                    --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddLogB narrowed to that context, with                 --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+-- basics
+dslogb000  logb          0 -> -Infinity  Division_by_zero
+dslogb001  logb          1E-100 -> -100
+dslogb002  logb          1E-96 -> -96
+dslogb003  logb          0.001 -> -3
+dslogb004  logb          0.03 -> -2
+dslogb005  logb          1 -> 0
+dslogb006  logb          2 -> 0
+dslogb007  logb          2.5 -> 0
+dslogb008  logb          2.500 -> 0
+dslogb009  logb          10 -> 1
+dslogb010  logb          70 -> 1
+dslogb011  logb          100 -> 2
+dslogb012  logb          333 -> 2
+dslogb013  logb          9E+96 -> 96
+dslogb014  logb          +Infinity -> Infinity
+
+-- negatives appear to be treated as positives
+dslogb021  logb          -0 -> -Infinity  Division_by_zero
+dslogb022  logb          -1E-100 -> -100
+dslogb023  logb          -9E-96 -> -96
+dslogb024  logb          -0.001 -> -3
+dslogb025  logb          -1 -> 0
+dslogb026  logb          -2 -> 0
+dslogb027  logb          -10 -> 1
+dslogb028  logb          -70 -> 1
+dslogb029  logb          -100 -> 2
+dslogb030  logb          -9E+96 -> 96
+dslogb031  logb          -Infinity -> Infinity
+
+-- zeros
+dslogb111  logb          0 -> -Infinity  Division_by_zero
+dslogb112  logb          -0 -> -Infinity  Division_by_zero
+dslogb113  logb          0E+1 -> -Infinity  Division_by_zero
+dslogb114  logb          -0E+1 -> -Infinity  Division_by_zero
+dslogb115  logb          0.0000 -> -Infinity  Division_by_zero
+dslogb116  logb          -0.0000 -> -Infinity  Division_by_zero
+dslogb117  logb          0E-35 -> -Infinity  Division_by_zero
+dslogb118  logb          -0E-35 -> -Infinity  Division_by_zero
+
+-- full coefficients, alternating bits
+dslogb121  logb          2682688 -> 6
+dslogb122  logb          -2682688 -> 6
+dslogb123  logb          1341344 -> 6
+dslogb124  logb          -1341344 -> 6
+
+-- Nmax, Nmin, Ntiny
+dslogb131  logb          9.999999E+96 -> 96
+dslogb132  logb          1E-96 -> -96
+dslogb133  logb          1.000000E-96 -> -96
+dslogb134  logb          1E-100 -> -100
+
+dslogb135  logb          -1E-100 -> -100
+dslogb136  logb          -1.000000E-96 -> -96
+dslogb137  logb          -1E-96 -> -96
+dslogb138  logb          -9.999999E+96 -> 96
+
+-- ones
+dslogb0061 logb          1 -> 0
+dslogb0062 logb          1.0 -> 0
+dslogb0063 logb          1.000000 -> 0
+
+-- notable cases -- exact powers of 10
+dslogb1100 logb          1 -> 0
+dslogb1101 logb          10 -> 1
+dslogb1102 logb          100 -> 2
+dslogb1103 logb          1000 -> 3
+dslogb1104 logb          10000 -> 4
+dslogb1105 logb          100000 -> 5
+dslogb1106 logb          1000000 -> 6
+dslogb1107 logb          1000000 -> 6
+dslogb1108 logb          1000000 -> 6
+dslogb1109 logb          1000000 -> 6
+dslogb1110 logb          1000000 -> 6
+dslogb1111 logb          1000000 -> 6
+dslogb1112 logb          1000000 -> 6
+dslogb1113 logb          0.00000000001 -> -11
+dslogb1114 logb          0.0000000001 -> -10
+dslogb1115 logb          0.000000001 -> -9
+dslogb1116 logb          0.00000001 -> -8
+dslogb1117 logb          0.0000001 -> -7
+dslogb1118 logb          0.000001 -> -6
+dslogb1119 logb          0.00001 -> -5
+dslogb1120 logb          0.0001 -> -4
+dslogb1121 logb          0.001 -> -3
+dslogb1122 logb          0.01 -> -2
+dslogb1123 logb          0.1 -> -1
+dslogb1124 logb          1E-25 -> -25
+dslogb1125 logb          1E-25 -> -25
+dslogb1127 logb          1E-75 -> -75
+dslogb1126 logb          1E-96 -> -96
+
+-- suggestions from Ilan Nehama
+dslogb1400 logb          10E-1 -> 0
+dslogb1401 logb          10E+0 -> 1
+dslogb1402 logb          100E+0 -> 2
+dslogb1403 logb          1000E+0 -> 3
+dslogb1404 logb          10000E+0 -> 4
+dslogb1405 logb          10E+0 -> 1
+dslogb1406 logb          100E+0 -> 2
+dslogb1407 logb          1000E+0 -> 3
+dslogb1408 logb          10000E+0 -> 4
+dslogb1409 logb          10E+0 -> 1
+dslogb1410 logb          100E+0 -> 2
+dslogb1411 logb          1000E+0 -> 3
+dslogb1412 logb          10000E+0 -> 4
+dslogb1413 logb          10E+0 -> 1
+dslogb1414 logb          100E+0 -> 2
+dslogb1415 logb          1000E+0 -> 3
+dslogb1416 logb          10000E+0 -> 4
+dslogb1417 logb          10E+0 -> 1
+dslogb1418 logb          100E+0 -> 2
+dslogb1419 logb          1000E+0 -> 3
+dslogb1420 logb          10000E+0 -> 4
+
+-- special values
+dslogb820  logb          Infinity -> Infinity
+dslogb821  logb          0 -> -Infinity  Division_by_zero
+dslogb822  logb          NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dslogb823  logb          sNaN -> NaN  Invalid_operation
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dslogb824  logb          sNaN123 -> NaN123  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dslogb825  logb          -sNaN321 -> -NaN321  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dslogb826  logb          NaN456 -> NaN456
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dslogb827  logb          -NaN654 -> -NaN654
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dslogb828  logb          NaN1 -> NaN1
+
+-- Null test

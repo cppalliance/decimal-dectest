@@ -1,0 +1,190 @@
+------------------------------------------------------------------------
+-- dsReduce.decTest                                                   --
+-- Generated for Boost.Decimal from ddReduce.decTest                  --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddReduce narrowed to that context, with               --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+dsred001   reduce        1 -> 1
+dsred002   reduce        -1 -> -1
+dsred003   reduce        1.00 -> 1
+dsred004   reduce        -1.00 -> -1
+dsred005   reduce        0 -> 0
+dsred006   reduce        0.00 -> 0
+dsred007   reduce        00.0 -> 0
+dsred008   reduce        00.00 -> 0
+dsred009   reduce        00 -> 0
+dsred010   reduce        0E+0 -> 0
+dsred011   reduce        0E+1 -> 0
+
+dsred012   reduce        -2 -> -2
+dsred013   reduce        2 -> 2
+dsred014   reduce        -2.00 -> -2
+dsred015   reduce        2.00 -> 2
+dsred016   reduce        -0 -> -0
+dsred017   reduce        -0.00 -> -0
+dsred018   reduce        -00.0 -> -0
+dsred019   reduce        -00.00 -> -0
+dsred020   reduce        -00 -> -0
+dsred021   reduce        -0E+1 -> -0
+dsred022   reduce        -0E+0 -> -0
+
+dsred030   reduce        +0.1 -> 0.1
+dsred031   reduce        -0.1 -> -0.1
+dsred032   reduce        +0.01 -> 0.01
+dsred033   reduce        -0.01 -> -0.01
+dsred034   reduce        +0.001 -> 0.001
+dsred035   reduce        -0.001 -> -0.001
+dsred036   reduce        +0.000001 -> 0.000001
+dsred037   reduce        -0.000001 -> -0.000001
+dsred038   reduce        +0.000000000001 -> 1E-12
+dsred039   reduce        -0.000000000001 -> -1E-12
+
+dsred041   reduce        1.1 -> 1.1
+dsred042   reduce        1.10 -> 1.1
+dsred043   reduce        1.100 -> 1.1
+dsred044   reduce        1.110 -> 1.11
+dsred045   reduce        -1.1 -> -1.1
+dsred046   reduce        -1.10 -> -1.1
+dsred047   reduce        -1.100 -> -1.1
+dsred048   reduce        -1.110 -> -1.11
+dsred049   reduce        9.9 -> 9.9
+dsred050   reduce        9.90 -> 9.9
+dsred051   reduce        9.900 -> 9.9
+dsred052   reduce        9.990 -> 9.99
+dsred053   reduce        -9.9 -> -9.9
+dsred054   reduce        -9.90 -> -9.9
+dsred055   reduce        -9.900 -> -9.9
+dsred056   reduce        -9.990 -> -9.99
+
+-- some trailing fractional zeros with zeros in units
+dsred060   reduce        10.0 -> 1E+1
+dsred061   reduce        10.00 -> 1E+1
+dsred062   reduce        100.0 -> 1E+2
+dsred063   reduce        100.00 -> 1E+2
+dsred064   reduce        1.1000E+1 -> 11
+dsred065   reduce        1.10000E+1 -> 11
+dsred066   reduce        -10.0 -> -1E+1
+dsred067   reduce        -10.00 -> -1E+1
+dsred068   reduce        -100.0 -> -1E+2
+dsred069   reduce        -100.00 -> -1E+2
+dsred070   reduce        -1.1000E+1 -> -11
+dsred071   reduce        -1.10000E+1 -> -11
+
+-- some insignificant trailing zeros with positive exponent
+dsred080   reduce        10E+0 -> 1E+1
+dsred081   reduce        100E+0 -> 1E+2
+dsred082   reduce        1.0E+0 -> 1
+dsred083   reduce        1.0E+1 -> 1E+1
+dsred084   reduce        1.1E+1 -> 11
+dsred085   reduce        1.00E+1 -> 1E+1
+dsred086   reduce        1.10E+1 -> 11
+dsred087   reduce        -10E+0 -> -1E+1
+dsred088   reduce        -100E+0 -> -1E+2
+dsred089   reduce        -1.0E+0 -> -1
+dsred090   reduce        -1.0E+1 -> -1E+1
+dsred091   reduce        -1.1E+1 -> -11
+dsred092   reduce        -1.00E+1 -> -1E+1
+dsred093   reduce        -1.10E+1 -> -11
+
+-- some significant trailing zeros, were we to be trimming
+dsred100   reduce        11 -> 11
+dsred101   reduce        10 -> 1E+1
+dsred102   reduce        10 -> 1E+1
+dsred103   reduce        1.1E+0 -> 1.1
+dsred104   reduce        1.0E+0 -> 1
+dsred105   reduce        1.10E+0 -> 1.1
+dsred106   reduce        1.00E+0 -> 1
+dsred107   reduce        1.100E+1 -> 11
+dsred108   reduce        1.000E+1 -> 1E+1
+dsred109   reduce        1.000000E+2 -> 1E+2
+dsred110   reduce        -11 -> -11
+dsred111   reduce        -10 -> -1E+1
+dsred112   reduce        -10 -> -1E+1
+dsred113   reduce        -1.1E+0 -> -1.1
+dsred114   reduce        -1.0E+0 -> -1
+dsred115   reduce        -1.10E+0 -> -1.1
+dsred116   reduce        -1.00E+0 -> -1
+dsred117   reduce        -1.100E+1 -> -11
+dsred118   reduce        -1.000E+1 -> -1E+1
+dsred119   reduce        -1.00000E+1 -> -1E+1
+dsred120   reduce        -1.000000E+2 -> -1E+2
+dsred121   reduce        -10.00000E+2 -> -1E+3
+dsred122   reduce        -100.0000E+2 -> -1E+4
+dsred123   reduce        -1000.000E+2 -> -1E+5
+dsred124   reduce        -10000.00E+2 -> -1E+6
+dsred125   reduce        -100000.0E+2 -> -1E+7
+dsred126   reduce        -1000000E+2 -> -1E+8
+
+-- examples from decArith
+dsred140   reduce        2.1 -> 2.1
+dsred141   reduce        -2.0 -> -2
+dsred142   reduce        1.200 -> 1.2
+dsred143   reduce        -120 -> -1.2E+2
+dsred144   reduce        120.00 -> 1.2E+2
+dsred145   reduce        0.00 -> 0
+
+-- Nmax, Nmin, Ntiny
+-- note origami effect on some of these
+dsred151   reduce        9.999999E+96 -> 9.999999E+96
+dsred152   reduce        9.999990E+95 -> 9.99999E+95
+dsred153   reduce        9.999990E+96 -> 9.999990E+96
+dsred154   reduce        1E-96 -> 1E-96  Subnormal
+dsred155   reduce        1.000000E-96 -> 1E-96  Rounded Subnormal
+dsred156   reduce        2.000E-99 -> 2E-99  Rounded Subnormal
+dsred157   reduce        1E-100 -> 1E-100  Subnormal
+
+dsred161   reduce        -1E-100 -> -1E-100  Subnormal
+dsred162   reduce        -2.000E-99 -> -2E-99  Rounded Subnormal
+dsred163   reduce        -1.000000E-96 -> -1E-96  Rounded Subnormal
+dsred164   reduce        -1E-96 -> -1E-96  Subnormal
+dsred165   reduce        -9.999990E+95 -> -9.99999E+95
+dsred166   reduce        -9.999990E+96 -> -9.999990E+96
+dsred167   reduce        -9.999990E+96 -> -9.999990E+96
+dsred168   reduce        -9.999999E+96 -> -9.999999E+96
+dsred169   reduce        -9.999990E+96 -> -9.999990E+96
+
+
+-- specials (reduce does not affect payload)
+dsred820   reduce        Inf -> Infinity
+dsred821   reduce        -Inf -> -Infinity
+dsred822   reduce        NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred823   reduce        sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred824   reduce        NaN101 -> NaN101
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred825   reduce        sNaN010 -> NaN10  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred827   reduce        -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred828   reduce        -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred829   reduce        -NaN101 -> -NaN101
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsred830   reduce        -sNaN010 -> -NaN10  Invalid_operation
+
+-- Null test

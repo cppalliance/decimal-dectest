@@ -17,6 +17,7 @@ int main()
 
     test_two_arg_harness("dectest/ddMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
     test_two_arg_harness("dectest/dqMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
+    test_two_arg_harness("dectest/dsMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
 
     return boost::report_errors();
 }

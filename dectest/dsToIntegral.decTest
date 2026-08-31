@@ -1,0 +1,263 @@
+------------------------------------------------------------------------
+-- dsToIntegral.decTest                                               --
+-- Generated for Boost.Decimal from ddToIntegral.decTest              --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddToIntegral narrowed to that context, with           --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- This set of tests tests the extended specification 'round-to-integral
+-- value-exact' operations (from IEEE 854, later modified in 754r).
+-- All non-zero results are defined as being those from either copy or
+-- quantize, so those are assumed to have been tested extensively
+-- elsewhere; the tests here are for integrity, rounding mode, etc.
+-- Also, it is assumed the test harness will use these tests for both
+-- ToIntegralExact (which does set Inexact) and the fixed-name
+-- functions (which do not set Inexact).
+
+-- Note that decNumber implements an earlier definition of toIntegral
+-- which never sets Inexact; the decTest operator for that is called
+-- 'tointegral' instead of 'tointegralx'.
+
+rounding:    half_even
+
+dsintx001  tointegralx   0 -> 0
+dsintx002  tointegralx   0.0 -> 0
+dsintx003  tointegralx   0.1 -> 0  Inexact Rounded
+dsintx004  tointegralx   0.2 -> 0  Inexact Rounded
+dsintx005  tointegralx   0.3 -> 0  Inexact Rounded
+dsintx006  tointegralx   0.4 -> 0  Inexact Rounded
+dsintx007  tointegralx   0.5 -> 0  Inexact Rounded
+dsintx008  tointegralx   0.6 -> 1  Inexact Rounded
+dsintx009  tointegralx   0.7 -> 1  Inexact Rounded
+dsintx010  tointegralx   0.8 -> 1  Inexact Rounded
+dsintx011  tointegralx   0.9 -> 1  Inexact Rounded
+dsintx012  tointegralx   1 -> 1
+dsintx013  tointegralx   1.0 -> 1  Rounded
+dsintx014  tointegralx   1.1 -> 1  Inexact Rounded
+dsintx015  tointegralx   1.2 -> 1  Inexact Rounded
+dsintx016  tointegralx   1.3 -> 1  Inexact Rounded
+dsintx017  tointegralx   1.4 -> 1  Inexact Rounded
+dsintx018  tointegralx   1.5 -> 2  Inexact Rounded
+dsintx019  tointegralx   1.6 -> 2  Inexact Rounded
+dsintx020  tointegralx   1.7 -> 2  Inexact Rounded
+dsintx021  tointegralx   1.8 -> 2  Inexact Rounded
+dsintx022  tointegralx   1.9 -> 2  Inexact Rounded
+-- negatives
+dsintx031  tointegralx   -0 -> -0
+dsintx032  tointegralx   -0.0 -> -0
+dsintx033  tointegralx   -0.1 -> -0  Inexact Rounded
+dsintx034  tointegralx   -0.2 -> -0  Inexact Rounded
+dsintx035  tointegralx   -0.3 -> -0  Inexact Rounded
+dsintx036  tointegralx   -0.4 -> -0  Inexact Rounded
+dsintx037  tointegralx   -0.5 -> -0  Inexact Rounded
+dsintx038  tointegralx   -0.6 -> -1  Inexact Rounded
+dsintx039  tointegralx   -0.7 -> -1  Inexact Rounded
+dsintx040  tointegralx   -0.8 -> -1  Inexact Rounded
+dsintx041  tointegralx   -0.9 -> -1  Inexact Rounded
+dsintx042  tointegralx   -1 -> -1
+dsintx043  tointegralx   -1.0 -> -1  Rounded
+dsintx044  tointegralx   -1.1 -> -1  Inexact Rounded
+dsintx045  tointegralx   -1.2 -> -1  Inexact Rounded
+dsintx046  tointegralx   -1.3 -> -1  Inexact Rounded
+dsintx047  tointegralx   -1.4 -> -1  Inexact Rounded
+dsintx048  tointegralx   -1.5 -> -2  Inexact Rounded
+dsintx049  tointegralx   -1.6 -> -2  Inexact Rounded
+dsintx050  tointegralx   -1.7 -> -2  Inexact Rounded
+dsintx051  tointegralx   -1.8 -> -2  Inexact Rounded
+dsintx052  tointegralx   -1.9 -> -2  Inexact Rounded
+-- next two would be NaN using quantize(x, 0)
+dsintx053  tointegralx   10E+15 -> 1.0E+16
+dsintx054  tointegralx   -10E+15 -> -1.0E+16
+
+-- numbers around precision
+dsintx060  tointegralx   56267E-4 -> 6  Inexact Rounded
+dsintx061  tointegralx   56267E-1 -> 5627  Inexact Rounded
+dsintx062  tointegralx   56267E+0 -> 56267
+dsintx063  tointegralx   56267E+0 -> 56267
+dsintx065  tointegralx   56267E+0 -> 56267
+dsintx066  tointegralx   56267E+0 -> 56267
+dsintx067  tointegralx   56267E+0 -> 56267
+dsintx068  tointegralx   56267E+2 -> 5.6267E+6
+dsintx069  tointegralx   56267E+2 -> 5.6267E+6
+dsintx070  tointegralx   56267E+3 -> 5.6267E+7
+dsintx071  tointegralx   56267E+3 -> 5.6267E+7
+dsintx072  tointegralx   56267E+3 -> 5.6267E+7
+dsintx073  tointegralx   1.23E+24 -> 1.23E+24
+
+dsintx080  tointegralx   -56267E-2 -> -563  Inexact Rounded
+dsintx081  tointegralx   -56267E-1 -> -5627  Inexact Rounded
+dsintx082  tointegralx   -56267E+0 -> -56267
+dsintx083  tointegralx   -56267E+0 -> -56267
+dsintx085  tointegralx   -56267E+0 -> -56267
+dsintx086  tointegralx   -56267E+0 -> -56267
+dsintx087  tointegralx   -56267E+0 -> -56267
+dsintx088  tointegralx   -56267E+2 -> -5.6267E+6
+dsintx089  tointegralx   -56267E+2 -> -5.6267E+6
+dsintx090  tointegralx   -56267E+3 -> -5.6267E+7
+dsintx091  tointegralx   -56267E+3 -> -5.6267E+7
+dsintx092  tointegralx   -56267E+3 -> -5.6267E+7
+dsintx093  tointegralx   -1.23E+24 -> -1.23E+24
+
+-- subnormal inputs
+dsintx100  tointegralx   1E-75 -> 0  Inexact Rounded
+dsintx101  tointegralx   0.1E-75 -> 0  Inexact Rounded
+dsintx102  tointegralx   0.01E-75 -> 0  Inexact Rounded
+dsintx103  tointegralx   0E-75 -> 0
+
+-- specials and zeros
+dsintx120  tointegralx   Inf -> Infinity
+dsintx121  tointegralx   -Inf -> -Infinity
+dsintx122  tointegralx   NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx123  tointegralx   sNaN -> NaN  Invalid_operation
+dsintx124  tointegralx   0 -> 0
+dsintx125  tointegralx   -0 -> -0
+dsintx126  tointegralx   0.000 -> 0
+dsintx127  tointegralx   0.00 -> 0
+dsintx128  tointegralx   0.0 -> 0
+dsintx129  tointegralx   0 -> 0
+dsintx130  tointegralx   0E-1 -> 0
+dsintx131  tointegralx   0E+0 -> 0
+dsintx132  tointegralx   0E+0 -> 0
+dsintx133  tointegralx   0E+0 -> 0
+dsintx134  tointegralx   0E+0 -> 0
+dsintx135  tointegralx   0E+0 -> 0
+dsintx136  tointegralx   0E+1 -> 0E+1
+dsintx137  tointegralx   0E+1 -> 0E+1
+dsintx138  tointegralx   0E+1 -> 0E+1
+dsintx139  tointegralx   -0.000 -> -0
+dsintx140  tointegralx   -0.00 -> -0
+dsintx141  tointegralx   -0.0 -> -0
+dsintx142  tointegralx   -0 -> -0
+dsintx143  tointegralx   -0E-1 -> -0
+dsintx144  tointegralx   -0E+0 -> -0
+dsintx145  tointegralx   -0E+0 -> -0
+dsintx146  tointegralx   -0E+0 -> -0
+dsintx147  tointegralx   -0E+0 -> -0
+dsintx148  tointegralx   -0E+0 -> -0
+dsintx149  tointegralx   -0E+1 -> -0E+1
+dsintx150  tointegralx   -0E+1 -> -0E+1
+dsintx151  tointegralx   -0E+1 -> -0E+1
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx152  tointegralx   NaN808 -> NaN808
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx153  tointegralx   sNaN080 -> NaN80  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx154  tointegralx   -NaN808 -> -NaN808
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx155  tointegralx   -sNaN080 -> -NaN80  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx156  tointegralx   -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsintx157  tointegralx   -sNaN -> -NaN  Invalid_operation
+
+-- examples
+rounding:    half_up
+dsintx200  tointegralx   2.1 -> 2  Inexact Rounded
+dsintx201  tointegralx   100 -> 100
+dsintx202  tointegralx   100.0 -> 100  Rounded
+dsintx203  tointegralx   101.5 -> 102  Inexact Rounded
+dsintx204  tointegralx   -101.5 -> -102  Inexact Rounded
+dsintx205  tointegralx   10E+1 -> 1.0E+2
+dsintx206  tointegralx   7.89E+19 -> 7.89E+19
+dsintx207  tointegralx   -Inf -> -Infinity
+
+
+-- all rounding modes
+rounding:    half_even
+dsintx210  tointegralx   55.5 -> 56  Inexact Rounded
+dsintx211  tointegralx   56.5 -> 56  Inexact Rounded
+dsintx212  tointegralx   57.5 -> 58  Inexact Rounded
+dsintx213  tointegralx   -55.5 -> -56  Inexact Rounded
+dsintx214  tointegralx   -56.5 -> -56  Inexact Rounded
+dsintx215  tointegralx   -57.5 -> -58  Inexact Rounded
+
+rounding:    half_up
+
+dsintx220  tointegralx   55.5 -> 56  Inexact Rounded
+dsintx221  tointegralx   56.5 -> 57  Inexact Rounded
+dsintx222  tointegralx   57.5 -> 58  Inexact Rounded
+dsintx223  tointegralx   -55.5 -> -56  Inexact Rounded
+dsintx224  tointegralx   -56.5 -> -57  Inexact Rounded
+dsintx225  tointegralx   -57.5 -> -58  Inexact Rounded
+
+rounding:    half_down
+
+dsintx230  tointegralx   55.5 -> 55  Inexact Rounded
+dsintx231  tointegralx   56.5 -> 56  Inexact Rounded
+dsintx232  tointegralx   57.5 -> 57  Inexact Rounded
+dsintx233  tointegralx   -55.5 -> -55  Inexact Rounded
+dsintx234  tointegralx   -56.5 -> -56  Inexact Rounded
+dsintx235  tointegralx   -57.5 -> -57  Inexact Rounded
+
+rounding:    up
+
+dsintx240  tointegralx   55.3 -> 56  Inexact Rounded
+dsintx241  tointegralx   56.3 -> 57  Inexact Rounded
+dsintx242  tointegralx   57.3 -> 58  Inexact Rounded
+dsintx243  tointegralx   -55.3 -> -56  Inexact Rounded
+dsintx244  tointegralx   -56.3 -> -57  Inexact Rounded
+dsintx245  tointegralx   -57.3 -> -58  Inexact Rounded
+
+rounding:    down
+
+dsintx250  tointegralx   55.7 -> 55  Inexact Rounded
+dsintx251  tointegralx   56.7 -> 56  Inexact Rounded
+dsintx252  tointegralx   57.7 -> 57  Inexact Rounded
+dsintx253  tointegralx   -55.7 -> -55  Inexact Rounded
+dsintx254  tointegralx   -56.7 -> -56  Inexact Rounded
+dsintx255  tointegralx   -57.7 -> -57  Inexact Rounded
+
+rounding:    ceiling
+
+dsintx260  tointegralx   55.3 -> 56  Inexact Rounded
+dsintx261  tointegralx   56.3 -> 57  Inexact Rounded
+dsintx262  tointegralx   57.3 -> 58  Inexact Rounded
+dsintx263  tointegralx   -55.3 -> -55  Inexact Rounded
+dsintx264  tointegralx   -56.3 -> -56  Inexact Rounded
+dsintx265  tointegralx   -57.3 -> -57  Inexact Rounded
+
+rounding:    floor
+
+dsintx270  tointegralx   55.7 -> 55  Inexact Rounded
+dsintx271  tointegralx   56.7 -> 56  Inexact Rounded
+dsintx272  tointegralx   57.7 -> 57  Inexact Rounded
+dsintx273  tointegralx   -55.7 -> -56  Inexact Rounded
+dsintx274  tointegralx   -56.7 -> -57  Inexact Rounded
+dsintx275  tointegralx   -57.7 -> -58  Inexact Rounded
+
+-- Int and uInt32 edge values for testing conversions
+dsintx300  tointegralx   -2147486 -> -2147486
+dsintx301  tointegralx   -2147487 -> -2147487
+dsintx302  tointegralx   -2147488 -> -2147488
+dsintx303  tointegralx   -2147489 -> -2147489
+dsintx304  tointegralx   2147486 -> 2147486
+dsintx305  tointegralx   2147487 -> 2147487
+dsintx306  tointegralx   2147488 -> 2147488
+dsintx307  tointegralx   2147489 -> 2147489
+dsintx308  tointegralx   4294964 -> 4294964
+dsintx309  tointegralx   4294965 -> 4294965
+dsintx310  tointegralx   4294966 -> 4294966
+dsintx311  tointegralx   4294967 -> 4294967

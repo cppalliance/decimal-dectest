@@ -15,6 +15,7 @@ int main()
     test_one_arg_harness("dectest/logb.decTest", "logb", op);
     test_one_arg_harness("dectest/ddLogB.decTest", "logb", op);
     test_one_arg_harness("dectest/dqLogB.decTest", "logb", op);
+    test_one_arg_harness("dectest/dsLogB.decTest", "logb", op);
 
     return boost::report_errors();
 }

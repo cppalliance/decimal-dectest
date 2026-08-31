@@ -13,6 +13,7 @@ int main()
     test_scaleb_harness("dectest/scaleb.decTest", "scaleb");
     test_scaleb_harness("dectest/ddScaleB.decTest", "scaleb");
     test_scaleb_harness("dectest/dqScaleB.decTest", "scaleb");
+    test_scaleb_harness("dectest/dsScaleB.decTest", "scaleb");
 
     return boost::report_errors();
 }

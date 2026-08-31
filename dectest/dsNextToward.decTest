@@ -1,0 +1,426 @@
+------------------------------------------------------------------------
+-- dsNextToward.decTest                                               --
+-- Generated for Boost.Decimal from ddNextToward.decTest              --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddNextToward narrowed to that context, with           --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- Sanity check with a scattering of numerics
+dsnextt001 nexttoward    10 10 -> 10
+dsnextt002 nexttoward    -10 -10 -> -10
+dsnextt003 nexttoward    1 10 -> 1.000001
+dsnextt004 nexttoward    1 -10 -> 0.9999999
+dsnextt005 nexttoward    -1 10 -> -0.9999999
+dsnextt006 nexttoward    -1 -10 -> -1.000001
+dsnextt007 nexttoward    0 10 -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt008 nexttoward    0 -10 -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt009 nexttoward    9.999999E+96 +Infinity -> Infinity  Overflow Inexact Rounded
+dsnextt010 nexttoward    -9.999999E+96 -Infinity -> -Infinity  Overflow Inexact Rounded
+dsnextt011 nexttoward    9.999999 10 -> 10.00000
+dsnextt012 nexttoward    10 9.999999 -> 9.999999
+dsnextt013 nexttoward    -9.999999 -10 -> -10.00000
+dsnextt014 nexttoward    -10 -9.999999 -> -9.999999
+dsnextt015 nexttoward    9.999998 10 -> 9.999999
+dsnextt016 nexttoward    10 9.999998 -> 9.999999
+dsnextt017 nexttoward    -9.999998 -10 -> -9.999999
+dsnextt018 nexttoward    -10 -9.999998 -> -9.999999
+
+-- finites
+dsnextt101 nexttoward    7 7 -> 7
+dsnextt102 nexttoward    -7 -7 -> -7
+dsnextt103 nexttoward    75 75 -> 75
+dsnextt104 nexttoward    -75 -75 -> -75
+dsnextt105 nexttoward    7.50 7.5 -> 7.50
+dsnextt106 nexttoward    -7.50 -7.50 -> -7.50
+dsnextt107 nexttoward    7.500 7.5000 -> 7.500
+dsnextt108 nexttoward    -7.500 -7.5 -> -7.500
+
+-- zeros
+dsnextt111 nexttoward    0 0 -> 0
+dsnextt112 nexttoward    -0 -0 -> -0
+dsnextt113 nexttoward    0E+1 0 -> 0E+1
+dsnextt114 nexttoward    -0E+1 -0 -> -0E+1
+dsnextt115 nexttoward    0.00000000000 0.000000000000 -> 0E-11
+dsnextt116 nexttoward    -0.00000000000 -0.00 -> -0E-11
+dsnextt117 nexttoward    0E-35 0 -> 0E-35
+dsnextt118 nexttoward    -0E-35 -000 -> -0E-35
+
+-- full coefficients, alternating bits
+dsnextt121 nexttoward    2682688 2682688 -> 2682688
+dsnextt122 nexttoward    -2682688 -2682688 -> -2682688
+dsnextt123 nexttoward    1341344 1341344 -> 1341344
+dsnextt124 nexttoward    -1341344 -1341344 -> -1341344
+
+-- Nmax, Nmin, Ntiny
+dsnextt131 nexttoward    9.999999E+96 9.999999E+96 -> 9.999999E+96
+dsnextt132 nexttoward    1E-96 1E-96 -> 1E-96
+dsnextt133 nexttoward    1.000000E-96 1.000000E-96 -> 1.000000E-96
+dsnextt134 nexttoward    1E-100 1E-100 -> 1E-100
+
+dsnextt135 nexttoward    -1E-100 -1E-100 -> -1E-100
+dsnextt136 nexttoward    -1.000000E-96 -1.000000E-96 -> -1.000000E-96
+dsnextt137 nexttoward    -1E-96 -1E-96 -> -1E-96
+dsnextt138 nexttoward    -9.999999E+96 -9.999999E+96 -> -9.999999E+96
+
+dsnextt201 nexttoward    0.9999995 Infinity -> 0.9999996
+dsnextt202 nexttoward    0.9999996 Infinity -> 0.9999997
+dsnextt203 nexttoward    0.9999997 Infinity -> 0.9999998
+dsnextt204 nexttoward    0.9999998 Infinity -> 0.9999999
+dsnextt205 nexttoward    0.9999999 Infinity -> 1.000000
+dsnextt206 nexttoward    1.000000 Infinity -> 1.000001
+dsnextt207 nexttoward    1.0 Infinity -> 1.000001
+dsnextt208 nexttoward    1 Infinity -> 1.000001
+dsnextt209 nexttoward    1.000001 Infinity -> 1.000002
+dsnextt210 nexttoward    1.000002 Infinity -> 1.000003
+dsnextt211 nexttoward    1.000003 Infinity -> 1.000004
+dsnextt212 nexttoward    1.000004 Infinity -> 1.000005
+dsnextt213 nexttoward    1.000005 Infinity -> 1.000006
+dsnextt214 nexttoward    1.000006 Infinity -> 1.000007
+dsnextt215 nexttoward    1.000007 Infinity -> 1.000008
+dsnextt216 nexttoward    1.000008 Infinity -> 1.000009
+dsnextt217 nexttoward    1.000009 Infinity -> 1.000010
+dsnextt218 nexttoward    1.000000 Infinity -> 1.000001
+dsnextt219 nexttoward    1.000001 Infinity -> 1.000002
+
+dsnextt221 nexttoward    -0.9999995 Infinity -> -0.9999994
+dsnextt222 nexttoward    -0.9999996 Infinity -> -0.9999995
+dsnextt223 nexttoward    -0.9999997 Infinity -> -0.9999996
+dsnextt224 nexttoward    -0.9999998 Infinity -> -0.9999997
+dsnextt225 nexttoward    -0.9999999 Infinity -> -0.9999998
+dsnextt226 nexttoward    -1.000000 Infinity -> -0.9999999
+dsnextt227 nexttoward    -1.0 Infinity -> -0.9999999
+dsnextt228 nexttoward    -1 Infinity -> -0.9999999
+dsnextt229 nexttoward    -1.000001 Infinity -> -1.000000
+dsnextt230 nexttoward    -1.000002 Infinity -> -1.000001
+dsnextt231 nexttoward    -1.000003 Infinity -> -1.000002
+dsnextt232 nexttoward    -1.000004 Infinity -> -1.000003
+dsnextt233 nexttoward    -1.000005 Infinity -> -1.000004
+dsnextt234 nexttoward    -1.000006 Infinity -> -1.000005
+dsnextt235 nexttoward    -1.000007 Infinity -> -1.000006
+dsnextt236 nexttoward    -1.000008 Infinity -> -1.000007
+dsnextt237 nexttoward    -1.000009 Infinity -> -1.000008
+dsnextt238 nexttoward    -1.000000 Infinity -> -0.9999999
+dsnextt239 nexttoward    -1.000001 Infinity -> -1.000000
+dsnextt240 nexttoward    -1.000002 Infinity -> -1.000001
+
+-- Zeros
+dsnextt300 nexttoward    0 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt301 nexttoward    0.00 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt302 nexttoward    0E-75 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt303 nexttoward    0E+75 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt304 nexttoward    0E+96 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt305 nexttoward    -0 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt306 nexttoward    -0.00 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt307 nexttoward    -0E-75 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt308 nexttoward    -0E+75 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt309 nexttoward    -0E+96 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+
+-- specials
+dsnextt350 nexttoward    Inf Infinity -> Infinity
+dsnextt351 nexttoward    -Inf Infinity -> -9.999999E+96
+dsnextt352 nexttoward    NaN Infinity -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt353 nexttoward    sNaN Infinity -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt354 nexttoward    NaN77 Infinity -> NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt355 nexttoward    sNaN88 Infinity -> NaN88  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt356 nexttoward    -NaN Infinity -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt357 nexttoward    -sNaN Infinity -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt358 nexttoward    -NaN77 Infinity -> -NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt359 nexttoward    -sNaN88 Infinity -> -NaN88  Invalid_operation
+
+-- Nmax, Nmin, Ntiny, subnormals
+dsnextt370 nexttoward    -9.999999E+96 Infinity -> -9.999998E+96
+dsnextt371 nexttoward    -9.999998E+96 Infinity -> -9.999997E+96
+dsnextt372 nexttoward    -1E-96 Infinity -> -9.9999E-97  Underflow Inexact Rounded Subnormal
+dsnextt373 nexttoward    -1.000000E-96 Infinity -> -9.9999E-97  Underflow Inexact Rounded Subnormal
+dsnextt374 nexttoward    -9E-100 Infinity -> -8.9E-100  Underflow Inexact Rounded Subnormal
+dsnextt375 nexttoward    -9.9E-99 Infinity -> -9.89E-99  Underflow Inexact Rounded Subnormal
+dsnextt376 nexttoward    -9.999999E-97 Infinity -> -9.9999E-97  Underflow Inexact Rounded Subnormal
+dsnextt377 nexttoward    -9.999999E-96 Infinity -> -9.99999E-96  Underflow Inexact Rounded Subnormal
+dsnextt378 nexttoward    -9.999998E-96 Infinity -> -9.99999E-96  Underflow Inexact Rounded Subnormal
+dsnextt379 nexttoward    -9.999997E-96 Infinity -> -9.99999E-96  Underflow Inexact Rounded Subnormal
+dsnextt380 nexttoward    -0E-100 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt381 nexttoward    -1E-100 Infinity -> -9E-101  Underflow Inexact Rounded Subnormal
+dsnextt382 nexttoward    -2E-100 Infinity -> -1.9E-100  Underflow Inexact Rounded Subnormal
+
+dsnextt383 nexttoward    0E-100 Infinity -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt384 nexttoward    1E-100 Infinity -> 1.1E-100  Underflow Inexact Rounded Subnormal
+dsnextt385 nexttoward    2E-100 Infinity -> 2.1E-100  Underflow Inexact Rounded Subnormal
+dsnextt386 nexttoward    10E-100 Infinity -> 1.01E-99  Underflow Inexact Rounded Subnormal
+dsnextt387 nexttoward    100E-100 Infinity -> 1.001E-98  Underflow Inexact Rounded Subnormal
+dsnextt388 nexttoward    100000E-100 Infinity -> 1.000001E-95
+dsnextt389 nexttoward    1.000000E-96 Infinity -> 1.00001E-96  Underflow Inexact Rounded Subnormal
+dsnextt390 nexttoward    1.000000E-96 Infinity -> 1.00001E-96  Underflow Inexact Rounded Subnormal
+dsnextt391 nexttoward    1E-96 Infinity -> 1.00001E-96  Underflow Inexact Rounded Subnormal
+dsnextt392 nexttoward    9.999997E+96 Infinity -> 9.999998E+96
+dsnextt393 nexttoward    9.999998E+96 Infinity -> 9.999999E+96
+dsnextt394 nexttoward    9.999999E+96 Infinity -> Infinity  Overflow Inexact Rounded
+
+dsnextt401 nexttoward    0.9999995 -Infinity -> 0.9999994
+dsnextt402 nexttoward    0.9999996 -Infinity -> 0.9999995
+dsnextt403 nexttoward    0.9999997 -Infinity -> 0.9999996
+dsnextt404 nexttoward    0.9999998 -Infinity -> 0.9999997
+dsnextt405 nexttoward    0.9999999 -Infinity -> 0.9999998
+dsnextt406 nexttoward    1.000000 -Infinity -> 0.9999999
+dsnextt407 nexttoward    1.0 -Infinity -> 0.9999999
+dsnextt408 nexttoward    1 -Infinity -> 0.9999999
+dsnextt409 nexttoward    1.000001 -Infinity -> 1.000000
+dsnextt410 nexttoward    1.000002 -Infinity -> 1.000001
+dsnextt411 nexttoward    1.000003 -Infinity -> 1.000002
+dsnextt412 nexttoward    1.000004 -Infinity -> 1.000003
+dsnextt413 nexttoward    1.000005 -Infinity -> 1.000004
+dsnextt414 nexttoward    1.000006 -Infinity -> 1.000005
+dsnextt415 nexttoward    1.000007 -Infinity -> 1.000006
+dsnextt416 nexttoward    1.000008 -Infinity -> 1.000007
+dsnextt417 nexttoward    1.000009 -Infinity -> 1.000008
+dsnextt418 nexttoward    1.000000 -Infinity -> 0.9999999
+dsnextt419 nexttoward    1.000001 -Infinity -> 1.000000
+dsnextt420 nexttoward    1.000002 -Infinity -> 1.000001
+
+dsnextt421 nexttoward    -0.9999995 -Infinity -> -0.9999996
+dsnextt422 nexttoward    -0.9999996 -Infinity -> -0.9999997
+dsnextt423 nexttoward    -0.9999997 -Infinity -> -0.9999998
+dsnextt424 nexttoward    -0.9999998 -Infinity -> -0.9999999
+dsnextt425 nexttoward    -0.9999999 -Infinity -> -1.000000
+dsnextt426 nexttoward    -1.000000 -Infinity -> -1.000001
+dsnextt427 nexttoward    -1.0 -Infinity -> -1.000001
+dsnextt428 nexttoward    -1 -Infinity -> -1.000001
+dsnextt429 nexttoward    -1.000001 -Infinity -> -1.000002
+dsnextt430 nexttoward    -1.000002 -Infinity -> -1.000003
+dsnextt431 nexttoward    -1.000003 -Infinity -> -1.000004
+dsnextt432 nexttoward    -1.000004 -Infinity -> -1.000005
+dsnextt433 nexttoward    -1.000005 -Infinity -> -1.000006
+dsnextt434 nexttoward    -1.000006 -Infinity -> -1.000007
+dsnextt435 nexttoward    -1.000007 -Infinity -> -1.000008
+dsnextt436 nexttoward    -1.000008 -Infinity -> -1.000009
+dsnextt437 nexttoward    -1.000009 -Infinity -> -1.000010
+dsnextt438 nexttoward    -1.000000 -Infinity -> -1.000001
+dsnextt439 nexttoward    -1.000001 -Infinity -> -1.000002
+
+-- Zeros
+dsnextt500 nexttoward    -0 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt501 nexttoward    0 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt502 nexttoward    0.00 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt503 nexttoward    -0.00 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt504 nexttoward    0E-75 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt505 nexttoward    0E+75 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt506 nexttoward    0E+96 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt507 nexttoward    -0E+96 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+
+-- specials
+dsnextt550 nexttoward    Inf -Infinity -> 9.999999E+96
+dsnextt551 nexttoward    -Inf -Infinity -> -Infinity
+dsnextt552 nexttoward    NaN -Infinity -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt553 nexttoward    sNaN -Infinity -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt554 nexttoward    NaN77 -Infinity -> NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt555 nexttoward    sNaN88 -Infinity -> NaN88  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt556 nexttoward    -NaN -Infinity -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt557 nexttoward    -sNaN -Infinity -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt558 nexttoward    -NaN77 -Infinity -> -NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt559 nexttoward    -sNaN88 -Infinity -> -NaN88  Invalid_operation
+
+-- Nmax, Nmin, Ntiny, subnormals
+dsnextt670 nexttoward    9.999999E+96 -Infinity -> 9.999998E+96
+dsnextt671 nexttoward    9.999998E+96 -Infinity -> 9.999997E+96
+dsnextt672 nexttoward    1E-96 -Infinity -> 9.9999E-97  Underflow Inexact Rounded Subnormal
+dsnextt673 nexttoward    1.000000E-96 -Infinity -> 9.9999E-97  Underflow Inexact Rounded Subnormal
+dsnextt674 nexttoward    9E-100 -Infinity -> 8.9E-100  Underflow Inexact Rounded Subnormal
+dsnextt675 nexttoward    9.9E-99 -Infinity -> 9.89E-99  Underflow Inexact Rounded Subnormal
+dsnextt676 nexttoward    9.999999E-97 -Infinity -> 9.9999E-97  Underflow Inexact Rounded Subnormal
+dsnextt677 nexttoward    9.999999E-96 -Infinity -> 9.99999E-96  Underflow Inexact Rounded Subnormal
+dsnextt678 nexttoward    9.999998E-96 -Infinity -> 9.99999E-96  Underflow Inexact Rounded Subnormal
+dsnextt679 nexttoward    9.999997E-96 -Infinity -> 9.99999E-96  Underflow Inexact Rounded Subnormal
+dsnextt680 nexttoward    0E-100 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt681 nexttoward    1E-100 -Infinity -> 9E-101  Underflow Inexact Rounded Subnormal
+dsnextt682 nexttoward    2E-100 -Infinity -> 1.9E-100  Underflow Inexact Rounded Subnormal
+
+dsnextt683 nexttoward    -0E-100 -Infinity -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt684 nexttoward    -1E-100 -Infinity -> -1.1E-100  Underflow Inexact Rounded Subnormal
+dsnextt685 nexttoward    -2E-100 -Infinity -> -2.1E-100  Underflow Inexact Rounded Subnormal
+dsnextt686 nexttoward    -10E-100 -Infinity -> -1.01E-99  Underflow Inexact Rounded Subnormal
+dsnextt687 nexttoward    -100E-100 -Infinity -> -1.001E-98  Underflow Inexact Rounded Subnormal
+dsnextt688 nexttoward    -100000E-100 -Infinity -> -1.000001E-95
+dsnextt689 nexttoward    -1.000000E-96 -Infinity -> -1.00001E-96  Underflow Inexact Rounded Subnormal
+dsnextt690 nexttoward    -1.000000E-96 -Infinity -> -1.00001E-96  Underflow Inexact Rounded Subnormal
+dsnextt691 nexttoward    -1E-96 -Infinity -> -1.00001E-96  Underflow Inexact Rounded Subnormal
+dsnextt692 nexttoward    -9.999998E+96 -Infinity -> -9.999999E+96
+dsnextt693 nexttoward    -9.999999E+96 -Infinity -> -Infinity  Overflow Inexact Rounded
+
+dsnextt780 nexttoward    -Inf -Inf -> -Infinity
+dsnextt781 nexttoward    -Inf -1000 -> -9.999999E+96
+dsnextt782 nexttoward    -Inf -1 -> -9.999999E+96
+dsnextt783 nexttoward    -Inf -0 -> -9.999999E+96
+dsnextt784 nexttoward    -Inf 0 -> -9.999999E+96
+dsnextt785 nexttoward    -Inf 1 -> -9.999999E+96
+dsnextt786 nexttoward    -Inf 1000 -> -9.999999E+96
+dsnextt787 nexttoward    -1000 -Inf -> -1000.001
+dsnextt788 nexttoward    -Inf -Inf -> -Infinity
+dsnextt789 nexttoward    -1 -Inf -> -1.000001
+dsnextt790 nexttoward    -0 -Inf -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt791 nexttoward    0 -Inf -> -1E-101  Underflow Inexact Rounded Subnormal
+dsnextt792 nexttoward    1 -Inf -> 0.9999999
+dsnextt793 nexttoward    1000 -Inf -> 999.9999
+dsnextt794 nexttoward    Inf -Inf -> 9.999999E+96
+
+dsnextt800 nexttoward    Inf -Inf -> 9.999999E+96
+dsnextt801 nexttoward    Inf -1000 -> 9.999999E+96
+dsnextt802 nexttoward    Inf -1 -> 9.999999E+96
+dsnextt803 nexttoward    Inf -0 -> 9.999999E+96
+dsnextt804 nexttoward    Inf 0 -> 9.999999E+96
+dsnextt805 nexttoward    Inf 1 -> 9.999999E+96
+dsnextt806 nexttoward    Inf 1000 -> 9.999999E+96
+dsnextt807 nexttoward    Inf Inf -> Infinity
+dsnextt808 nexttoward    -1000 Inf -> -999.9999
+dsnextt809 nexttoward    -Inf Inf -> -9.999999E+96
+dsnextt810 nexttoward    -1 Inf -> -0.9999999
+dsnextt811 nexttoward    -0 Inf -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt812 nexttoward    0 Inf -> 1E-101  Underflow Inexact Rounded Subnormal
+dsnextt813 nexttoward    1 Inf -> 1.000001
+dsnextt814 nexttoward    1000 Inf -> 1000.001
+dsnextt815 nexttoward    Inf Inf -> Infinity
+
+dsnextt821 nexttoward    NaN -Inf -> NaN
+dsnextt822 nexttoward    NaN -1000 -> NaN
+dsnextt823 nexttoward    NaN -1 -> NaN
+dsnextt824 nexttoward    NaN -0 -> NaN
+dsnextt825 nexttoward    NaN 0 -> NaN
+dsnextt826 nexttoward    NaN 1 -> NaN
+dsnextt827 nexttoward    NaN 1000 -> NaN
+dsnextt828 nexttoward    NaN Inf -> NaN
+dsnextt829 nexttoward    NaN NaN -> NaN
+dsnextt830 nexttoward    -Inf NaN -> NaN
+dsnextt831 nexttoward    -1000 NaN -> NaN
+dsnextt832 nexttoward    -1 NaN -> NaN
+dsnextt833 nexttoward    -0 NaN -> NaN
+dsnextt834 nexttoward    0 NaN -> NaN
+dsnextt835 nexttoward    1 NaN -> NaN
+dsnextt836 nexttoward    1000 NaN -> NaN
+dsnextt837 nexttoward    Inf NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt841 nexttoward    sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt842 nexttoward    sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt843 nexttoward    sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt844 nexttoward    sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt845 nexttoward    sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt846 nexttoward    sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt847 nexttoward    sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt848 nexttoward    sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt849 nexttoward    sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt850 nexttoward    NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt851 nexttoward    -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt852 nexttoward    -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt853 nexttoward    -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt854 nexttoward    -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt855 nexttoward    0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt856 nexttoward    1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt857 nexttoward    1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt858 nexttoward    Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt859 nexttoward    NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt861 nexttoward    NaN1 -Inf -> NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt862 nexttoward    +NaN2 -1000 -> NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt863 nexttoward    NaN3 1000 -> NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt864 nexttoward    NaN4 Inf -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt865 nexttoward    NaN5 +NaN6 -> NaN5
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt866 nexttoward    -Inf NaN7 -> NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt867 nexttoward    -1000 NaN8 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt868 nexttoward    1000 NaN9 -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt869 nexttoward    Inf +NaN10 -> NaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt871 nexttoward    sNaN11 -Inf -> NaN11  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt872 nexttoward    sNaN12 -1000 -> NaN12  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt873 nexttoward    sNaN13 1000 -> NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt874 nexttoward    sNaN14 NaN17 -> NaN14  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt875 nexttoward    sNaN15 sNaN18 -> NaN15  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt876 nexttoward    NaN16 sNaN19 -> NaN19  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt877 nexttoward    -Inf +sNaN20 -> NaN20  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt878 nexttoward    -1000 sNaN21 -> NaN21  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt879 nexttoward    1000 sNaN22 -> NaN22  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt880 nexttoward    Inf sNaN23 -> NaN23  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt881 nexttoward    +NaN25 +sNaN24 -> NaN24  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt882 nexttoward    -NaN26 NaN28 -> -NaN26
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt883 nexttoward    -sNaN27 sNaN29 -> -NaN27  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt884 nexttoward    1000 -NaN30 -> -NaN30
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextt885 nexttoward    1000 -sNaN31 -> -NaN31  Invalid_operation
+
+-- Null tests

@@ -1,0 +1,133 @@
+------------------------------------------------------------------------
+-- dsNextMinus.decTest                                                --
+-- Generated for Boost.Decimal from ddNextMinus.decTest               --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddNextMinus narrowed to that context, with            --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+dsnextm001 nextminus     0.9999995 -> 0.9999994
+dsnextm002 nextminus     0.9999996 -> 0.9999995
+dsnextm003 nextminus     0.9999997 -> 0.9999996
+dsnextm004 nextminus     0.9999998 -> 0.9999997
+dsnextm005 nextminus     0.9999999 -> 0.9999998
+dsnextm006 nextminus     1.000000 -> 0.9999999
+dsnextm007 nextminus     1.0 -> 0.9999999
+dsnextm008 nextminus     1 -> 0.9999999
+dsnextm009 nextminus     1.000001 -> 1.000000
+dsnextm010 nextminus     1.000002 -> 1.000001
+dsnextm011 nextminus     1.000003 -> 1.000002
+dsnextm012 nextminus     1.000004 -> 1.000003
+dsnextm013 nextminus     1.000005 -> 1.000004
+dsnextm014 nextminus     1.000006 -> 1.000005
+dsnextm015 nextminus     1.000007 -> 1.000006
+dsnextm016 nextminus     1.000008 -> 1.000007
+dsnextm017 nextminus     1.000009 -> 1.000008
+dsnextm018 nextminus     1.000000 -> 0.9999999
+dsnextm019 nextminus     1.000001 -> 1.000000
+dsnextm020 nextminus     1.000002 -> 1.000001
+
+dsnextm021 nextminus     -0.9999995 -> -0.9999996
+dsnextm022 nextminus     -0.9999996 -> -0.9999997
+dsnextm023 nextminus     -0.9999997 -> -0.9999998
+dsnextm024 nextminus     -0.9999998 -> -0.9999999
+dsnextm025 nextminus     -0.9999999 -> -1.000000
+dsnextm026 nextminus     -1.000000 -> -1.000001
+dsnextm027 nextminus     -1.0 -> -1.000001
+dsnextm028 nextminus     -1 -> -1.000001
+dsnextm029 nextminus     -1.000001 -> -1.000002
+dsnextm030 nextminus     -1.000002 -> -1.000003
+dsnextm031 nextminus     -1.000003 -> -1.000004
+dsnextm032 nextminus     -1.000004 -> -1.000005
+dsnextm033 nextminus     -1.000005 -> -1.000006
+dsnextm034 nextminus     -1.000006 -> -1.000007
+dsnextm035 nextminus     -1.000007 -> -1.000008
+dsnextm036 nextminus     -1.000008 -> -1.000009
+dsnextm037 nextminus     -1.000009 -> -1.000010
+dsnextm038 nextminus     -1.000000 -> -1.000001
+dsnextm039 nextminus     -1.000001 -> -1.000002
+
+-- ultra-tiny inputs
+dsnextm062 nextminus     1E-100 -> 9E-101
+dsnextm065 nextminus     -1E-100 -> -1.1E-100
+
+-- Zeros
+dsnextm100 nextminus     -0 -> -1E-101
+dsnextm101 nextminus     0 -> -1E-101
+dsnextm102 nextminus     0.00 -> -1E-101
+dsnextm103 nextminus     -0.00 -> -1E-101
+dsnextm104 nextminus     0E-75 -> -1E-101
+dsnextm105 nextminus     0E+75 -> -1E-101
+dsnextm106 nextminus     0E+96 -> -1E-101
+dsnextm107 nextminus     -0E+96 -> -1E-101
+
+-- specials
+dsnextm150 nextminus     Inf -> 9.999999E+96
+dsnextm151 nextminus     -Inf -> -Infinity
+dsnextm152 nextminus     NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm153 nextminus     sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm154 nextminus     NaN77 -> NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm155 nextminus     sNaN88 -> NaN88  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm156 nextminus     -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm157 nextminus     -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm158 nextminus     -NaN77 -> -NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextm159 nextminus     -sNaN88 -> -NaN88  Invalid_operation
+
+-- Nmax, Nmin, Ntiny, subnormals
+dsnextm170 nextminus     9.999999E+96 -> 9.999998E+96
+dsnextm171 nextminus     9.999998E+96 -> 9.999997E+96
+dsnextm172 nextminus     1E-96 -> 9.9999E-97
+dsnextm173 nextminus     1.000000E-96 -> 9.9999E-97
+dsnextm174 nextminus     9E-100 -> 8.9E-100
+dsnextm175 nextminus     9.9E-99 -> 9.89E-99
+dsnextm176 nextminus     9.999999E-97 -> 9.9999E-97
+dsnextm177 nextminus     9.999999E-96 -> 9.99999E-96
+dsnextm178 nextminus     9.999998E-96 -> 9.99999E-96
+dsnextm179 nextminus     9.999997E-96 -> 9.99999E-96
+dsnextm180 nextminus     0E-100 -> -1E-101
+dsnextm181 nextminus     1E-100 -> 9E-101
+dsnextm182 nextminus     2E-100 -> 1.9E-100
+
+dsnextm183 nextminus     -0E-100 -> -1E-101
+dsnextm184 nextminus     -1E-100 -> -1.1E-100
+dsnextm185 nextminus     -2E-100 -> -2.1E-100
+dsnextm186 nextminus     -10E-100 -> -1.01E-99
+dsnextm187 nextminus     -100E-100 -> -1.001E-98
+dsnextm188 nextminus     -100000E-100 -> -1.000001E-95
+dsnextm189 nextminus     -1.000000E-96 -> -1.00001E-96
+dsnextm190 nextminus     -1.000000E-96 -> -1.00001E-96
+dsnextm191 nextminus     -1E-96 -> -1.00001E-96
+dsnextm192 nextminus     -9.999998E+96 -> -9.999999E+96
+dsnextm193 nextminus     -9.999999E+96 -> -Infinity
+
+-- Null tests

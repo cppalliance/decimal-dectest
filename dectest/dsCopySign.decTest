@@ -1,0 +1,198 @@
+------------------------------------------------------------------------
+-- dsCopySign.decTest                                                 --
+-- Generated for Boost.Decimal from ddCopySign.decTest                --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddCopySign narrowed to that context, with             --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- Sanity check
+dscps001   copysign      +7.50 11 -> 7.50
+
+-- Infinities
+dscps011   copysign      Infinity 11 -> Infinity
+dscps012   copysign      -Infinity 11 -> Infinity
+
+-- NaNs, 0 payload
+dscps021   copysign      NaN 11 -> NaN
+dscps022   copysign      -NaN 11 -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps023   copysign      sNaN 11 -> sNaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps024   copysign      -sNaN 11 -> sNaN
+
+-- NaNs, non-0 payload
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps031   copysign      NaN10 11 -> NaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps032   copysign      -NaN10 11 -> NaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps033   copysign      sNaN10 11 -> sNaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps034   copysign      -sNaN10 11 -> sNaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps035   copysign      NaN7 11 -> NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps036   copysign      -NaN7 11 -> NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps037   copysign      sNaN101 11 -> sNaN101
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps038   copysign      -sNaN101 11 -> sNaN101
+
+-- finites
+dscps101   copysign      7 11 -> 7
+dscps102   copysign      -7 11 -> 7
+dscps103   copysign      75 11 -> 75
+dscps104   copysign      -75 11 -> 75
+dscps105   copysign      7.50 11 -> 7.50
+dscps106   copysign      -7.50 11 -> 7.50
+dscps107   copysign      7.500 11 -> 7.500
+dscps108   copysign      -7.500 11 -> 7.500
+
+-- zeros
+dscps111   copysign      0 11 -> 0
+dscps112   copysign      -0 11 -> 0
+dscps113   copysign      0E+1 11 -> 0E+1
+dscps114   copysign      -0E+1 11 -> 0E+1
+dscps115   copysign      0.0000 11 -> 0.0000
+dscps116   copysign      -0.0000 11 -> 0.0000
+dscps117   copysign      0E-35 11 -> 0E-35
+dscps118   copysign      -0E-35 11 -> 0E-35
+
+-- full coefficients, alternating bits
+dscps121   copysign      2682682 11 -> 2682682
+dscps122   copysign      -2682682 11 -> 2682682
+dscps123   copysign      1341341 11 -> 1341341
+dscps124   copysign      -1341341 11 -> 1341341
+
+-- Nmax, Nmin, Ntiny
+dscps131   copysign      9.999999E+96 11 -> 9.999999E+96
+dscps132   copysign      1E-96 11 -> 1E-96
+dscps133   copysign      1.000000E-96 11 -> 1.000000E-96
+dscps134   copysign      1E-100 11 -> 1E-100
+
+dscps135   copysign      -1E-100 11 -> 1E-100
+dscps136   copysign      -1.000000E-96 11 -> 1.000000E-96
+dscps137   copysign      -1E-96 11 -> 1E-96
+dscps138   copysign      -9.999999E+96 11 -> 9.999999E+96
+
+-- repeat with negative RHS
+
+-- Infinities
+dscps211   copysign      Infinity -34 -> -Infinity
+dscps212   copysign      -Infinity -34 -> -Infinity
+
+-- NaNs, 0 payload
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps221   copysign      NaN -34 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps222   copysign      -NaN -34 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps223   copysign      sNaN -34 -> -sNaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps224   copysign      -sNaN -34 -> -sNaN
+
+-- NaNs, non-0 payload
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps231   copysign      NaN10 -34 -> -NaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps232   copysign      -NaN10 -34 -> -NaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps233   copysign      sNaN10 -34 -> -sNaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps234   copysign      -sNaN10 -34 -> -sNaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps235   copysign      NaN7 -34 -> -NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps236   copysign      -NaN7 -34 -> -NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps237   copysign      sNaN101 -34 -> -sNaN101
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscps238   copysign      -sNaN101 -34 -> -sNaN101
+
+-- finites
+dscps301   copysign      7 -34 -> -7
+dscps302   copysign      -7 -34 -> -7
+dscps303   copysign      75 -34 -> -75
+dscps304   copysign      -75 -34 -> -75
+dscps305   copysign      7.50 -34 -> -7.50
+dscps306   copysign      -7.50 -34 -> -7.50
+dscps307   copysign      7.500 -34 -> -7.500
+dscps308   copysign      -7.500 -34 -> -7.500
+
+-- zeros
+dscps311   copysign      0 -34 -> -0
+dscps312   copysign      -0 -34 -> -0
+dscps313   copysign      0E+1 -34 -> -0E+1
+dscps314   copysign      -0E+1 -34 -> -0E+1
+dscps315   copysign      0.0000 -34 -> -0.0000
+dscps316   copysign      -0.0000 -34 -> -0.0000
+dscps317   copysign      0E-35 -34 -> -0E-35
+dscps318   copysign      -0E-35 -34 -> -0E-35
+
+-- full coefficients, alternating bits
+dscps321   copysign      2682682 -34 -> -2682682
+dscps322   copysign      -2682682 -34 -> -2682682
+dscps323   copysign      1341341 -34 -> -1341341
+dscps324   copysign      -1341341 -34 -> -1341341
+
+-- Nmax, Nmin, Ntiny
+dscps331   copysign      9.999999E+96 -34 -> -9.999999E+96
+dscps332   copysign      1E-96 -34 -> -1E-96
+dscps333   copysign      1.000000E-96 -34 -> -1.000000E-96
+dscps334   copysign      1E-100 -34 -> -1E-100
+
+dscps335   copysign      -1E-100 -34 -> -1E-100
+dscps336   copysign      -1.000000E-96 -34 -> -1.000000E-96
+dscps337   copysign      -1E-96 -34 -> -1E-96
+dscps338   copysign      -9.999999E+96 -34 -> -9.999999E+96
+
+-- Other kinds of RHS
+dscps401   copysign      701 -34 -> -701
+dscps402   copysign      -720 -34 -> -720
+dscps403   copysign      701 -0 -> -701
+dscps404   copysign      -720 -0 -> -720
+dscps405   copysign      701 +0 -> 701
+dscps406   copysign      -720 +0 -> 720
+dscps407   copysign      701 +34 -> 701
+dscps408   copysign      -720 +34 -> 720
+
+dscps413   copysign      701 -Inf -> -701
+dscps414   copysign      -720 -Inf -> -720
+dscps415   copysign      701 +Inf -> 701
+dscps416   copysign      -720 +Inf -> 720
+
+dscps420   copysign      701 -NaN -> -701
+dscps421   copysign      -720 -NaN -> -720
+dscps422   copysign      701 +NaN -> 701
+dscps423   copysign      -720 +NaN -> 720
+dscps425   copysign      -720 +NaN8 -> 720
+
+dscps426   copysign      701 -sNaN -> -701
+dscps427   copysign      -720 -sNaN -> -720
+dscps428   copysign      701 +sNaN -> 701
+dscps429   copysign      -720 +sNaN -> 720
+dscps430   copysign      -720 +sNaN3 -> 720

@@ -1,0 +1,131 @@
+------------------------------------------------------------------------
+-- dsNextPlus.decTest                                                 --
+-- Generated for Boost.Decimal from ddNextPlus.decTest                --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddNextPlus narrowed to that context, with             --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+dsnextp001 nextplus      0.9999995 -> 0.9999996
+dsnextp002 nextplus      0.9999996 -> 0.9999997
+dsnextp003 nextplus      0.9999997 -> 0.9999998
+dsnextp004 nextplus      0.9999998 -> 0.9999999
+dsnextp005 nextplus      0.9999999 -> 1.000000
+dsnextp006 nextplus      1.000000 -> 1.000001
+dsnextp007 nextplus      1.0 -> 1.000001
+dsnextp008 nextplus      1 -> 1.000001
+dsnextp009 nextplus      1.000001 -> 1.000002
+dsnextp010 nextplus      1.000002 -> 1.000003
+dsnextp011 nextplus      1.000003 -> 1.000004
+dsnextp012 nextplus      1.000004 -> 1.000005
+dsnextp013 nextplus      1.000005 -> 1.000006
+dsnextp014 nextplus      1.000006 -> 1.000007
+dsnextp015 nextplus      1.000007 -> 1.000008
+dsnextp016 nextplus      1.000008 -> 1.000009
+dsnextp017 nextplus      1.000009 -> 1.000010
+dsnextp018 nextplus      1.000000 -> 1.000001
+dsnextp019 nextplus      1.000001 -> 1.000002
+
+dsnextp021 nextplus      -0.9999995 -> -0.9999994
+dsnextp022 nextplus      -0.9999996 -> -0.9999995
+dsnextp023 nextplus      -0.9999997 -> -0.9999996
+dsnextp024 nextplus      -0.9999998 -> -0.9999997
+dsnextp025 nextplus      -0.9999999 -> -0.9999998
+dsnextp026 nextplus      -1.000000 -> -0.9999999
+dsnextp027 nextplus      -1.0 -> -0.9999999
+dsnextp028 nextplus      -1 -> -0.9999999
+dsnextp029 nextplus      -1.000001 -> -1.000000
+dsnextp030 nextplus      -1.000002 -> -1.000001
+dsnextp031 nextplus      -1.000003 -> -1.000002
+dsnextp032 nextplus      -1.000004 -> -1.000003
+dsnextp033 nextplus      -1.000005 -> -1.000004
+dsnextp034 nextplus      -1.000006 -> -1.000005
+dsnextp035 nextplus      -1.000007 -> -1.000006
+dsnextp036 nextplus      -1.000008 -> -1.000007
+dsnextp037 nextplus      -1.000009 -> -1.000008
+dsnextp038 nextplus      -1.000000 -> -0.9999999
+dsnextp039 nextplus      -1.000001 -> -1.000000
+dsnextp040 nextplus      -1.000002 -> -1.000001
+
+-- Zeros
+dsnextp100 nextplus      0 -> 1E-101
+dsnextp101 nextplus      0.00 -> 1E-101
+dsnextp102 nextplus      0E-75 -> 1E-101
+dsnextp103 nextplus      0E+75 -> 1E-101
+dsnextp104 nextplus      0E+96 -> 1E-101
+dsnextp105 nextplus      -0 -> 1E-101
+dsnextp106 nextplus      -0.00 -> 1E-101
+dsnextp107 nextplus      -0E-75 -> 1E-101
+dsnextp108 nextplus      -0E+75 -> 1E-101
+dsnextp109 nextplus      -0E+96 -> 1E-101
+
+-- specials
+dsnextp150 nextplus      Inf -> Infinity
+dsnextp151 nextplus      -Inf -> -9.999999E+96
+dsnextp152 nextplus      NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp153 nextplus      sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp154 nextplus      NaN77 -> NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp155 nextplus      sNaN88 -> NaN88  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp156 nextplus      -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp157 nextplus      -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp158 nextplus      -NaN77 -> -NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsnextp159 nextplus      -sNaN88 -> -NaN88  Invalid_operation
+
+-- Nmax, Nmin, Ntiny, subnormals
+dsnextp170 nextplus      -9.999999E+96 -> -9.999998E+96
+dsnextp171 nextplus      -9.999998E+96 -> -9.999997E+96
+dsnextp172 nextplus      -1E-96 -> -9.9999E-97
+dsnextp173 nextplus      -1.000000E-96 -> -9.9999E-97
+dsnextp174 nextplus      -9E-100 -> -8.9E-100
+dsnextp175 nextplus      -9.9E-99 -> -9.89E-99
+dsnextp176 nextplus      -9.999999E-97 -> -9.9999E-97
+dsnextp177 nextplus      -9.999999E-96 -> -9.99999E-96
+dsnextp178 nextplus      -9.999998E-96 -> -9.99999E-96
+dsnextp179 nextplus      -9.999997E-96 -> -9.99999E-96
+dsnextp180 nextplus      -0E-100 -> 1E-101
+dsnextp181 nextplus      -1E-100 -> -9E-101
+dsnextp182 nextplus      -2E-100 -> -1.9E-100
+
+dsnextp183 nextplus      0E-100 -> 1E-101
+dsnextp184 nextplus      1E-100 -> 1.1E-100
+dsnextp185 nextplus      2E-100 -> 2.1E-100
+dsnextp186 nextplus      10E-100 -> 1.01E-99
+dsnextp187 nextplus      100E-100 -> 1.001E-98
+dsnextp188 nextplus      100000E-100 -> 1.000001E-95
+dsnextp189 nextplus      1.000000E-96 -> 1.00001E-96
+dsnextp190 nextplus      1.000000E-96 -> 1.00001E-96
+dsnextp191 nextplus      1E-96 -> 1.00001E-96
+dsnextp192 nextplus      9.999998E+96 -> 9.999999E+96
+dsnextp193 nextplus      9.999999E+96 -> Infinity
+
+-- Null tests

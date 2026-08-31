@@ -1,0 +1,920 @@
+------------------------------------------------------------------------
+-- dsDivide.decTest                                                   --
+-- Generated for Boost.Decimal from ddDivide.decTest                  --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddDivide narrowed to that context, with               --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+-- sanity checks
+dsdiv001   divide        1 1 -> 1
+dsdiv002   divide        2 1 -> 2
+dsdiv003   divide        1 2 -> 0.5
+dsdiv004   divide        2 2 -> 1
+dsdiv005   divide        0 1 -> 0
+dsdiv006   divide        0 2 -> 0
+dsdiv007   divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv008   divide        2 3 -> 0.6666667  Inexact Rounded
+dsdiv009   divide        3 3 -> 1
+
+dsdiv010   divide        2.4 1 -> 2.4
+dsdiv011   divide        2.4 -1 -> -2.4
+dsdiv012   divide        -2.4 1 -> -2.4
+dsdiv013   divide        -2.4 -1 -> 2.4
+dsdiv014   divide        2.40 1 -> 2.40
+dsdiv015   divide        2.400 1 -> 2.400
+dsdiv016   divide        2.4 2 -> 1.2
+dsdiv017   divide        2.400 2 -> 1.200
+dsdiv018   divide        2 2 -> 1
+dsdiv019   divide        20 20 -> 1
+
+dsdiv020   divide        187 187 -> 1
+dsdiv021   divide        5 2 -> 2.5
+dsdiv022   divide        50 20 -> 2.5
+dsdiv023   divide        500 200 -> 2.5
+dsdiv024   divide        50.0 20.0 -> 2.5
+dsdiv025   divide        5.00 2.00 -> 2.5
+dsdiv026   divide        5 2.0 -> 2.5
+dsdiv027   divide        5 2.000 -> 2.5
+dsdiv028   divide        5 0.20 -> 25
+dsdiv029   divide        5 0.200 -> 25
+dsdiv030   divide        10 1 -> 10
+dsdiv031   divide        100 1 -> 100
+dsdiv032   divide        1000 1 -> 1000
+dsdiv033   divide        1000 100 -> 10
+
+dsdiv035   divide        1 2 -> 0.5
+dsdiv036   divide        1 4 -> 0.25
+dsdiv037   divide        1 8 -> 0.125
+dsdiv038   divide        1 16 -> 0.0625
+dsdiv039   divide        1 32 -> 0.03125
+dsdiv040   divide        1 64 -> 0.015625
+dsdiv041   divide        1 -2 -> -0.5
+dsdiv042   divide        1 -4 -> -0.25
+dsdiv043   divide        1 -8 -> -0.125
+dsdiv044   divide        1 -16 -> -0.0625
+dsdiv045   divide        1 -32 -> -0.03125
+dsdiv046   divide        1 -64 -> -0.015625
+dsdiv047   divide        -1 2 -> -0.5
+dsdiv048   divide        -1 4 -> -0.25
+dsdiv049   divide        -1 8 -> -0.125
+dsdiv050   divide        -1 16 -> -0.0625
+dsdiv051   divide        -1 32 -> -0.03125
+dsdiv052   divide        -1 64 -> -0.015625
+dsdiv053   divide        -1 -2 -> 0.5
+dsdiv054   divide        -1 -4 -> 0.25
+dsdiv055   divide        -1 -8 -> 0.125
+dsdiv056   divide        -1 -16 -> 0.0625
+dsdiv057   divide        -1 -32 -> 0.03125
+dsdiv058   divide        -1 -64 -> 0.015625
+
+-- bcdTime
+dsdiv060   divide        1 7 -> 0.1428571  Inexact Rounded
+dsdiv061   divide        1.234568 1.987653 -> 0.6211185  Inexact Rounded
+
+--               1234567890123456
+dsdiv071   divide        9999999 1 -> 9999999
+dsdiv072   divide        9999999 1 -> 9999999
+dsdiv073   divide        9999999 1 -> 9999999
+dsdiv074   divide        9999999 1 -> 9999999
+dsdiv075   divide        9999999 1 -> 9999999
+dsdiv076   divide        9999999 1 -> 9999999
+dsdiv077   divide        9999999 1 -> 9999999
+dsdiv078   divide        9999999 1 -> 9999999
+dsdiv079   divide        9999999 1 -> 9999999
+dsdiv080   divide        9999999 1 -> 9999999
+dsdiv081   divide        999999 1 -> 999999
+dsdiv082   divide        99999 1 -> 99999
+dsdiv083   divide        9999 1 -> 9999
+dsdiv084   divide        999 1 -> 999
+dsdiv085   divide        99 1 -> 99
+dsdiv086   divide        9 1 -> 9
+
+dsdiv090   divide        0 1 -> 0
+dsdiv091   divide        0.0 1 -> 0.0
+dsdiv092   divide        0.00 1 -> 0.00
+dsdiv093   divide        0.00E+2 1 -> 0
+dsdiv094   divide        0.0000E-12 1 -> 0E-16
+
+dsdiv095   divide        1 1E-2 -> 1E+2
+dsdiv096   divide        1 1E-2 -> 1E+2
+dsdiv097   divide        1 1E-2 -> 1E+2
+dsdiv098   divide        1 1E-3 -> 1E+3
+dsdiv099   divide        1 1E-3 -> 1E+3
+
+dsdiv100   divide        1 1 -> 1
+dsdiv101   divide        1 2 -> 0.5
+dsdiv102   divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv103   divide        1 4 -> 0.25
+dsdiv104   divide        1 5 -> 0.2
+dsdiv105   divide        1 6 -> 0.1666667  Inexact Rounded
+dsdiv106   divide        1 7 -> 0.1428571  Inexact Rounded
+dsdiv107   divide        1 8 -> 0.125
+dsdiv108   divide        1 9 -> 0.1111111  Inexact Rounded
+dsdiv109   divide        1 10 -> 0.1
+dsdiv110   divide        1 1 -> 1
+dsdiv111   divide        2 1 -> 2
+dsdiv112   divide        3 1 -> 3
+dsdiv113   divide        4 1 -> 4
+dsdiv114   divide        5 1 -> 5
+dsdiv115   divide        6 1 -> 6
+dsdiv116   divide        7 1 -> 7
+dsdiv117   divide        8 1 -> 8
+dsdiv118   divide        9 1 -> 9
+dsdiv119   divide        10 1 -> 10
+
+dsdiv120   divide        3E+0 0.001 -> 3E+3
+dsdiv121   divide        2.200 2 -> 1.100
+
+dsdiv130   divide        12345 4.999 -> 2469.494  Inexact Rounded
+dsdiv131   divide        12345 4.99 -> 2473.948  Inexact Rounded
+dsdiv132   divide        12345 4.9 -> 2519.388  Inexact Rounded
+dsdiv133   divide        12345 5 -> 2469
+dsdiv134   divide        12345 5.1 -> 2420.588  Inexact Rounded
+dsdiv135   divide        12345 5.01 -> 2464.072  Inexact Rounded
+dsdiv136   divide        12345 5.001 -> 2468.506  Inexact Rounded
+
+-- test possibly imprecise results
+dsdiv220   divide        391 597 -> 0.6549414  Inexact Rounded
+dsdiv221   divide        391 -597 -> -0.6549414  Inexact Rounded
+dsdiv222   divide        -391 597 -> -0.6549414  Inexact Rounded
+dsdiv223   divide        -391 -597 -> 0.6549414  Inexact Rounded
+
+-- test some cases that are close to exponent overflow, some with coefficient padding
+dsdiv270   divide        1 1E+96 -> 1E-96  Subnormal
+dsdiv271   divide        1 0.9E+96 -> 1.11111E-96  Underflow Inexact Rounded Subnormal
+dsdiv272   divide        1 0.99E+96 -> 1.01010E-96  Underflow Inexact Rounded Subnormal
+dsdiv273   divide        1 0.9999999E+96 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsdiv274   divide        9E+96 1 -> 9.000000E+96  Clamped
+dsdiv275   divide        9.9E+96 1 -> 9.900000E+96  Clamped
+dsdiv276   divide        9.99E+96 1 -> 9.990000E+96  Clamped
+dsdiv277   divide        9.999999E+96 1 -> 9.999999E+96
+dsdiv278   divide        9.999999E+96 1 -> 9.999999E+96
+dsdiv279   divide        9.999999E+96 1 -> 9.999999E+96
+
+dsdiv285   divide        9.9E+96 1.1 -> 9.000000E+96  Clamped
+dsdiv286   divide        9.99E+96 1.1 -> 9.081818E+96  Inexact Rounded
+dsdiv287   divide        9.999999E+96 1.1 -> 9.090908E+96  Inexact Rounded
+dsdiv288   divide        9.999999E+96 1.1 -> 9.090908E+96  Inexact Rounded
+dsdiv289   divide        9.999999E+96 1.1 -> 9.090908E+96  Inexact Rounded
+
+
+-- Divide into 0 tests
+dsdiv301   divide        0 7 -> 0
+dsdiv302   divide        0 7E-1 -> 0E+1
+dsdiv303   divide        0 7E+0 -> 0
+dsdiv304   divide        0 7E+0 -> 0
+dsdiv305   divide        0 7E+1 -> 0.0
+dsdiv306   divide        0 7E+2 -> 0.00
+dsdiv307   divide        0 7E+2 -> 0.00
+dsdiv308   divide        0 70E-1 -> 0E+1
+dsdiv309   divide        0 70E+0 -> 0
+dsdiv310   divide        0 70E+0 -> 0
+dsdiv311   divide        0 70E+0 -> 0
+dsdiv312   divide        0 70E+1 -> 0.0
+dsdiv313   divide        0 70E+2 -> 0.00
+dsdiv314   divide        0 70E+2 -> 0.00
+dsdiv315   divide        0 700E-1 -> 0E+1
+dsdiv316   divide        0 700E+0 -> 0
+dsdiv317   divide        0 700E+0 -> 0
+dsdiv318   divide        0 700E+0 -> 0
+dsdiv319   divide        0 700E+1 -> 0.0
+dsdiv320   divide        0 700E+2 -> 0.00
+dsdiv321   divide        0 700E+2 -> 0.00
+dsdiv322   divide        0 700E+19 -> 0E-19
+
+dsdiv331   divide        0E-1 7E-1 -> 0
+dsdiv332   divide        0E-1 7E+0 -> 0.0
+dsdiv333   divide        0E-1 7E+0 -> 0.0
+dsdiv334   divide        0E-1 7E+1 -> 0.00
+dsdiv335   divide        0E+0 7E-1 -> 0E+1
+dsdiv336   divide        0E+0 7E+0 -> 0
+dsdiv337   divide        0E+0 7E+0 -> 0
+dsdiv338   divide        0E+0 7E+1 -> 0.0
+dsdiv339   divide        0E+0 7E-1 -> 0E+1
+dsdiv340   divide        0E+0 7E+0 -> 0
+dsdiv341   divide        0E+0 7E+0 -> 0
+dsdiv342   divide        0E+0 7E+1 -> 0.0
+dsdiv343   divide        0E+1 7E-1 -> 0E+2
+dsdiv344   divide        0E+1 7E+0 -> 0E+1
+dsdiv345   divide        0E+1 7E+0 -> 0E+1
+dsdiv346   divide        0E+1 7E+1 -> 0
+
+-- These were 'input rounding'
+dsdiv441   divide        1234560 1 -> 1234560
+dsdiv442   divide        1 1234560 -> 8.100052E-7  Inexact Rounded
+dsdiv443   divide        1234560 1 -> 1234560
+dsdiv444   divide        1 1234560 -> 8.100052E-7  Inexact Rounded
+dsdiv445   divide        1234560 1 -> 1234560
+dsdiv446   divide        1 1234560 -> 8.100052E-7  Inexact Rounded
+dsdiv447   divide        1234561 1 -> 1234561
+dsdiv448   divide        1 1234561 -> 8.100045E-7  Inexact Rounded
+dsdiv449   divide        1234561 1 -> 1234561
+dsdiv450   divide        1 1234561 -> 8.100045E-7  Inexact Rounded
+dsdiv451   divide        1234566 1 -> 1234566
+dsdiv452   divide        1 1234566 -> 8.100012E-7  Inexact Rounded
+
+-- high-lows
+dsdiv453   divide        1E+0 1 -> 1
+dsdiv454   divide        1E+0 1.0 -> 1
+dsdiv455   divide        1E+0 1.00 -> 1
+dsdiv456   divide        1E+0 2 -> 0.5
+dsdiv457   divide        1E+0 2.0 -> 0.5
+dsdiv458   divide        1E+0 2.00 -> 0.5
+
+-- some from IEEE discussions
+dsdiv460   divide        3E+0 2E+0 -> 1.5
+dsdiv461   divide        30E+0 2E+0 -> 15
+dsdiv462   divide        300E+0 2E+0 -> 150
+dsdiv464   divide        3000E-1 2E+0 -> 150.0
+dsdiv465   divide        3E+0 20E+0 -> 0.15
+dsdiv466   divide        30E+0 20E+0 -> 1.5
+dsdiv467   divide        300E+0 20E+0 -> 15
+dsdiv468   divide        3000E-1 20E+0 -> 15.0
+dsdiv469   divide        3E+0 200E+0 -> 0.015
+dsdiv470   divide        30E+0 200E+0 -> 0.15
+dsdiv471   divide        300E+0 200E+0 -> 1.5
+dsdiv472   divide        3000E-1 200E+0 -> 1.5
+dsdiv473   divide        3E+0 2000E-1 -> 0.015
+dsdiv474   divide        30E+0 2000E-1 -> 0.15
+dsdiv475   divide        300E+0 2000E-1 -> 1.5
+dsdiv476   divide        3000E-1 2000E-1 -> 1.5
+
+-- some reciprocals
+dsdiv480   divide        1 1.0E+8 -> 1E-8
+dsdiv481   divide        1 10E+8 -> 1E-9
+dsdiv482   divide        1 1.0E-8 -> 1E+8
+dsdiv483   divide        1 10E-8 -> 1E+7
+
+-- RMS discussion table
+dsdiv484   divide        0E+1 1E+1 -> 0
+dsdiv485   divide        0E+1 2E+1 -> 0
+dsdiv486   divide        0E+1 10E+0 -> 0E+1
+dsdiv487   divide        0E+1 20E+0 -> 0E+1
+dsdiv488   divide        0E+1 100E+0 -> 0E+1
+dsdiv489   divide        0E+1 200E+0 -> 0E+1
+
+dsdiv491   divide        1E+1 1E+1 -> 1
+dsdiv492   divide        1E+1 2E+1 -> 0.5
+dsdiv493   divide        1E+1 10E+0 -> 1
+dsdiv494   divide        1E+1 20E+0 -> 0.5
+dsdiv495   divide        1E+1 100E+0 -> 0.1
+dsdiv496   divide        1E+1 200E+0 -> 0.05
+
+-- tryzeros cases
+rounding:    half_up
+dsdiv497   divide        0E+95 1000E-3 -> 0E+90  Clamped
+dsdiv498   divide        0E-98 1000E+3 -> 0E-101
+
+rounding:    half_up
+
+-- focus on trailing zeros issues
+dsdiv500   divide        1 9.9 -> 0.1010101  Inexact Rounded
+dsdiv501   divide        1 9.09 -> 0.1100110  Inexact Rounded
+dsdiv502   divide        1 9.009 -> 0.1110001  Inexact Rounded
+
+dsdiv511   divide        1 2 -> 0.5
+dsdiv512   divide        1.0 2 -> 0.5
+dsdiv513   divide        1.00 2 -> 0.50
+dsdiv514   divide        1.000 2 -> 0.500
+dsdiv515   divide        1.0000 2 -> 0.5000
+dsdiv516   divide        1.00000 2 -> 0.50000
+dsdiv517   divide        1.000000 2 -> 0.500000
+dsdiv518   divide        1.000000 2 -> 0.500000
+dsdiv519   divide        1.00 2.00 -> 0.5
+
+dsdiv521   divide        2 1 -> 2
+dsdiv522   divide        2 1.0 -> 2
+dsdiv523   divide        2 1.00 -> 2
+dsdiv524   divide        2 1.000 -> 2
+dsdiv525   divide        2 1.0000 -> 2
+dsdiv526   divide        2 1.00000 -> 2
+dsdiv527   divide        2 1.000000 -> 2
+dsdiv528   divide        2 1.000000 -> 2
+dsdiv529   divide        2.00 1.00 -> 2
+
+dsdiv530   divide        2.40 2 -> 1.20
+dsdiv531   divide        2.40 4 -> 0.60
+dsdiv532   divide        2.40 10 -> 0.24
+dsdiv533   divide        2.40 2.0 -> 1.2
+dsdiv534   divide        2.40 4.0 -> 0.6
+dsdiv535   divide        2.40 10.0 -> 0.24
+dsdiv536   divide        2.40 2.00 -> 1.2
+dsdiv537   divide        2.40 4.00 -> 0.6
+dsdiv538   divide        2.40 10.00 -> 0.24
+dsdiv539   divide        0.9 0.1 -> 9
+dsdiv540   divide        0.9 0.01 -> 9E+1
+dsdiv541   divide        0.9 0.001 -> 9E+2
+dsdiv542   divide        5 2 -> 2.5
+dsdiv543   divide        5 2.0 -> 2.5
+dsdiv544   divide        5 2.00 -> 2.5
+dsdiv545   divide        5 20 -> 0.25
+dsdiv546   divide        5 20.0 -> 0.25
+dsdiv547   divide        2.400 2 -> 1.200
+dsdiv548   divide        2.400 2.0 -> 1.20
+dsdiv549   divide        2.400 2.400 -> 1
+
+dsdiv550   divide        240 1 -> 240
+dsdiv551   divide        240 10 -> 24
+dsdiv552   divide        240 100 -> 2.4
+dsdiv553   divide        240 1000 -> 0.24
+dsdiv554   divide        2400 1 -> 2400
+dsdiv555   divide        2400 10 -> 240
+dsdiv556   divide        2400 100 -> 24
+dsdiv557   divide        2400 1000 -> 2.4
+
+-- +ve exponent
+dsdiv600   divide        2.4E+2 2 -> 1.2E+2
+dsdiv601   divide        2.40E+2 2 -> 120
+dsdiv602   divide        2.400E+2 2 -> 120.0
+dsdiv603   divide        2.4000E+2 2 -> 120.00
+dsdiv604   divide        24E+2 2 -> 1.2E+3
+dsdiv605   divide        240E+2 2 -> 1.20E+4
+dsdiv606   divide        2400E+2 2 -> 1.200E+5
+dsdiv607   divide        24000E+1 2 -> 1.2000E+5
+
+-- more zeros, etc.
+dsdiv731   divide        5.00 1E-1 -> 50.0
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv732   divide        00.00 0.000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv733   divide        00.00 0E-1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv734   divide        0 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv735   divide        -0 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv736   divide        -0 -0 -> NaN  Invalid_operation
+
+dsdiv741   divide        0 -1 -> -0
+dsdiv742   divide        -0 -1 -> 0
+dsdiv743   divide        0 1 -> 0
+dsdiv744   divide        -0 1 -> -0
+dsdiv745   divide        -1 0 -> -Infinity  Division_by_zero
+dsdiv746   divide        -1 -0 -> Infinity  Division_by_zero
+dsdiv747   divide        1 0 -> Infinity  Division_by_zero
+dsdiv748   divide        1 -0 -> -Infinity  Division_by_zero
+
+dsdiv751   divide        0.0 -1 -> -0.0
+dsdiv752   divide        -0.0 -1 -> 0.0
+dsdiv753   divide        0.0 1 -> 0.0
+dsdiv754   divide        -0.0 1 -> -0.0
+dsdiv755   divide        -1.0 0 -> -Infinity  Division_by_zero
+dsdiv756   divide        -1.0 -0 -> Infinity  Division_by_zero
+dsdiv757   divide        1.0 0 -> Infinity  Division_by_zero
+dsdiv758   divide        1.0 -0 -> -Infinity  Division_by_zero
+
+dsdiv761   divide        0 -1.0 -> -0E+1
+dsdiv762   divide        -0 -1.0 -> 0E+1
+dsdiv763   divide        0 1.0 -> 0E+1
+dsdiv764   divide        -0 1.0 -> -0E+1
+dsdiv765   divide        -1 0.0 -> -Infinity  Division_by_zero
+dsdiv766   divide        -1 -0.0 -> Infinity  Division_by_zero
+dsdiv767   divide        1 0.0 -> Infinity  Division_by_zero
+dsdiv768   divide        1 -0.0 -> -Infinity  Division_by_zero
+
+dsdiv771   divide        0.0 -1.0 -> -0
+dsdiv772   divide        -0.0 -1.0 -> 0
+dsdiv773   divide        0.0 1.0 -> 0
+dsdiv774   divide        -0.0 1.0 -> -0
+dsdiv775   divide        -1.0 0.0 -> -Infinity  Division_by_zero
+dsdiv776   divide        -1.0 -0.0 -> Infinity  Division_by_zero
+dsdiv777   divide        1.0 0.0 -> Infinity  Division_by_zero
+dsdiv778   divide        1.0 -0.0 -> -Infinity  Division_by_zero
+
+-- Specials
+dsdiv780   divide        Inf -Inf -> NaN  Invalid_operation
+dsdiv781   divide        Inf -1000 -> -Infinity
+dsdiv782   divide        Inf -1 -> -Infinity
+dsdiv783   divide        Inf -0 -> -Infinity
+dsdiv784   divide        Inf 0 -> Infinity
+dsdiv785   divide        Inf 1 -> Infinity
+dsdiv786   divide        Inf 1000 -> Infinity
+dsdiv787   divide        Inf Inf -> NaN  Invalid_operation
+dsdiv788   divide        -1000 Inf -> -0E-101  Clamped
+dsdiv789   divide        -Inf Inf -> NaN  Invalid_operation
+dsdiv790   divide        -1 Inf -> -0E-101  Clamped
+dsdiv791   divide        -0 Inf -> -0E-101  Clamped
+dsdiv792   divide        0 Inf -> 0E-101  Clamped
+dsdiv793   divide        1 Inf -> 0E-101  Clamped
+dsdiv794   divide        1000 Inf -> 0E-101  Clamped
+dsdiv795   divide        Inf Inf -> NaN  Invalid_operation
+
+dsdiv800   divide        -Inf -Inf -> NaN  Invalid_operation
+dsdiv801   divide        -Inf -1000 -> Infinity
+dsdiv802   divide        -Inf -1 -> Infinity
+dsdiv803   divide        -Inf -0 -> Infinity
+dsdiv804   divide        -Inf 0 -> -Infinity
+dsdiv805   divide        -Inf 1 -> -Infinity
+dsdiv806   divide        -Inf 1000 -> -Infinity
+dsdiv807   divide        -Inf Inf -> NaN  Invalid_operation
+dsdiv808   divide        -1000 Inf -> -0E-101  Clamped
+dsdiv809   divide        -Inf -Inf -> NaN  Invalid_operation
+dsdiv810   divide        -1 -Inf -> 0E-101  Clamped
+dsdiv811   divide        -0 -Inf -> 0E-101  Clamped
+dsdiv812   divide        0 -Inf -> -0E-101  Clamped
+dsdiv813   divide        1 -Inf -> -0E-101  Clamped
+dsdiv814   divide        1000 -Inf -> -0E-101  Clamped
+dsdiv815   divide        Inf -Inf -> NaN  Invalid_operation
+
+dsdiv821   divide        NaN -Inf -> NaN
+dsdiv822   divide        NaN -1000 -> NaN
+dsdiv823   divide        NaN -1 -> NaN
+dsdiv824   divide        NaN -0 -> NaN
+dsdiv825   divide        NaN 0 -> NaN
+dsdiv826   divide        NaN 1 -> NaN
+dsdiv827   divide        NaN 1000 -> NaN
+dsdiv828   divide        NaN Inf -> NaN
+dsdiv829   divide        NaN NaN -> NaN
+dsdiv830   divide        -Inf NaN -> NaN
+dsdiv831   divide        -1000 NaN -> NaN
+dsdiv832   divide        -1 NaN -> NaN
+dsdiv833   divide        -0 NaN -> NaN
+dsdiv834   divide        0 NaN -> NaN
+dsdiv835   divide        1 NaN -> NaN
+dsdiv836   divide        1000 NaN -> NaN
+dsdiv837   divide        Inf NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv841   divide        sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv842   divide        sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv843   divide        sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv844   divide        sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv845   divide        sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv846   divide        sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv847   divide        sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv848   divide        sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv849   divide        sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv850   divide        NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv851   divide        -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv852   divide        -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv853   divide        -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv854   divide        -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv855   divide        0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv856   divide        1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv857   divide        1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv858   divide        Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv859   divide        NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv861   divide        NaN9 -Inf -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv862   divide        NaN8 1000 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv863   divide        NaN7 Inf -> NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv864   divide        NaN6 NaN5 -> NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv865   divide        -Inf NaN4 -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv866   divide        -1000 NaN3 -> NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv867   divide        Inf NaN2 -> NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv871   divide        sNaN99 -Inf -> NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv872   divide        sNaN98 -1 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv873   divide        sNaN97 NaN -> NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv874   divide        sNaN96 sNaN94 -> NaN96  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv875   divide        NaN95 sNaN93 -> NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv876   divide        -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv877   divide        0 sNaN91 -> NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv878   divide        Inf sNaN90 -> NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv879   divide        NaN sNaN89 -> NaN89  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv881   divide        -NaN9 -Inf -> -NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv882   divide        -NaN8 1000 -> -NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv883   divide        -NaN7 Inf -> -NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv884   divide        -NaN6 -NaN5 -> -NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv885   divide        -Inf -NaN4 -> -NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv886   divide        -1000 -NaN3 -> -NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv887   divide        Inf -NaN2 -> -NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv891   divide        -sNaN99 -Inf -> -NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv892   divide        -sNaN98 -1 -> -NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv893   divide        -sNaN97 NaN -> -NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv894   divide        -sNaN96 -sNaN94 -> -NaN96  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv895   divide        -NaN95 -sNaN93 -> -NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv896   divide        -Inf -sNaN92 -> -NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv897   divide        0 -sNaN91 -> -NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv898   divide        Inf -sNaN90 -> -NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsdiv899   divide        -NaN -sNaN89 -> -NaN89  Invalid_operation
+
+-- Various flavours of divide by 0
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv901   divide        0 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv902   divide        0.0E+1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsdiv903   divide        0.000 0 -> NaN  Invalid_operation
+dsdiv904   divide        0.0001 0 -> Infinity  Division_by_zero
+dsdiv905   divide        0.01 0 -> Infinity  Division_by_zero
+dsdiv906   divide        0.1 0 -> Infinity  Division_by_zero
+dsdiv907   divide        1 0 -> Infinity  Division_by_zero
+dsdiv908   divide        1 0.0 -> Infinity  Division_by_zero
+dsdiv909   divide        10 0.0 -> Infinity  Division_by_zero
+dsdiv910   divide        1E+25 0.0 -> Infinity  Division_by_zero
+dsdiv911   divide        1E+25 0 -> Infinity  Division_by_zero
+
+dsdiv921   divide        -0.0001 0 -> -Infinity  Division_by_zero
+dsdiv922   divide        -0.01 0 -> -Infinity  Division_by_zero
+dsdiv923   divide        -0.1 0 -> -Infinity  Division_by_zero
+dsdiv924   divide        -1 0 -> -Infinity  Division_by_zero
+dsdiv925   divide        -1 0.0 -> -Infinity  Division_by_zero
+dsdiv926   divide        -10 0.0 -> -Infinity  Division_by_zero
+dsdiv927   divide        -1E+25 0.0 -> -Infinity  Division_by_zero
+dsdiv928   divide        -1E+25 0 -> -Infinity  Division_by_zero
+
+dsdiv931   divide        0.0001 -0 -> -Infinity  Division_by_zero
+dsdiv932   divide        0.01 -0 -> -Infinity  Division_by_zero
+dsdiv933   divide        0.1 -0 -> -Infinity  Division_by_zero
+dsdiv934   divide        1 -0 -> -Infinity  Division_by_zero
+dsdiv935   divide        1 -0.0 -> -Infinity  Division_by_zero
+dsdiv936   divide        10 -0.0 -> -Infinity  Division_by_zero
+dsdiv937   divide        1E+25 -0.0 -> -Infinity  Division_by_zero
+dsdiv938   divide        1E+25 -0 -> -Infinity  Division_by_zero
+
+dsdiv941   divide        -0.0001 -0 -> Infinity  Division_by_zero
+dsdiv942   divide        -0.01 -0 -> Infinity  Division_by_zero
+dsdiv943   divide        -0.1 -0 -> Infinity  Division_by_zero
+dsdiv944   divide        -1 -0 -> Infinity  Division_by_zero
+dsdiv945   divide        -1 -0.0 -> Infinity  Division_by_zero
+dsdiv946   divide        -10 -0.0 -> Infinity  Division_by_zero
+dsdiv947   divide        -1E+25 -0.0 -> Infinity  Division_by_zero
+dsdiv948   divide        -1E+25 -0 -> Infinity  Division_by_zero
+
+-- Examples from SQL proposal (Krishna Kulkarni)
+dsdiv1021  divide        1E+0 1E+0 -> 1
+dsdiv1022  divide        1E+0 2E+0 -> 0.5
+dsdiv1023  divide        1E+0 3E+0 -> 0.3333333  Inexact Rounded
+dsdiv1024  divide        100E+0 1000E-1 -> 1
+dsdiv1025  divide        24E+0 2E+0 -> 12
+dsdiv1026  divide        2400E-1 2E+0 -> 120.0
+dsdiv1027  divide        5E+0 2E+0 -> 2.5
+dsdiv1028  divide        5E+0 20E+0 -> 0.25
+dsdiv1029  divide        5E+0 2000E-1 -> 0.025
+dsdiv1030  divide        5E+0 2E+0 -> 2.5
+dsdiv1031  divide        5E+0 20E+0 -> 0.25
+dsdiv1032  divide        480E+0 3E+0 -> 160
+dsdiv1033  divide        47E+0 2E+0 -> 23.5
+
+-- ECMAScript bad examples
+rounding:    half_down
+dsdiv1040  divide        5 9 -> 0.5555556  Inexact Rounded
+rounding:    half_even
+dsdiv1041  divide        6 11 -> 0.5454545  Inexact Rounded
+
+-- overflow and underflow tests .. note subnormal results
+-- signs
+dsdiv1051  divide        1E+69 1E-78 -> Infinity  Overflow Inexact Rounded
+dsdiv1052  divide        1E+69 -1E-78 -> -Infinity  Overflow Inexact Rounded
+dsdiv1053  divide        -1E+69 1E-78 -> -Infinity  Overflow Inexact Rounded
+dsdiv1054  divide        -1E+69 -1E-78 -> Infinity  Overflow Inexact Rounded
+dsdiv1055  divide        1E-69 1E+78 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsdiv1056  divide        1E-69 -1E+78 -> -0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsdiv1057  divide        -1E-69 1E+78 -> -0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsdiv1058  divide        -1E-69 -1E+78 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+
+-- 'subnormal' boundary (all hard underflow or overflow in base arithemtic)
+dsdiv1060  divide        1E-73 1E+25 -> 1E-98  Subnormal
+dsdiv1061  divide        1E-73 1E+26 -> 1E-99  Subnormal
+dsdiv1062  divide        1E-73 1E+26 -> 1E-99  Subnormal
+dsdiv1063  divide        1E-73 1E+26 -> 1E-99  Subnormal
+dsdiv1064  divide        1E-73 1E+26 -> 1E-99  Subnormal
+dsdiv1065  divide        1E-73 1E+26 -> 1E-99  Subnormal
+dsdiv1066  divide        1E-73 1E+27 -> 1E-100  Subnormal
+dsdiv1067  divide        1E-73 1E+27 -> 1E-100  Subnormal
+dsdiv1068  divide        1E-73 1E+27 -> 1E-100  Subnormal
+dsdiv1069  divide        1E-73 1E+28 -> 1E-101  Subnormal
+-- [no equivalent of 'subnormal' for overflow]
+dsdiv1070  divide        1E+15 1E-80 -> 1.00000E+95  Clamped
+dsdiv1071  divide        1E+15 1E-80 -> 1.00000E+95  Clamped
+dsdiv1072  divide        1E+15 1E-81 -> 1.000000E+96  Clamped
+dsdiv1073  divide        1E+15 1E-81 -> 1.000000E+96  Clamped
+dsdiv1074  divide        1E+15 1E-81 -> 1.000000E+96  Clamped
+dsdiv1075  divide        1E+15 1E-82 -> Infinity  Overflow Inexact Rounded
+dsdiv1076  divide        1E+15 1E-82 -> Infinity  Overflow Inexact Rounded
+dsdiv1077  divide        1E+15 1E-82 -> Infinity  Overflow Inexact Rounded
+dsdiv1078  divide        1E+15 1E-82 -> Infinity  Overflow Inexact Rounded
+dsdiv1079  divide        1E+15 1E-82 -> Infinity  Overflow Inexact Rounded
+
+dsdiv1101  divide        1.0000E-98 1 -> 1.000E-98  Rounded Subnormal
+dsdiv1102  divide        1.000E-98 1E+0 -> 1.000E-98  Subnormal
+dsdiv1103  divide        1.00E-98 1E+0 -> 1.00E-98  Subnormal
+dsdiv1104  divide        1.0E-98 1E+1 -> 1.0E-99  Subnormal
+dsdiv1105  divide        1.0E-98 1E+1 -> 1.0E-99  Subnormal
+dsdiv1106  divide        1.3E-98 1E+1 -> 1.3E-99  Subnormal
+dsdiv1107  divide        1.5E-98 1E+1 -> 1.5E-99  Subnormal
+dsdiv1108  divide        1.7E-98 1E+1 -> 1.7E-99  Subnormal
+dsdiv1109  divide        2.3E-98 1E+1 -> 2.3E-99  Subnormal
+dsdiv1110  divide        2.5E-98 1E+1 -> 2.5E-99  Subnormal
+dsdiv1111  divide        2.7E-98 1E+1 -> 2.7E-99  Subnormal
+dsdiv1112  divide        1.49E-98 1E+1 -> 1.49E-99  Subnormal
+dsdiv1113  divide        1.50E-98 1E+1 -> 1.50E-99  Subnormal
+dsdiv1114  divide        1.51E-98 1E+1 -> 1.51E-99  Subnormal
+dsdiv1115  divide        2.49E-98 1E+1 -> 2.49E-99  Subnormal
+dsdiv1116  divide        2.50E-98 1E+1 -> 2.50E-99  Subnormal
+dsdiv1117  divide        2.51E-98 1E+1 -> 2.51E-99  Subnormal
+
+dsdiv1118  divide        1E-98 1E+1 -> 1E-99  Subnormal
+dsdiv1119  divide        3E-98 1E+1 -> 3E-99  Subnormal
+dsdiv1120  divide        5E-98 1E+1 -> 5E-99  Subnormal
+dsdiv1121  divide        7E-98 1E+1 -> 7E-99  Subnormal
+dsdiv1122  divide        9E-98 1E+1 -> 9E-99  Subnormal
+dsdiv1123  divide        9.9E-98 1E+1 -> 9.9E-99  Subnormal
+
+dsdiv1124  divide        1E-98 -1E+1 -> -1E-99  Subnormal
+dsdiv1125  divide        3E-98 -1E+1 -> -3E-99  Subnormal
+dsdiv1126  divide        -5E-98 1E+1 -> -5E-99  Subnormal
+dsdiv1127  divide        7E-98 -1E+1 -> -7E-99  Subnormal
+dsdiv1128  divide        -9E-98 1E+1 -> -9E-99  Subnormal
+dsdiv1129  divide        9.9E-98 -1E+1 -> -9.9E-99  Subnormal
+dsdiv1130  divide        3.0E-98 -1E+1 -> -3.0E-99  Subnormal
+
+dsdiv1131  divide        1.0E-50 1E+50 -> 1.0E-100  Subnormal
+dsdiv1132  divide        1.0E-50 1E+50 -> 1.0E-100  Subnormal
+dsdiv1133  divide        1.0E-50 1E+50 -> 1.0E-100  Subnormal
+dsdiv1134  divide        2.0E-50 2E+50 -> 1.0E-100  Subnormal
+dsdiv1135  divide        4.0E-50 4E+50 -> 1.0E-100  Subnormal
+dsdiv1136  divide        10.0E-50 10E+50 -> 1.0E-100  Subnormal
+dsdiv1137  divide        30.0E-50 30E+50 -> 1.0E-100  Subnormal
+
+-- randoms
+dsdiv2010  divide        -3.303221E-9 8.796573E+18 -> -3.755123E-28  Inexact Rounded
+dsdiv2011  divide        9331536 6878215 -> 1.356680  Inexact Rounded
+dsdiv2012  divide        5.047526E-18 -8.179482E+16 -> -6.170960E-35  Inexact Rounded
+dsdiv2013  divide        -3707618 3394918 -> -1.092108  Inexact Rounded
+dsdiv2014  divide        99689.01 -4.735204 -> -21052.74  Inexact Rounded
+dsdiv2015  divide        -1447919 2697505 -> -0.5367623  Inexact Rounded
+dsdiv2016  divide        -9.394888E-5 -830585.6 -> 1.131116E-10  Inexact Rounded
+dsdiv2017  divide        -1.056284 88.58753 -> -0.01192362  Inexact Rounded
+dsdiv2018  divide        5763221 6890891 -> 0.8363535  Inexact Rounded
+dsdiv2019  divide        873819.6 9.740610E-12 -> 8.970892E+16  Inexact Rounded
+dsdiv2020  divide        8022916 6178.563 -> 1298.508  Inexact Rounded
+dsdiv2021  divide        203982.3 -2158.285 -> -94.51129  Inexact Rounded
+dsdiv2022  divide        803.6310 7101148 -> 0.0001131692  Inexact Rounded
+dsdiv2023  divide        9.251699E-20 -1.342359E-2 -> -6.892120E-18  Inexact Rounded
+dsdiv2024  divide        -1.980602E-13 -5.474267E+19 -> 3.618022E-33  Inexact Rounded
+dsdiv2025  divide        -210.0320 -8.580953E+20 -> 2.447654E-19  Inexact Rounded
+dsdiv2026  divide        -1.821980E+21 -3.018915 -> 6.035215E+20  Inexact Rounded
+dsdiv2027  divide        -7722647 5.158258E-22 -> -1.497142E+28  Inexact Rounded
+dsdiv2028  divide        -767.0536 2.700029E-15 -> -2.840909E+17  Inexact Rounded
+dsdiv2029  divide        496724.3 7.327000E+16 -> 6.779368E-12  Inexact Rounded
+dsdiv2030  divide        -3042329 -108.9730 -> 27918.19  Inexact Rounded
+dsdiv2031  divide        -7.233815E+10 -5711301 -> 12665.79  Inexact Rounded
+dsdiv2032  divide        -9.999225E+24 4010567 -> -2.493220E+18  Inexact Rounded
+dsdiv2033  divide        -1837272 8.356322 -> -219866.1  Inexact Rounded
+dsdiv2034  divide        2168.519 209.1911 -> 10.36621  Inexact Rounded
+dsdiv2035  divide        -1.884381E+22 2.951813E+5 -> -6.383809E+16  Inexact Rounded
+dsdiv2036  divide        732263.6 961222.9 -> 0.7618042  Inexact Rounded
+dsdiv2037  divide        -8134616 5.376293E+21 -> -1.513053E-15  Inexact Rounded
+dsdiv2038  divide        -4556210 -9.776847E+13 -> 4.660204E-8  Inexact Rounded
+dsdiv2039  divide        -6.489396E+20 -9101963 -> 7.129666E+13  Inexact Rounded
+dsdiv2040  divide        3.694579E+23 6683513 -> 5.527900E+16  Inexact Rounded
+dsdiv2041  divide        -2.252872E+5 -7451917 -> 0.03023211  Inexact Rounded
+dsdiv2042  divide        518303.2 50.01583 -> 10362.78  Inexact Rounded
+dsdiv2043  divide        2.902083E+6 33.32402 -> 87086.82  Inexact Rounded
+dsdiv2044  divide        549619.7 1660828 -> 0.3309311  Inexact Rounded
+dsdiv2045  divide        -6775673 8292152 -> -0.8171188  Inexact Rounded
+dsdiv2046  divide        -77.50929 -5.636885E+18 -> 1.375038E-17  Inexact Rounded
+dsdiv2047  divide        -2.984889E-2 -8810619 -> 3.387831E-9  Inexact Rounded
+dsdiv2048  divide        0.9495175 4476718 -> 2.121013E-7  Inexact Rounded
+dsdiv2049  divide        -2760931 -1087018 -> 2.539913  Inexact Rounded
+dsdiv2050  divide        2843836 -4.209394E-12 -> -6.755927E+17  Inexact Rounded
+dsdiv2051  divide        -8556276 -7.166045E+11 -> 0.00001194003  Inexact Rounded
+dsdiv2052  divide        2533805 7154.115 -> 354.1745  Inexact Rounded
+dsdiv2053  divide        -8858834 97.59736 -> -90769.20  Inexact Rounded
+dsdiv2054  divide        1767835 8400737 -> 0.2104381  Inexact Rounded
+dsdiv2055  divide        -4935066 7973383 -> -0.6189425  Inexact Rounded
+dsdiv2056  divide        790.1685 829.9445 -> 0.9520739  Inexact Rounded
+dsdiv2057  divide        -8920454 -4767.884 -> 1870.946  Inexact Rounded
+dsdiv2058  divide        5353661 53137.59 -> 100.7509  Inexact Rounded
+dsdiv2059  divide        4.051531E-18 -2.343081E+24 -> -1.729147E-42  Inexact Rounded
+dsdiv2060  divide        -1484778 3.062547E-11 -> -4.848180E+16  Inexact Rounded
+
+-- Division probably has pre-rounding, so need to test rounding
+-- explicitly rather than assume included through other tests;
+-- tests include simple rounding and also the tricky cases of sticky
+-- bits following two zeros
+--   1/99999 gives 0.0000100001000010000100001000010000100001
+--                       1234567890123456
+--   1/999999 gives 0.000001000001000001000001000001000001000001
+--                         1234567890123456
+
+rounding:    ceiling
+dsdiv3001  divide        1 3 -> 0.3333334  Inexact Rounded
+dsdiv3002  divide        2 3 -> 0.6666667  Inexact Rounded
+dsdiv3003  divide        1 99999 -> 0.00001000011  Inexact Rounded
+# BOOST_DECIMAL_KNOWN_BUG: known defect: a directed rounding mode drops the sticky bit when the discarded part begins with several zeros, so the result rounds the wrong way; see the same note on ddadd71801 in ddAdd.decTest
+#dsdiv3004  divide        1 999999 -> 0.000001000002  Inexact Rounded
+
+rounding:    floor
+dsdiv3011  divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv3012  divide        2 3 -> 0.6666666  Inexact Rounded
+dsdiv3013  divide        1 99999 -> 0.00001000010  Inexact Rounded
+dsdiv3014  divide        1 999999 -> 0.000001000001  Inexact Rounded
+
+rounding:    up
+dsdiv3021  divide        1 3 -> 0.3333334  Inexact Rounded
+dsdiv3022  divide        2 3 -> 0.6666667  Inexact Rounded
+dsdiv3023  divide        1 99999 -> 0.00001000011  Inexact Rounded
+dsdiv3024  divide        1 999999 -> 0.000001000002  Inexact Rounded
+
+rounding:    down
+dsdiv3031  divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv3032  divide        2 3 -> 0.6666666  Inexact Rounded
+dsdiv3033  divide        1 99999 -> 0.00001000010  Inexact Rounded
+dsdiv3034  divide        1 999999 -> 0.000001000001  Inexact Rounded
+
+rounding:    half_up
+dsdiv3041  divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv3042  divide        2 3 -> 0.6666667  Inexact Rounded
+dsdiv3043  divide        1 99999 -> 0.00001000010  Inexact Rounded
+dsdiv3044  divide        1 999999 -> 0.000001000001  Inexact Rounded
+
+rounding:    half_down
+dsdiv3051  divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv3052  divide        2 3 -> 0.6666667  Inexact Rounded
+dsdiv3053  divide        1 99999 -> 0.00001000010  Inexact Rounded
+dsdiv3054  divide        1 999999 -> 0.000001000001  Inexact Rounded
+
+rounding:    half_even
+dsdiv3061  divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv3062  divide        2 3 -> 0.6666667  Inexact Rounded
+dsdiv3063  divide        1 99999 -> 0.00001000010  Inexact Rounded
+dsdiv3064  divide        1 999999 -> 0.000001000001  Inexact Rounded
+
+rounding:    05up
+dsdiv3071  divide        1 3 -> 0.3333333  Inexact Rounded
+dsdiv3072  divide        2 3 -> 0.6666666  Inexact Rounded
+dsdiv3073  divide        1 99999 -> 0.00001000011  Inexact Rounded
+dsdiv3074  divide        1 999999 -> 0.000001000001  Inexact Rounded
+
+-- random divide tests with result near 1
+rounding:    half_even
+dsdiv4001  divide        3195387 3195385 -> 1.000001  Inexact Rounded
+dsdiv4002  divide        1393723 1393725 -> 0.9999986  Inexact Rounded
+dsdiv4003  divide        7599852 7599855 -> 0.9999996  Inexact Rounded
+dsdiv4004  divide        9579152 9579154 -> 0.9999998  Inexact Rounded
+dsdiv4005  divide        7079399 7079394 -> 1.000001  Inexact Rounded
+dsdiv4006  divide        6636168 6636166 -> 1.000000  Inexact Rounded
+dsdiv4007  divide        6964810 6964814 -> 0.9999994  Inexact Rounded
+dsdiv4008  divide        4182274 4182279 -> 0.9999988  Inexact Rounded
+dsdiv4009  divide        9228329 9228320 -> 1.000001  Inexact Rounded
+dsdiv4010  divide        3428342 3428343 -> 0.9999997  Inexact Rounded
+dsdiv4011  divide        2143513 2143514 -> 0.9999995  Inexact Rounded
+dsdiv4012  divide        1672735 1672731 -> 1.000002  Inexact Rounded
+dsdiv4013  divide        4190716 4190714 -> 1.000000  Inexact Rounded
+dsdiv4014  divide        3942257 3942256 -> 1.000000  Inexact Rounded
+dsdiv4015  divide        2854454 2854452 -> 1.000001  Inexact Rounded
+dsdiv4016  divide        2853251 2853251 -> 1
+dsdiv4017  divide        9453518 9453515 -> 1.000000  Inexact Rounded
+dsdiv4018  divide        3394769 3394767 -> 1.000001  Inexact Rounded
+dsdiv4019  divide        4542187 4542185 -> 1.000000  Inexact Rounded
+dsdiv4020  divide        7312607 7312604 -> 1.000000  Inexact Rounded
+dsdiv4021  divide        1811671 1811675 -> 0.9999978  Inexact Rounded
+dsdiv4022  divide        1706461 1706460 -> 1.000001  Inexact Rounded
+dsdiv4023  divide        6697058 6697050 -> 1.000001  Inexact Rounded
+dsdiv4024  divide        5015289 5015289 -> 1
+dsdiv4025  divide        2359504 2359504 -> 1
+dsdiv4026  divide        2669857 2669858 -> 0.9999996  Inexact Rounded
+dsdiv4027  divide        9329728 9329725 -> 1.000000  Inexact Rounded
+dsdiv4028  divide        3228568 3228566 -> 1.000001  Inexact Rounded
+dsdiv4029  divide        4862225 4862220 -> 1.000001  Inexact Rounded
+dsdiv4030  divide        1022269 1022269 -> 1
+dsdiv4031  divide        1048779 1048778 -> 1.000001  Inexact Rounded
+dsdiv4032  divide        9980118 9980119 -> 0.9999999  Inexact Rounded
+dsdiv4033  divide        7506838 7506831 -> 1.000001  Inexact Rounded
+dsdiv4034  divide        2311190 2311193 -> 0.9999987  Inexact Rounded
+dsdiv4035  divide        4034902 4034906 -> 0.9999990  Inexact Rounded
+dsdiv4036  divide        5700126 5700126 -> 1
+dsdiv4037  divide        6869590 6869595 -> 0.9999993  Inexact Rounded
+dsdiv4038  divide        5576287 5576289 -> 0.9999996  Inexact Rounded
+dsdiv4039  divide        2304848 2304843 -> 1.000002  Inexact Rounded
+dsdiv4040  divide        3265932 3265939 -> 0.9999979  Inexact Rounded
+dsdiv4041  divide        5235714 5235711 -> 1.000001  Inexact Rounded
+dsdiv4042  divide        5578481 5578485 -> 0.9999993  Inexact Rounded
+dsdiv4043  divide        4909614 4909616 -> 0.9999996  Inexact Rounded
+dsdiv4044  divide        6364477 6364477 -> 1
+dsdiv4045  divide        1539370 1539377 -> 0.9999955  Inexact Rounded
+dsdiv4046  divide        2028783 2028786 -> 0.9999985  Inexact Rounded
+dsdiv4047  divide        1376432 1376439 -> 0.9999949  Inexact Rounded
+dsdiv4048  divide        2474515 2474517 -> 0.9999992  Inexact Rounded
+dsdiv4049  divide        7877854 7877854 -> 1
+dsdiv4050  divide        7333248 7333248 -> 1
+dsdiv4051  divide        1240512 1240517 -> 0.9999960  Inexact Rounded
+dsdiv4052  divide        8944738 8944730 -> 1.000001  Inexact Rounded
+dsdiv4053  divide        9883944 9883943 -> 1.000000  Inexact Rounded
+dsdiv4054  divide        6829174 6829173 -> 1.000000  Inexact Rounded
+dsdiv4055  divide        7342752 7342755 -> 0.9999996  Inexact Rounded
+dsdiv4056  divide        8066423 8066423 -> 1
+dsdiv4057  divide        8992775 8992772 -> 1.000000  Inexact Rounded
+dsdiv4058  divide        5485011 5485011 -> 1
+dsdiv4059  divide        5779988 5779980 -> 1.000001  Inexact Rounded
+dsdiv4060  divide        9502264 9502268 -> 0.9999996  Inexact Rounded
+dsdiv4061  divide        2109551 2109551 -> 1
+dsdiv4062  divide        5296181 5296181 -> 1
+dsdiv4063  divide        1440013 1440014 -> 0.9999993  Inexact Rounded
+dsdiv4064  divide        8182111 8182114 -> 0.9999996  Inexact Rounded
+dsdiv4065  divide        4890980 4890986 -> 0.9999988  Inexact Rounded
+dsdiv4066  divide        6475688 6475689 -> 0.9999998  Inexact Rounded
+dsdiv4067  divide        8094348 8094346 -> 1.000000  Inexact Rounded
+dsdiv4068  divide        1982763 1982763 -> 1
+dsdiv4069  divide        9277311 9277317 -> 0.9999994  Inexact Rounded
+dsdiv4070  divide        4335534 4335537 -> 0.9999993  Inexact Rounded
+dsdiv4071  divide        7767118 7767112 -> 1.000001  Inexact Rounded
+dsdiv4072  divide        1578548 1578548 -> 1
+dsdiv4073  divide        3790428 3790425 -> 1.000001  Inexact Rounded
+dsdiv4074  divide        8716827 8716821 -> 1.000001  Inexact Rounded
+dsdiv4075  divide        7441410 7441419 -> 0.9999988  Inexact Rounded
+dsdiv4076  divide        8956825 8956821 -> 1.000000  Inexact Rounded
+dsdiv4077  divide        8337292 8337293 -> 0.9999999  Inexact Rounded
+dsdiv4078  divide        4107779 4107777 -> 1.000000  Inexact Rounded
+dsdiv4079  divide        8691908 8691905 -> 1.000000  Inexact Rounded
+dsdiv4080  divide        2229522 2229527 -> 0.9999978  Inexact Rounded
+dsdiv4081  divide        3984422 3984423 -> 0.9999997  Inexact Rounded
+dsdiv4082  divide        5319819 5319813 -> 1.000001  Inexact Rounded
+dsdiv4083  divide        7710495 7710498 -> 0.9999996  Inexact Rounded
+dsdiv4084  divide        9083236 9083230 -> 1.000001  Inexact Rounded
+dsdiv4085  divide        3566879 3566878 -> 1.000000  Inexact Rounded
+dsdiv4086  divide        5963435 5963434 -> 1.000000  Inexact Rounded
+dsdiv4087  divide        2782272 2782274 -> 0.9999993  Inexact Rounded
+dsdiv4088  divide        3292909 3292901 -> 1.000002  Inexact Rounded
+dsdiv4089  divide        5521871 5521876 -> 0.9999991  Inexact Rounded
+dsdiv4090  divide        2406507 2406507 -> 1
+dsdiv4091  divide        7741148 7741145 -> 1.000000  Inexact Rounded
+dsdiv4092  divide        4576049 4576042 -> 1.000002  Inexact Rounded
+dsdiv4093  divide        9183757 9183754 -> 1.000000  Inexact Rounded
+dsdiv4094  divide        6215739 6215732 -> 1.000001  Inexact Rounded
+dsdiv4095  divide        2485543 2485547 -> 0.9999984  Inexact Rounded
+dsdiv4096  divide        3763145 3763145 -> 1
+dsdiv4097  divide        5513568 5513566 -> 1.000000  Inexact Rounded
+dsdiv4098  divide        3367994 3367998 -> 0.9999988  Inexact Rounded
+dsdiv4099  divide        6134867 6134866 -> 1.000000  Inexact Rounded
+
+-- Null tests

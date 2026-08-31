@@ -1,0 +1,706 @@
+------------------------------------------------------------------------
+-- dsCompareTotal.decTest                                             --
+-- Generated for Boost.Decimal from ddCompareTotal.decTest            --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddCompareTotal narrowed to that context, with         --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- Note that we cannot assume add/subtract tests cover paths adequately,
+-- here, because the code might be quite different (comparison cannot
+-- overflow or underflow, so actual subtractions are not necessary).
+-- Similarly, comparetotal will have some radically different paths
+-- than compare.
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- sanity checks
+dscot001   comparetotal  -2 -2 -> 0
+dscot002   comparetotal  -2 -1 -> -1
+dscot003   comparetotal  -2 0 -> -1
+dscot004   comparetotal  -2 1 -> -1
+dscot005   comparetotal  -2 2 -> -1
+dscot006   comparetotal  -1 -2 -> 1
+dscot007   comparetotal  -1 -1 -> 0
+dscot008   comparetotal  -1 0 -> -1
+dscot009   comparetotal  -1 1 -> -1
+dscot010   comparetotal  -1 2 -> -1
+dscot011   comparetotal  0 -2 -> 1
+dscot012   comparetotal  0 -1 -> 1
+dscot013   comparetotal  0 0 -> 0
+dscot014   comparetotal  0 1 -> -1
+dscot015   comparetotal  0 2 -> -1
+dscot016   comparetotal  1 -2 -> 1
+dscot017   comparetotal  1 -1 -> 1
+dscot018   comparetotal  1 0 -> 1
+dscot019   comparetotal  1 1 -> 0
+dscot020   comparetotal  1 2 -> -1
+dscot021   comparetotal  2 -2 -> 1
+dscot022   comparetotal  2 -1 -> 1
+dscot023   comparetotal  2 0 -> 1
+dscot025   comparetotal  2 1 -> 1
+dscot026   comparetotal  2 2 -> 0
+
+dscot031   comparetotal  -20 -20 -> 0
+dscot032   comparetotal  -20 -10 -> -1
+dscot033   comparetotal  -20 00 -> -1
+dscot034   comparetotal  -20 10 -> -1
+dscot035   comparetotal  -20 20 -> -1
+dscot036   comparetotal  -10 -20 -> 1
+dscot037   comparetotal  -10 -10 -> 0
+dscot038   comparetotal  -10 00 -> -1
+dscot039   comparetotal  -10 10 -> -1
+dscot040   comparetotal  -10 20 -> -1
+dscot041   comparetotal  00 -20 -> 1
+dscot042   comparetotal  00 -10 -> 1
+dscot043   comparetotal  00 00 -> 0
+dscot044   comparetotal  00 10 -> -1
+dscot045   comparetotal  00 20 -> -1
+dscot046   comparetotal  10 -20 -> 1
+dscot047   comparetotal  10 -10 -> 1
+dscot048   comparetotal  10 00 -> 1
+dscot049   comparetotal  10 10 -> 0
+dscot050   comparetotal  10 20 -> -1
+dscot051   comparetotal  20 -20 -> 1
+dscot052   comparetotal  20 -10 -> 1
+dscot053   comparetotal  20 00 -> 1
+dscot055   comparetotal  20 10 -> 1
+dscot056   comparetotal  20 20 -> 0
+
+dscot061   comparetotal  -2.0 -2.0 -> 0
+dscot062   comparetotal  -2.0 -1.0 -> -1
+dscot063   comparetotal  -2.0 0.0 -> -1
+dscot064   comparetotal  -2.0 1.0 -> -1
+dscot065   comparetotal  -2.0 2.0 -> -1
+dscot066   comparetotal  -1.0 -2.0 -> 1
+dscot067   comparetotal  -1.0 -1.0 -> 0
+dscot068   comparetotal  -1.0 0.0 -> -1
+dscot069   comparetotal  -1.0 1.0 -> -1
+dscot070   comparetotal  -1.0 2.0 -> -1
+dscot071   comparetotal  0.0 -2.0 -> 1
+dscot072   comparetotal  0.0 -1.0 -> 1
+dscot073   comparetotal  0.0 0.0 -> 0
+dscot074   comparetotal  0.0 1.0 -> -1
+dscot075   comparetotal  0.0 2.0 -> -1
+dscot076   comparetotal  1.0 -2.0 -> 1
+dscot077   comparetotal  1.0 -1.0 -> 1
+dscot078   comparetotal  1.0 0.0 -> 1
+dscot079   comparetotal  1.0 1.0 -> 0
+dscot080   comparetotal  1.0 2.0 -> -1
+dscot081   comparetotal  2.0 -2.0 -> 1
+dscot082   comparetotal  2.0 -1.0 -> 1
+dscot083   comparetotal  2.0 0.0 -> 1
+dscot085   comparetotal  2.0 1.0 -> 1
+dscot086   comparetotal  2.0 2.0 -> 0
+
+-- now some cases which might overflow if subtract were used
+dscot090   comparetotal  9.999999E+96 9.999999E+96 -> 0
+dscot091   comparetotal  -9.999999E+96 9.999999E+96 -> -1
+dscot092   comparetotal  9.999999E+96 -9.999999E+96 -> 1
+dscot093   comparetotal  -9.999999E+96 -9.999999E+96 -> 0
+
+-- some differing length/exponent cases
+-- in this first group, compare would compare all equal
+dscot100   comparetotal  7.0 7.0 -> 0
+dscot101   comparetotal  7.0 7 -> -1
+dscot102   comparetotal  7 7.0 -> 1
+dscot103   comparetotal  7E+0 7.0 -> 1
+dscot104   comparetotal  70E+0 7.0 -> 1
+dscot105   comparetotal  0.7E+0 7 -> -1
+dscot106   comparetotal  70E+0 7 -> 1
+dscot107   comparetotal  7.0 7E+0 -> -1
+dscot108   comparetotal  7.0 70E+0 -> -1
+dscot109   comparetotal  7 0.7E+0 -> 1
+dscot110   comparetotal  7 70E+0 -> -1
+
+dscot120   comparetotal  8.0 7.0 -> 1
+dscot121   comparetotal  8.0 7 -> 1
+dscot122   comparetotal  8 7.0 -> 1
+dscot123   comparetotal  8E+0 7.0 -> 1
+dscot124   comparetotal  80E+0 7.0 -> 1
+dscot125   comparetotal  0.8E+0 7 -> -1
+dscot126   comparetotal  80E+0 7 -> 1
+dscot127   comparetotal  8.0 7E+0 -> 1
+dscot128   comparetotal  8.0 70E+0 -> -1
+dscot129   comparetotal  8 0.7E+0 -> 1
+dscot130   comparetotal  8 70E+0 -> -1
+
+dscot140   comparetotal  8.0 9.0 -> -1
+dscot141   comparetotal  8.0 9 -> -1
+dscot142   comparetotal  8 9.0 -> -1
+dscot143   comparetotal  8E+0 9.0 -> -1
+dscot144   comparetotal  80E+0 9.0 -> 1
+dscot145   comparetotal  0.8E+0 9 -> -1
+dscot146   comparetotal  80E+0 9 -> 1
+dscot147   comparetotal  8.0 9E+0 -> -1
+dscot148   comparetotal  8.0 90E+0 -> -1
+dscot149   comparetotal  8 0.9E+0 -> 1
+dscot150   comparetotal  8 90E+0 -> -1
+
+-- and again, with sign changes -+ ..
+dscot200   comparetotal  -7.0 7.0 -> -1
+dscot201   comparetotal  -7.0 7 -> -1
+dscot202   comparetotal  -7 7.0 -> -1
+dscot203   comparetotal  -7E+0 7.0 -> -1
+dscot204   comparetotal  -70E+0 7.0 -> -1
+dscot205   comparetotal  -0.7E+0 7 -> -1
+dscot206   comparetotal  -70E+0 7 -> -1
+dscot207   comparetotal  -7.0 7E+0 -> -1
+dscot208   comparetotal  -7.0 70E+0 -> -1
+dscot209   comparetotal  -7 0.7E+0 -> -1
+dscot210   comparetotal  -7 70E+0 -> -1
+
+dscot220   comparetotal  -8.0 7.0 -> -1
+dscot221   comparetotal  -8.0 7 -> -1
+dscot222   comparetotal  -8 7.0 -> -1
+dscot223   comparetotal  -8E+0 7.0 -> -1
+dscot224   comparetotal  -80E+0 7.0 -> -1
+dscot225   comparetotal  -0.8E+0 7 -> -1
+dscot226   comparetotal  -80E+0 7 -> -1
+dscot227   comparetotal  -8.0 7E+0 -> -1
+dscot228   comparetotal  -8.0 70E+0 -> -1
+dscot229   comparetotal  -8 0.7E+0 -> -1
+dscot230   comparetotal  -8 70E+0 -> -1
+
+dscot240   comparetotal  -8.0 9.0 -> -1
+dscot241   comparetotal  -8.0 9 -> -1
+dscot242   comparetotal  -8 9.0 -> -1
+dscot243   comparetotal  -8E+0 9.0 -> -1
+dscot244   comparetotal  -80E+0 9.0 -> -1
+dscot245   comparetotal  -0.8E+0 9 -> -1
+dscot246   comparetotal  -80E+0 9 -> -1
+dscot247   comparetotal  -8.0 9E+0 -> -1
+dscot248   comparetotal  -8.0 90E+0 -> -1
+dscot249   comparetotal  -8 0.9E+0 -> -1
+dscot250   comparetotal  -8 90E+0 -> -1
+
+-- and again, with sign changes +- ..
+dscot300   comparetotal  7.0 -7.0 -> 1
+dscot301   comparetotal  7.0 -7 -> 1
+dscot302   comparetotal  7 -7.0 -> 1
+dscot303   comparetotal  7E+0 -7.0 -> 1
+dscot304   comparetotal  70E+0 -7.0 -> 1
+dscot305   comparetotal  0.7E+0 -7 -> 1
+dscot306   comparetotal  70E+0 -7 -> 1
+dscot307   comparetotal  7.0 -7E+0 -> 1
+dscot308   comparetotal  7.0 -70E+0 -> 1
+dscot309   comparetotal  7 -0.7E+0 -> 1
+dscot310   comparetotal  7 -70E+0 -> 1
+
+dscot320   comparetotal  8.0 -7.0 -> 1
+dscot321   comparetotal  8.0 -7 -> 1
+dscot322   comparetotal  8 -7.0 -> 1
+dscot323   comparetotal  8E+0 -7.0 -> 1
+dscot324   comparetotal  80E+0 -7.0 -> 1
+dscot325   comparetotal  0.8E+0 -7 -> 1
+dscot326   comparetotal  80E+0 -7 -> 1
+dscot327   comparetotal  8.0 -7E+0 -> 1
+dscot328   comparetotal  8.0 -70E+0 -> 1
+dscot329   comparetotal  8 -0.7E+0 -> 1
+dscot330   comparetotal  8 -70E+0 -> 1
+
+dscot340   comparetotal  8.0 -9.0 -> 1
+dscot341   comparetotal  8.0 -9 -> 1
+dscot342   comparetotal  8 -9.0 -> 1
+dscot343   comparetotal  8E+0 -9.0 -> 1
+dscot344   comparetotal  80E+0 -9.0 -> 1
+dscot345   comparetotal  0.8E+0 -9 -> 1
+dscot346   comparetotal  80E+0 -9 -> 1
+dscot347   comparetotal  8.0 -9E+0 -> 1
+dscot348   comparetotal  8.0 -90E+0 -> 1
+dscot349   comparetotal  8 -0.9E+0 -> 1
+dscot350   comparetotal  8 -90E+0 -> 1
+
+-- and again, with sign changes -- ..
+dscot400   comparetotal  -7.0 -7.0 -> 0
+dscot401   comparetotal  -7.0 -7 -> 1
+dscot402   comparetotal  -7 -7.0 -> -1
+dscot403   comparetotal  -7E+0 -7.0 -> -1
+dscot404   comparetotal  -70E+0 -7.0 -> -1
+dscot405   comparetotal  -0.7E+0 -7 -> 1
+dscot406   comparetotal  -70E+0 -7 -> -1
+dscot407   comparetotal  -7.0 -7E+0 -> 1
+dscot408   comparetotal  -7.0 -70E+0 -> 1
+dscot409   comparetotal  -7 -0.7E+0 -> -1
+dscot410   comparetotal  -7 -70E+0 -> 1
+
+dscot420   comparetotal  -8.0 -7.0 -> -1
+dscot421   comparetotal  -8.0 -7 -> -1
+dscot422   comparetotal  -8 -7.0 -> -1
+dscot423   comparetotal  -8E+0 -7.0 -> -1
+dscot424   comparetotal  -80E+0 -7.0 -> -1
+dscot425   comparetotal  -0.8E+0 -7 -> 1
+dscot426   comparetotal  -80E+0 -7 -> -1
+dscot427   comparetotal  -8.0 -7E+0 -> -1
+dscot428   comparetotal  -8.0 -70E+0 -> 1
+dscot429   comparetotal  -8 -0.7E+0 -> -1
+dscot430   comparetotal  -8 -70E+0 -> 1
+
+dscot440   comparetotal  -8.0 -9.0 -> 1
+dscot441   comparetotal  -8.0 -9 -> 1
+dscot442   comparetotal  -8 -9.0 -> 1
+dscot443   comparetotal  -8E+0 -9.0 -> 1
+dscot444   comparetotal  -80E+0 -9.0 -> -1
+dscot445   comparetotal  -0.8E+0 -9 -> 1
+dscot446   comparetotal  -80E+0 -9 -> -1
+dscot447   comparetotal  -8.0 -9E+0 -> 1
+dscot448   comparetotal  -8.0 -90E+0 -> 1
+dscot449   comparetotal  -8 -0.9E+0 -> -1
+dscot450   comparetotal  -8 -90E+0 -> 1
+
+
+-- testcases that subtract to lots of zeros at boundaries [pgr]
+dscot473   comparetotal  123.4560E-22 123.456E-22 -> -1
+dscot474   comparetotal  123.4560E+22 123.456E+22 -> -1
+dscot475   comparetotal  123.4560E-22 123.456E-22 -> -1
+dscot476   comparetotal  123.4560E+22 123.456E+22 -> -1
+dscot477   comparetotal  123.4560E-22 123.456E-22 -> -1
+dscot478   comparetotal  123.4560E+22 123.456E+22 -> -1
+dscot479   comparetotal  123.4560E-22 123.456E-22 -> -1
+dscot480   comparetotal  123.4560E+22 123.456E+22 -> -1
+dscot481   comparetotal  123.4560E-22 123.456E-22 -> -1
+dscot482   comparetotal  123.4560E+22 123.456E+22 -> -1
+dscot483   comparetotal  123.456E-22 123.456E-22 -> 0
+dscot487   comparetotal  123.456E+22 123.4560E+22 -> 1
+dscot488   comparetotal  123.456E-22 123.4560E-22 -> 1
+dscot489   comparetotal  123.456E+22 123.4560E+22 -> 1
+dscot490   comparetotal  123.456E-22 123.4560E-22 -> 1
+dscot491   comparetotal  123.456E+22 123.4560E+22 -> 1
+dscot492   comparetotal  123.456E-22 123.4560E-22 -> 1
+dscot493   comparetotal  123.456E+22 123.4560E+22 -> 1
+dscot494   comparetotal  123.456E-22 123.4560E-22 -> 1
+dscot495   comparetotal  123.456E+22 123.4560E+22 -> 1
+dscot496   comparetotal  123.456E-22 123.4560E-22 -> 1
+dscot497   comparetotal  123.456E+22 123.456E+22 -> 0
+
+-- wide-ranging, around precision; signs equal
+dscot498   comparetotal  1 1E-4 -> 1
+dscot499   comparetotal  1 1E-4 -> 1
+dscot500   comparetotal  1 1E-4 -> 1
+dscot501   comparetotal  1 1E-4 -> 1
+dscot502   comparetotal  1 1E-3 -> 1
+dscot503   comparetotal  1 1E-3 -> 1
+dscot504   comparetotal  1 1E-3 -> 1
+dscot505   comparetotal  1 1E-2 -> 1
+dscot506   comparetotal  1 1E-2 -> 1
+dscot507   comparetotal  1 1E-2 -> 1
+dscot508   comparetotal  1 1E-2 -> 1
+dscot509   comparetotal  1 1E-2 -> 1
+dscot510   comparetotal  1 1E-1 -> 1
+dscot511   comparetotal  1 1E-1 -> 1
+dscot512   comparetotal  1 1E-1 -> 1
+dscot513   comparetotal  1 1E+0 -> 0
+dscot514   comparetotal  1 1E+0 -> 0
+dscot515   comparetotal  1 1E+0 -> 0
+dscot516   comparetotal  1 1E+0 -> 0
+dscot517   comparetotal  1 1E+0 -> 0
+dscot518   comparetotal  1 1E+1 -> -1
+dscot519   comparetotal  1 1E+1 -> -1
+dscot521   comparetotal  1 1E+1 -> -1
+dscot522   comparetotal  1 1E+2 -> -1
+dscot523   comparetotal  1 1E+2 -> -1
+dscot524   comparetotal  1 1E+2 -> -1
+dscot525   comparetotal  1 1E+2 -> -1
+dscot526   comparetotal  1 1E+2 -> -1
+dscot527   comparetotal  1 1E+3 -> -1
+dscot528   comparetotal  1 1E+3 -> -1
+dscot529   comparetotal  1 1E+3 -> -1
+dscot530   comparetotal  1 1E+4 -> -1
+dscot531   comparetotal  1 1E+4 -> -1
+dscot532   comparetotal  1 1E+4 -> -1
+dscot533   comparetotal  1 1E+4 -> -1
+-- LR swap
+dscot538   comparetotal  1E-4 1 -> -1
+dscot539   comparetotal  1E-4 1 -> -1
+dscot540   comparetotal  1E-4 1 -> -1
+dscot541   comparetotal  1E-4 1 -> -1
+dscot542   comparetotal  1E-3 1 -> -1
+dscot543   comparetotal  1E-3 1 -> -1
+dscot544   comparetotal  1E-3 1 -> -1
+dscot545   comparetotal  1E-2 1 -> -1
+dscot546   comparetotal  1E-2 1 -> -1
+dscot547   comparetotal  1E-2 1 -> -1
+dscot548   comparetotal  1E-2 1 -> -1
+dscot549   comparetotal  1E-2 1 -> -1
+dscot550   comparetotal  1E-1 1 -> -1
+dscot551   comparetotal  1E-1 1 -> -1
+dscot552   comparetotal  1E-1 1 -> -1
+dscot553   comparetotal  1E+0 1 -> 0
+dscot554   comparetotal  1E+0 1 -> 0
+dscot555   comparetotal  1E+0 1 -> 0
+dscot556   comparetotal  1E+0 1 -> 0
+dscot557   comparetotal  1E+0 1 -> 0
+dscot558   comparetotal  1E+1 1 -> 1
+dscot559   comparetotal  1E+1 1 -> 1
+dscot561   comparetotal  1E+1 1 -> 1
+dscot562   comparetotal  1E+2 1 -> 1
+dscot563   comparetotal  1E+2 1 -> 1
+dscot564   comparetotal  1E+2 1 -> 1
+dscot565   comparetotal  1E+2 1 -> 1
+dscot566   comparetotal  1E+2 1 -> 1
+dscot567   comparetotal  1E+3 1 -> 1
+dscot568   comparetotal  1E+3 1 -> 1
+dscot569   comparetotal  1E+3 1 -> 1
+dscot570   comparetotal  1E+4 1 -> 1
+dscot571   comparetotal  1E+4 1 -> 1
+dscot572   comparetotal  1E+4 1 -> 1
+dscot573   comparetotal  1E+4 1 -> 1
+-- similar with a useful coefficient, one side only
+dscot578   comparetotal  0.0000009876541 1E-4 -> -1
+dscot579   comparetotal  0.0000009876541 1E-4 -> -1
+dscot580   comparetotal  0.0000009876541 1E-4 -> -1
+dscot581   comparetotal  0.0000009876541 1E-4 -> -1
+dscot582   comparetotal  0.0000009876541 1E-3 -> -1
+dscot583   comparetotal  0.0000009876541 1E-3 -> -1
+dscot584   comparetotal  0.0000009876541 1E-3 -> -1
+dscot585   comparetotal  0.0000009876541 1E-2 -> -1
+dscot586   comparetotal  0.0000009876541 1E-2 -> -1
+dscot587   comparetotal  0.0000009876541 1E-2 -> -1
+dscot588   comparetotal  0.0000009876541 1E-2 -> -1
+dscot589   comparetotal  0.0000009876541 1E-2 -> -1
+dscot590   comparetotal  0.0000009876541 1E-1 -> -1
+dscot591   comparetotal  0.0000009876541 1E-1 -> -1
+dscot592   comparetotal  0.0000009876541 1E-1 -> -1
+dscot593   comparetotal  0.0000009876541 1E+0 -> -1
+dscot594   comparetotal  0.0000009876541 1E+0 -> -1
+dscot595   comparetotal  0.0000009876541 1E+0 -> -1
+dscot596   comparetotal  0.0000009876541 1E+0 -> -1
+dscot597   comparetotal  0.0000009876541 1E+0 -> -1
+dscot598   comparetotal  0.0000009876541 1E+1 -> -1
+dscot599   comparetotal  0.0000009876541 1E+1 -> -1
+
+-- check some unit-y traps
+dscot600   comparetotal  12 12.2345 -> -1
+dscot601   comparetotal  12.0 12.2345 -> -1
+dscot602   comparetotal  12.00 12.2345 -> -1
+dscot603   comparetotal  12.000 12.2345 -> -1
+dscot604   comparetotal  12.0000 12.2345 -> -1
+dscot605   comparetotal  12.00000 12.2345 -> -1
+dscot606   comparetotal  12.00000 12.2345 -> -1
+dscot607   comparetotal  12.00000 12.2345 -> -1
+dscot608   comparetotal  12.00000 12.2345 -> -1
+dscot609   comparetotal  12.00000 12.2345 -> -1
+dscot610   comparetotal  12.1234 12 -> 1
+dscot611   comparetotal  12.1234 12.0 -> 1
+dscot612   comparetotal  12.1234 12.00 -> 1
+dscot613   comparetotal  12.1234 12.000 -> 1
+dscot614   comparetotal  12.1234 12.0000 -> 1
+dscot615   comparetotal  12.1234 12.00000 -> 1
+dscot616   comparetotal  12.1234 12.00000 -> 1
+dscot617   comparetotal  12.1234 12.00000 -> 1
+dscot618   comparetotal  12.1234 12.00000 -> 1
+dscot619   comparetotal  12.1234 12.00000 -> 1
+dscot620   comparetotal  -12 -12.2345 -> 1
+dscot621   comparetotal  -12.0 -12.2345 -> 1
+dscot622   comparetotal  -12.00 -12.2345 -> 1
+dscot623   comparetotal  -12.000 -12.2345 -> 1
+dscot624   comparetotal  -12.0000 -12.2345 -> 1
+dscot625   comparetotal  -12.00000 -12.2345 -> 1
+dscot626   comparetotal  -12.00000 -12.2345 -> 1
+dscot627   comparetotal  -12.00000 -12.2345 -> 1
+dscot628   comparetotal  -12.00000 -12.2345 -> 1
+dscot629   comparetotal  -12.00000 -12.2345 -> 1
+dscot630   comparetotal  -12.1234 -12 -> -1
+dscot631   comparetotal  -12.1234 -12.0 -> -1
+dscot632   comparetotal  -12.1234 -12.00 -> -1
+dscot633   comparetotal  -12.1234 -12.000 -> -1
+dscot634   comparetotal  -12.1234 -12.0000 -> -1
+dscot635   comparetotal  -12.1234 -12.00000 -> -1
+dscot636   comparetotal  -12.1234 -12.00000 -> -1
+dscot637   comparetotal  -12.1234 -12.00000 -> -1
+dscot638   comparetotal  -12.1234 -12.00000 -> -1
+dscot639   comparetotal  -12.1234 -12.00000 -> -1
+
+-- extended zeros
+dscot640   comparetotal  0 0 -> 0
+dscot641   comparetotal  0 -0 -> 1
+dscot642   comparetotal  0 -0.0 -> 1
+dscot643   comparetotal  0 0.0 -> 1
+dscot644   comparetotal  -0 0 -> -1
+dscot645   comparetotal  -0 -0 -> 0
+dscot646   comparetotal  -0 -0.0 -> -1
+dscot647   comparetotal  -0 0.0 -> -1
+dscot648   comparetotal  0.0 0 -> -1
+dscot649   comparetotal  0.0 -0 -> 1
+dscot650   comparetotal  0.0 -0.0 -> 1
+dscot651   comparetotal  0.0 0.0 -> 0
+dscot652   comparetotal  -0.0 0 -> -1
+dscot653   comparetotal  -0.0 -0 -> 1
+dscot654   comparetotal  -0.0 -0.0 -> 0
+dscot655   comparetotal  -0.0 0.0 -> -1
+
+dscot656   comparetotal  -0E+0 0.0 -> -1
+dscot657   comparetotal  -0E+0 0.0 -> -1
+dscot658   comparetotal  0E+0 0.0 -> 1
+dscot659   comparetotal  0E+0 0.0 -> 1
+dscot660   comparetotal  -0E+0 0 -> -1
+dscot661   comparetotal  -0E+0 0 -> -1
+dscot662   comparetotal  0E+0 0 -> 0
+dscot663   comparetotal  0E+0 0 -> 0
+dscot664   comparetotal  -0E+0 -0E+0 -> 0
+dscot665   comparetotal  -0E+0 -0E+0 -> 0
+dscot666   comparetotal  0E+0 -0E+0 -> 1
+dscot667   comparetotal  0E+0 -0E+0 -> 1
+dscot668   comparetotal  -0E+0 -0E+0 -> 0
+dscot669   comparetotal  -0E+0 -0E+0 -> 0
+dscot670   comparetotal  0E+0 -0E+0 -> 1
+dscot671   comparetotal  0E+0 -0E+0 -> 1
+dscot672   comparetotal  -0E+0 0E+0 -> -1
+dscot673   comparetotal  -0E+0 0E+0 -> -1
+dscot674   comparetotal  0E+0 0E+0 -> 0
+dscot675   comparetotal  0E+0 0E+0 -> 0
+dscot676   comparetotal  -0E+0 0E+0 -> -1
+dscot677   comparetotal  -0E+0 0E+0 -> -1
+dscot678   comparetotal  0E+0 0E+0 -> 0
+dscot679   comparetotal  0E+0 0E+0 -> 0
+
+-- trailing zeros; unit-y
+dscot680   comparetotal  12 12 -> 0
+dscot681   comparetotal  12 12.0 -> 1
+dscot682   comparetotal  12 12.00 -> 1
+dscot683   comparetotal  12 12.000 -> 1
+dscot684   comparetotal  12 12.0000 -> 1
+dscot685   comparetotal  12 12.00000 -> 1
+dscot686   comparetotal  12 12.00000 -> 1
+dscot687   comparetotal  12 12.00000 -> 1
+dscot688   comparetotal  12 12.00000 -> 1
+dscot689   comparetotal  12 12.00000 -> 1
+dscot690   comparetotal  12 12 -> 0
+dscot691   comparetotal  12.0 12 -> -1
+dscot692   comparetotal  12.00 12 -> -1
+dscot693   comparetotal  12.000 12 -> -1
+dscot694   comparetotal  12.0000 12 -> -1
+dscot695   comparetotal  12.00000 12 -> -1
+dscot696   comparetotal  12.00000 12 -> -1
+dscot697   comparetotal  12.00000 12 -> -1
+dscot698   comparetotal  12.00000 12 -> -1
+dscot699   comparetotal  12.00000 12 -> -1
+
+-- old long operand checks
+dscot701   comparetotal  1234560 1 -> 1
+dscot702   comparetotal  1 1234560 -> -1
+dscot703   comparetotal  1234560 1 -> 1
+dscot704   comparetotal  1 1234560 -> -1
+dscot705   comparetotal  1234560 1 -> 1
+dscot706   comparetotal  1 1234560 -> -1
+dscot707   comparetotal  1234561 1 -> 1
+dscot708   comparetotal  1 1234561 -> -1
+dscot709   comparetotal  1234561 1 -> 1
+dscot710   comparetotal  1 1234561 -> -1
+dscot711   comparetotal  1234566 1 -> 1
+dscot712   comparetotal  1 1234566 -> -1
+dscot713   comparetotal  -1234561 1 -> -1
+dscot714   comparetotal  1 -1234561 -> 1
+dscot715   comparetotal  -1234561 1 -> -1
+dscot716   comparetotal  1 -1234561 -> 1
+dscot717   comparetotal  -1234566 1 -> -1
+dscot718   comparetotal  1 -1234566 -> 1
+
+-- old residue cases
+dscot740   comparetotal  1 0.9999999 -> 1
+dscot741   comparetotal  1 0.999999 -> 1
+dscot742   comparetotal  1 0.99999 -> 1
+dscot743   comparetotal  1 1.0000 -> 1
+dscot744   comparetotal  1 1.00001 -> -1
+dscot745   comparetotal  1 1.000001 -> -1
+dscot746   comparetotal  1 1.000001 -> -1
+dscot750   comparetotal  0.9999999 1 -> -1
+dscot751   comparetotal  0.999999 1 -> -1
+dscot752   comparetotal  0.99999 1 -> -1
+dscot753   comparetotal  1.0000 1 -> -1
+dscot754   comparetotal  1.00001 1 -> 1
+dscot755   comparetotal  1.000001 1 -> 1
+dscot756   comparetotal  1.000001 1 -> 1
+
+-- Specials
+dscot780   comparetotal  Inf -Inf -> 1
+dscot781   comparetotal  Inf -1000 -> 1
+dscot782   comparetotal  Inf -1 -> 1
+dscot783   comparetotal  Inf -0 -> 1
+dscot784   comparetotal  Inf 0 -> 1
+dscot785   comparetotal  Inf 1 -> 1
+dscot786   comparetotal  Inf 1000 -> 1
+dscot787   comparetotal  Inf Inf -> 0
+dscot788   comparetotal  -1000 Inf -> -1
+dscot789   comparetotal  -Inf Inf -> -1
+dscot790   comparetotal  -1 Inf -> -1
+dscot791   comparetotal  -0 Inf -> -1
+dscot792   comparetotal  0 Inf -> -1
+dscot793   comparetotal  1 Inf -> -1
+dscot794   comparetotal  1000 Inf -> -1
+dscot795   comparetotal  Inf Inf -> 0
+
+dscot800   comparetotal  -Inf -Inf -> 0
+dscot801   comparetotal  -Inf -1000 -> -1
+dscot802   comparetotal  -Inf -1 -> -1
+dscot803   comparetotal  -Inf -0 -> -1
+dscot804   comparetotal  -Inf 0 -> -1
+dscot805   comparetotal  -Inf 1 -> -1
+dscot806   comparetotal  -Inf 1000 -> -1
+dscot807   comparetotal  -Inf Inf -> -1
+dscot808   comparetotal  -Inf -Inf -> 0
+dscot809   comparetotal  -1000 -Inf -> 1
+dscot810   comparetotal  -1 -Inf -> 1
+dscot811   comparetotal  -0 -Inf -> 1
+dscot812   comparetotal  0 -Inf -> 1
+dscot813   comparetotal  1 -Inf -> 1
+dscot814   comparetotal  1000 -Inf -> 1
+dscot815   comparetotal  Inf -Inf -> 1
+
+dscot821   comparetotal  NaN -Inf -> 1
+dscot822   comparetotal  NaN -1000 -> 1
+dscot823   comparetotal  NaN -1 -> 1
+dscot824   comparetotal  NaN -0 -> 1
+dscot825   comparetotal  NaN 0 -> 1
+dscot826   comparetotal  NaN 1 -> 1
+dscot827   comparetotal  NaN 1000 -> 1
+dscot828   comparetotal  NaN Inf -> 1
+dscot829   comparetotal  NaN NaN -> 0
+dscot830   comparetotal  -Inf NaN -> -1
+dscot831   comparetotal  -1000 NaN -> -1
+dscot832   comparetotal  -1 NaN -> -1
+dscot833   comparetotal  -0 NaN -> -1
+dscot834   comparetotal  0 NaN -> -1
+dscot835   comparetotal  1 NaN -> -1
+dscot836   comparetotal  1000 NaN -> -1
+dscot837   comparetotal  Inf NaN -> -1
+dscot838   comparetotal  -NaN -NaN -> 0
+dscot839   comparetotal  +NaN -NaN -> 1
+dscot840   comparetotal  -NaN +NaN -> -1
+
+dscot841   comparetotal  sNaN -sNaN -> 1
+dscot842   comparetotal  sNaN -NaN -> 1
+dscot843   comparetotal  sNaN -Inf -> 1
+dscot844   comparetotal  sNaN -1000 -> 1
+dscot845   comparetotal  sNaN -1 -> 1
+dscot846   comparetotal  sNaN -0 -> 1
+dscot847   comparetotal  sNaN 0 -> 1
+dscot848   comparetotal  sNaN 1 -> 1
+dscot849   comparetotal  sNaN 1000 -> 1
+dscot850   comparetotal  sNaN NaN -> -1
+dscot851   comparetotal  sNaN sNaN -> 0
+
+dscot852   comparetotal  -sNaN sNaN -> -1
+dscot853   comparetotal  -NaN sNaN -> -1
+dscot854   comparetotal  -Inf sNaN -> -1
+dscot855   comparetotal  -1000 sNaN -> -1
+dscot856   comparetotal  -1 sNaN -> -1
+dscot857   comparetotal  -0 sNaN -> -1
+dscot858   comparetotal  0 sNaN -> -1
+dscot859   comparetotal  1 sNaN -> -1
+dscot860   comparetotal  1000 sNaN -> -1
+dscot861   comparetotal  Inf sNaN -> -1
+dscot862   comparetotal  NaN sNaN -> 1
+dscot863   comparetotal  sNaN sNaN -> 0
+
+dscot871   comparetotal  -sNaN -sNaN -> 0
+dscot872   comparetotal  -sNaN -NaN -> 1
+dscot873   comparetotal  -sNaN -Inf -> -1
+dscot874   comparetotal  -sNaN -1000 -> -1
+dscot875   comparetotal  -sNaN -1 -> -1
+dscot876   comparetotal  -sNaN -0 -> -1
+dscot877   comparetotal  -sNaN 0 -> -1
+dscot878   comparetotal  -sNaN 1 -> -1
+dscot879   comparetotal  -sNaN 1000 -> -1
+dscot880   comparetotal  -sNaN NaN -> -1
+dscot881   comparetotal  -sNaN sNaN -> -1
+
+dscot882   comparetotal  -sNaN -sNaN -> 0
+dscot883   comparetotal  -NaN -sNaN -> -1
+dscot884   comparetotal  -Inf -sNaN -> 1
+dscot885   comparetotal  -1000 -sNaN -> 1
+dscot886   comparetotal  -1 -sNaN -> 1
+dscot887   comparetotal  -0 -sNaN -> 1
+dscot888   comparetotal  0 -sNaN -> 1
+dscot889   comparetotal  1 -sNaN -> 1
+dscot890   comparetotal  1000 -sNaN -> 1
+dscot891   comparetotal  Inf -sNaN -> 1
+dscot892   comparetotal  NaN -sNaN -> 1
+dscot893   comparetotal  sNaN -sNaN -> 1
+
+-- NaNs with payload
+dscot960   comparetotal  NaN9 -Inf -> 1
+dscot961   comparetotal  NaN8 999 -> 1
+dscot962   comparetotal  NaN77 Inf -> 1
+dscot963   comparetotal  -NaN67 NaN5 -> -1
+dscot964   comparetotal  -Inf -NaN4 -> 1
+dscot965   comparetotal  -999 -NaN33 -> 1
+dscot966   comparetotal  Inf NaN2 -> -1
+
+dscot970   comparetotal  -NaN41 -NaN42 -> 1
+dscot971   comparetotal  +NaN41 -NaN42 -> 1
+dscot972   comparetotal  -NaN41 +NaN42 -> -1
+dscot973   comparetotal  +NaN41 +NaN42 -> -1
+dscot974   comparetotal  -NaN42 -NaN01 -> -1
+dscot975   comparetotal  +NaN42 -NaN01 -> 1
+dscot976   comparetotal  -NaN42 +NaN01 -> -1
+dscot977   comparetotal  +NaN42 +NaN01 -> 1
+
+dscot980   comparetotal  -sNaN771 -sNaN772 -> 1
+dscot981   comparetotal  +sNaN771 -sNaN772 -> 1
+dscot982   comparetotal  -sNaN771 +sNaN772 -> -1
+dscot983   comparetotal  +sNaN771 +sNaN772 -> -1
+dscot984   comparetotal  -sNaN772 -sNaN771 -> -1
+dscot985   comparetotal  +sNaN772 -sNaN771 -> 1
+dscot986   comparetotal  -sNaN772 +sNaN771 -> -1
+dscot987   comparetotal  +sNaN772 +sNaN771 -> 1
+
+dscot991   comparetotal  -sNaN99 -Inf -> -1
+dscot992   comparetotal  sNaN98 -11 -> 1
+dscot993   comparetotal  sNaN97 NaN -> -1
+dscot994   comparetotal  sNaN16 sNaN94 -> -1
+dscot995   comparetotal  NaN85 sNaN83 -> 1
+dscot996   comparetotal  -Inf sNaN92 -> -1
+dscot997   comparetotal  088 sNaN81 -> -1
+dscot998   comparetotal  Inf sNaN90 -> -1
+dscot999   comparetotal  NaN -sNaN89 -> 1
+
+-- spread zeros
+dscot1110  comparetotal  0E-96 0 -> -1
+dscot1111  comparetotal  0E-96 -0 -> 1
+dscot1112  comparetotal  -0E-96 0 -> -1
+dscot1113  comparetotal  -0E-96 -0 -> 1
+dscot1114  comparetotal  0E-96 0E+96 -> -1
+dscot1115  comparetotal  0E-96 -0E+96 -> 1
+dscot1116  comparetotal  -0E-96 0E+96 -> -1
+dscot1117  comparetotal  -0E-96 -0E+96 -> 1
+dscot1118  comparetotal  0 0E+96 -> -1
+dscot1119  comparetotal  0 -0E+96 -> 1
+dscot1120  comparetotal  -0 0E+96 -> -1
+dscot1121  comparetotal  -0 -0E+96 -> 1
+
+dscot1130  comparetotal  0E+96 0 -> 1
+dscot1131  comparetotal  0E+96 -0 -> 1
+dscot1132  comparetotal  -0E+96 0 -> -1
+dscot1133  comparetotal  -0E+96 -0 -> -1
+dscot1134  comparetotal  0E+96 0E-96 -> 1
+dscot1135  comparetotal  0E+96 -0E-96 -> 1
+dscot1136  comparetotal  -0E+96 0E-96 -> -1
+dscot1137  comparetotal  -0E+96 -0E-96 -> -1
+dscot1138  comparetotal  0 0E-96 -> 1
+dscot1139  comparetotal  0 -0E-96 -> 1
+dscot1140  comparetotal  -0 0E-96 -> -1
+dscot1141  comparetotal  -0 -0E-96 -> -1
+
+-- Null tests

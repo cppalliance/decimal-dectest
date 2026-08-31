@@ -15,6 +15,7 @@ int main()
     test_two_arg_harness("dectest/copysign.decTest", "copysign", op);
     test_two_arg_harness("dectest/ddCopySign.decTest", "copysign", op);
     test_two_arg_harness("dectest/dqCopySign.decTest", "copysign", op);
+    test_two_arg_harness("dectest/dsCopySign.decTest", "copysign", op);
 
     return boost::report_errors();
 }

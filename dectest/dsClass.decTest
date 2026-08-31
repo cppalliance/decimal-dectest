@@ -1,0 +1,78 @@
+------------------------------------------------------------------------
+-- dsClass.decTest                                                    --
+-- Generated for Boost.Decimal from ddClass.decTest                   --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddClass narrowed to that context, with                --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- [New 2006.11.27]
+rounding:    half_even
+
+dscla001   class         0 -> +Zero
+dscla002   class         0.00 -> +Zero
+dscla003   class         0E+1 -> +Zero
+dscla004   class         1E-99 -> +Subnormal
+dscla005   class         0.1E-96 -> +Subnormal
+dscla006   class         0.9999999E-96 -> +Subnormal
+dscla007   class         1.000000E-96 -> +Subnormal
+dscla008   class         1E-96 -> +Subnormal
+dscla009   class         1E-25 -> +Normal
+dscla010   class         1E-2 -> +Normal
+dscla012   class         1E+0 -> +Normal
+dscla013   class         1 -> +Normal
+dscla014   class         2.50 -> +Normal
+dscla015   class         100.100 -> +Normal
+dscla016   class         1E+8 -> +Normal
+dscla017   class         1E+96 -> +Normal
+dscla018   class         9.999999E+96 -> +Normal
+dscla019   class         Inf -> +Infinity
+
+dscla021   class         -0 -> -Zero
+dscla022   class         -0.00 -> -Zero
+dscla023   class         -0E+1 -> -Zero
+dscla024   class         -1E-99 -> -Subnormal
+dscla025   class         -0.1E-96 -> -Subnormal
+dscla026   class         -0.9999999E-96 -> -Subnormal
+dscla027   class         -1.000000E-96 -> -Subnormal
+dscla028   class         -1E-96 -> -Subnormal
+dscla029   class         -1E-25 -> -Normal
+dscla030   class         -1E-2 -> -Normal
+dscla032   class         -1E+0 -> -Normal
+dscla033   class         -1 -> -Normal
+dscla034   class         -2.50 -> -Normal
+dscla035   class         -100.100 -> -Normal
+dscla036   class         -1E+8 -> -Normal
+dscla037   class         -1E+96 -> -Normal
+dscla038   class         -9.999999E+96 -> -Normal
+dscla039   class         -Inf -> -Infinity
+
+dscla041   class         NaN -> NaN
+dscla042   class         -NaN -> NaN
+dscla043   class         +NaN12345 -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscla044   class         sNaN -> sNaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscla045   class         -sNaN -> sNaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscla046   class         +sNaN12345 -> sNaN

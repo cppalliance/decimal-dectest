@@ -1,0 +1,131 @@
+------------------------------------------------------------------------
+-- dsAbs.decTest                                                      --
+-- Generated for Boost.Decimal from ddAbs.decTest                     --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddAbs narrowed to that context, with                  --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+dsabs001   abs           1 -> 1
+dsabs002   abs           -1 -> 1
+dsabs003   abs           1.00 -> 1.00
+dsabs004   abs           -1.00 -> 1.00
+dsabs005   abs           0 -> 0
+dsabs006   abs           0.00 -> 0.00
+dsabs007   abs           00.0 -> 0.0
+dsabs008   abs           00.00 -> 0.00
+dsabs009   abs           00 -> 0
+
+dsabs010   abs           -2 -> 2
+dsabs011   abs           2 -> 2
+dsabs012   abs           -2.00 -> 2.00
+dsabs013   abs           2.00 -> 2.00
+dsabs014   abs           -0 -> 0
+dsabs015   abs           -0.00 -> 0.00
+dsabs016   abs           -00.0 -> 0.0
+dsabs017   abs           -00.00 -> 0.00
+dsabs018   abs           -00 -> 0
+
+dsabs020   abs           -2000000 -> 2000000
+dsabs021   abs           2000000 -> 2000000
+
+dsabs030   abs           +0.1 -> 0.1
+dsabs031   abs           -0.1 -> 0.1
+dsabs032   abs           +0.01 -> 0.01
+dsabs033   abs           -0.01 -> 0.01
+dsabs034   abs           +0.001 -> 0.001
+dsabs035   abs           -0.001 -> 0.001
+dsabs036   abs           +0.000001 -> 0.000001
+dsabs037   abs           -0.000001 -> 0.000001
+dsabs038   abs           +0.000000000001 -> 1E-12
+dsabs039   abs           -0.000000000001 -> 1E-12
+
+-- examples from decArith
+dsabs040   abs           2.1 -> 2.1
+dsabs041   abs           -100 -> 100
+dsabs042   abs           101.5 -> 101.5
+dsabs043   abs           -101.5 -> 101.5
+
+-- more fixed, potential LHS swaps/overlays if done by subtract 0
+dsabs060   abs           -56267E-2 -> 562.67
+dsabs061   abs           -56267E-1 -> 5626.7
+dsabs062   abs           -56267E+0 -> 56267
+dsabs063   abs           -56267E+0 -> 56267
+dsabs065   abs           -56267E+0 -> 56267
+
+-- subnormals and underflow
+
+-- long operand tests
+dsabs321   abs           1234566 -> 1234566
+dsabs322   abs           1234560 -> 1234560
+dsabs323   abs           1234560 -> 1234560
+dsabs324   abs           1234560 -> 1234560
+dsabs325   abs           1234561 -> 1234561
+dsabs326   abs           1234561 -> 1234561
+dsabs327   abs           1234566 -> 1234566
+
+-- zeros
+dsabs111   abs           0 -> 0
+dsabs112   abs           -0 -> 0
+dsabs113   abs           0E+2 -> 0E+2
+dsabs114   abs           -0E+2 -> 0E+2
+dsabs115   abs           0.0000 -> 0.0000
+dsabs116   abs           -0.0000 -> 0.0000
+dsabs117   abs           0E-35 -> 0E-35
+dsabs118   abs           -0E-35 -> 0E-35
+
+-- full coefficients, alternating bits
+dsabs121   abs           2682682 -> 2682682
+dsabs122   abs           -2682682 -> 2682682
+dsabs123   abs           1341341 -> 1341341
+dsabs124   abs           -1341341 -> 1341341
+
+-- Nmax, Nmin, Ntiny
+dsabs131   abs           9.999999E+96 -> 9.999999E+96
+dsabs132   abs           1E-96 -> 1E-96  Subnormal
+dsabs133   abs           1.000000E-96 -> 1.00000E-96  Rounded Subnormal
+dsabs134   abs           1E-100 -> 1E-100  Subnormal
+
+dsabs135   abs           -1E-100 -> 1E-100  Subnormal
+dsabs136   abs           -1.000000E-96 -> 1.00000E-96  Rounded Subnormal
+dsabs137   abs           -1E-96 -> 1E-96  Subnormal
+dsabs138   abs           -9.999999E+96 -> 9.999999E+96
+
+-- specials
+dsabs520   abs           Inf -> Infinity
+dsabs521   abs           -Inf -> Infinity
+dsabs522   abs           NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsabs523   abs           sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsabs524   abs           NaN22 -> NaN22
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsabs525   abs           sNaN33 -> NaN33  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsabs526   abs           -NaN22 -> -NaN22
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsabs527   abs           -sNaN33 -> -NaN33  Invalid_operation
+
+-- Null tests

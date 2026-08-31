@@ -1,0 +1,621 @@
+------------------------------------------------------------------------
+-- dsMultiply.decTest                                                 --
+-- Generated for Boost.Decimal from ddMultiply.decTest                --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddMultiply narrowed to that context, with             --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- This set of tests are for decDoubles only; all arguments are
+-- representable in a decDouble
+rounding:    half_even
+
+-- sanity checks
+dsmul000   multiply      2 2 -> 4
+dsmul001   multiply      2 3 -> 6
+dsmul002   multiply      5 1 -> 5
+dsmul003   multiply      5 2 -> 10
+dsmul004   multiply      1.20 2 -> 2.40
+dsmul005   multiply      1.20 0 -> 0.00
+dsmul006   multiply      1.20 -2 -> -2.40
+dsmul007   multiply      -1.20 2 -> -2.40
+dsmul008   multiply      -1.20 0 -> -0.00
+dsmul009   multiply      -1.20 -2 -> 2.40
+dsmul010   multiply      5.09 7.1 -> 36.139
+dsmul011   multiply      2.5 4 -> 10.0
+dsmul012   multiply      2.50 4 -> 10.00
+dsmul013   multiply      1.234569 1.000000 -> 1.234569  Rounded
+dsmul015   multiply      2.50 4 -> 10.00
+dsmul016   multiply      9.999999 9.999999 -> 99.99998  Inexact Rounded
+dsmul017   multiply      9.999999 -9.999999 -> -99.99998  Inexact Rounded
+dsmul018   multiply      -9.999999 9.999999 -> -99.99998  Inexact Rounded
+dsmul019   multiply      -9.999999 -9.999999 -> 99.99998  Inexact Rounded
+
+-- zeros, etc.
+dsmul021   multiply      0 0 -> 0
+dsmul022   multiply      0 -0 -> -0
+dsmul023   multiply      -0 0 -> -0
+dsmul024   multiply      -0 -0 -> 0
+dsmul025   multiply      -0.0 -0.0 -> 0.00
+dsmul026   multiply      -0.0 -0.0 -> 0.00
+dsmul027   multiply      -0.0 -0.0 -> 0.00
+dsmul028   multiply      -0.0 -0.0 -> 0.00
+dsmul030   multiply      5.00 1E-1 -> 0.500
+dsmul031   multiply      00.00 0.000 -> 0.00000
+dsmul032   multiply      00.00 0E-1 -> 0.000
+dsmul033   multiply      0E-1 00.00 -> 0.000
+dsmul034   multiply      -5.00 1E-1 -> -0.500
+dsmul035   multiply      -00.00 0.000 -> -0.00000
+dsmul036   multiply      -00.00 0E-1 -> -0.000
+dsmul037   multiply      -0E-1 00.00 -> -0.000
+dsmul038   multiply      5.00 -1E-1 -> -0.500
+dsmul039   multiply      00.00 -0.000 -> -0.00000
+dsmul040   multiply      00.00 -0E-1 -> -0.000
+dsmul041   multiply      0E-1 -00.00 -> -0.000
+dsmul042   multiply      -5.00 -1E-1 -> 0.500
+dsmul043   multiply      -00.00 -0.000 -> 0.00000
+dsmul044   multiply      -00.00 -0E-1 -> 0.000
+dsmul045   multiply      -0E-1 -00.00 -> 0.000
+
+-- examples from decarith
+dsmul050   multiply      1.20 3 -> 3.60
+dsmul051   multiply      7 3 -> 21
+dsmul052   multiply      0.9 0.8 -> 0.72
+dsmul053   multiply      0.9 -0 -> -0.0
+dsmul054   multiply      654321 654321 -> 4.281360E+11  Inexact Rounded
+
+dsmul060   multiply      123.45 1E+2 -> 12345
+dsmul061   multiply      123.45 1E+2 -> 12345
+dsmul062   multiply      123.45 1E+2 -> 12345
+dsmul063   multiply      123.45 1E+2 -> 12345
+dsmul064   multiply      123.45 1E+3 -> 1.2345E+5
+dsmul065   multiply      123.45 1E+3 -> 1.2345E+5
+dsmul066   multiply      123.45 1E+3 -> 1.2345E+5
+
+
+-- test some intermediate lengths
+--                    1234567890123456
+dsmul080   multiply      0.1 1230129 -> 123012.9
+dsmul084   multiply      0.1 1230129 -> 123012.9
+dsmul090   multiply      1230129 0.1 -> 123012.9
+dsmul094   multiply      1230129 0.1 -> 123012.9
+
+-- test some more edge cases and carries
+dsmul101   multiply      9 9 -> 81
+dsmul102   multiply      9 90 -> 810
+dsmul103   multiply      9 900 -> 8100
+dsmul104   multiply      9 9000 -> 81000
+dsmul105   multiply      9 90000 -> 810000
+dsmul106   multiply      9 900000 -> 8100000
+dsmul107   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul108   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul109   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul110   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul111   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul112   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul113   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul114   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul115   multiply      9 9000000 -> 8.100000E+7  Rounded
+--ddmul116 multiply 9 9000000000000000   -> 81000000000000000
+--ddmul117 multiply 9 90000000000000000   -> 810000000000000000
+--ddmul118 multiply 9 900000000000000000   -> 8100000000000000000
+--ddmul119 multiply 9 9000000000000000000   -> 81000000000000000000
+--ddmul120 multiply 9 90000000000000000000   -> 810000000000000000000
+--ddmul121 multiply 9 900000000000000000000   -> 8100000000000000000000
+--ddmul122 multiply 9 9000000000000000000000   -> 81000000000000000000000
+--ddmul123 multiply 9 90000000000000000000000   -> 810000000000000000000000
+-- test some more edge cases without carries
+dsmul131   multiply      3 3 -> 9
+dsmul132   multiply      3 30 -> 90
+dsmul133   multiply      3 300 -> 900
+dsmul134   multiply      3 3000 -> 9000
+dsmul135   multiply      3 30000 -> 90000
+dsmul136   multiply      3 300000 -> 900000
+dsmul137   multiply      3 3000000 -> 9000000
+dsmul138   multiply      3 3000000 -> 9000000
+dsmul139   multiply      3 3000000 -> 9000000
+dsmul140   multiply      3 3000000 -> 9000000
+dsmul141   multiply      3 3000000 -> 9000000
+dsmul142   multiply      3 3000000 -> 9000000
+dsmul143   multiply      3 3000000 -> 9000000
+dsmul144   multiply      3 3000000 -> 9000000
+dsmul145   multiply      3 3000000 -> 9000000
+
+-- test some edge cases with exact rounding
+dsmul301   multiply      9 9 -> 81
+dsmul302   multiply      9 90 -> 810
+dsmul303   multiply      9 900 -> 8100
+dsmul304   multiply      9 9000 -> 81000
+dsmul305   multiply      9 90000 -> 810000
+dsmul306   multiply      9 900000 -> 8100000
+dsmul307   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul308   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul309   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul310   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul311   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul312   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul313   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul314   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul315   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul316   multiply      9 9000000 -> 8.100000E+7  Rounded
+dsmul317   multiply      90 9000000 -> 8.100000E+8  Rounded
+dsmul318   multiply      900 9000000 -> 8.100000E+9  Rounded
+dsmul319   multiply      9000 9000000 -> 8.100000E+10  Rounded
+dsmul320   multiply      90000 9000000 -> 8.100000E+11  Rounded
+dsmul321   multiply      900000 9000000 -> 8.100000E+12  Rounded
+dsmul322   multiply      9000000 9000000 -> 8.100000E+13  Rounded
+dsmul323   multiply      9000000 9000000 -> 8.100000E+13  Rounded
+
+-- tryzeros cases
+dsmul504   multiply      0E-65 1000E-65 -> 0E-101  Clamped
+dsmul505   multiply      100E+65 0E+65 -> 0E+90  Clamped
+-- 65K-1 case
+dsmul506   multiply      77.1 850 -> 65535.0
+
+-- mixed with zeros
+dsmul541   multiply      0 -1 -> -0
+dsmul542   multiply      -0 -1 -> 0
+dsmul543   multiply      0 1 -> 0
+dsmul544   multiply      -0 1 -> -0
+dsmul545   multiply      -1 0 -> -0
+dsmul546   multiply      -1 -0 -> 0
+dsmul547   multiply      1 0 -> 0
+dsmul548   multiply      1 -0 -> -0
+
+dsmul551   multiply      0.0 -1 -> -0.0
+dsmul552   multiply      -0.0 -1 -> 0.0
+dsmul553   multiply      0.0 1 -> 0.0
+dsmul554   multiply      -0.0 1 -> -0.0
+dsmul555   multiply      -1.0 0 -> -0.0
+dsmul556   multiply      -1.0 -0 -> 0.0
+dsmul557   multiply      1.0 0 -> 0.0
+dsmul558   multiply      1.0 -0 -> -0.0
+
+dsmul561   multiply      0 -1.0 -> -0.0
+dsmul562   multiply      -0 -1.0 -> 0.0
+dsmul563   multiply      0 1.0 -> 0.0
+dsmul564   multiply      -0 1.0 -> -0.0
+dsmul565   multiply      -1 0.0 -> -0.0
+dsmul566   multiply      -1 -0.0 -> 0.0
+dsmul567   multiply      1 0.0 -> 0.0
+dsmul568   multiply      1 -0.0 -> -0.0
+
+dsmul571   multiply      0.0 -1.0 -> -0.00
+dsmul572   multiply      -0.0 -1.0 -> 0.00
+dsmul573   multiply      0.0 1.0 -> 0.00
+dsmul574   multiply      -0.0 1.0 -> -0.00
+dsmul575   multiply      -1.0 0.0 -> -0.00
+dsmul576   multiply      -1.0 -0.0 -> 0.00
+dsmul577   multiply      1.0 0.0 -> 0.00
+dsmul578   multiply      1.0 -0.0 -> -0.00
+
+
+-- Specials
+dsmul580   multiply      Inf -Inf -> -Infinity
+dsmul581   multiply      Inf -1000 -> -Infinity
+dsmul582   multiply      Inf -1 -> -Infinity
+dsmul583   multiply      Inf -0 -> NaN  Invalid_operation
+dsmul584   multiply      Inf 0 -> NaN  Invalid_operation
+dsmul585   multiply      Inf 1 -> Infinity
+dsmul586   multiply      Inf 1000 -> Infinity
+dsmul587   multiply      Inf Inf -> Infinity
+dsmul588   multiply      -1000 Inf -> -Infinity
+dsmul589   multiply      -Inf Inf -> -Infinity
+dsmul590   multiply      -1 Inf -> -Infinity
+dsmul591   multiply      -0 Inf -> NaN  Invalid_operation
+dsmul592   multiply      0 Inf -> NaN  Invalid_operation
+dsmul593   multiply      1 Inf -> Infinity
+dsmul594   multiply      1000 Inf -> Infinity
+dsmul595   multiply      Inf Inf -> Infinity
+
+dsmul600   multiply      -Inf -Inf -> Infinity
+dsmul601   multiply      -Inf -1000 -> Infinity
+dsmul602   multiply      -Inf -1 -> Infinity
+dsmul603   multiply      -Inf -0 -> NaN  Invalid_operation
+dsmul604   multiply      -Inf 0 -> NaN  Invalid_operation
+dsmul605   multiply      -Inf 1 -> -Infinity
+dsmul606   multiply      -Inf 1000 -> -Infinity
+dsmul607   multiply      -Inf Inf -> -Infinity
+dsmul608   multiply      -1000 Inf -> -Infinity
+dsmul609   multiply      -Inf -Inf -> Infinity
+dsmul610   multiply      -1 -Inf -> Infinity
+dsmul611   multiply      -0 -Inf -> NaN  Invalid_operation
+dsmul612   multiply      0 -Inf -> NaN  Invalid_operation
+dsmul613   multiply      1 -Inf -> -Infinity
+dsmul614   multiply      1000 -Inf -> -Infinity
+dsmul615   multiply      Inf -Inf -> -Infinity
+
+dsmul621   multiply      NaN -Inf -> NaN
+dsmul622   multiply      NaN -1000 -> NaN
+dsmul623   multiply      NaN -1 -> NaN
+dsmul624   multiply      NaN -0 -> NaN
+dsmul625   multiply      NaN 0 -> NaN
+dsmul626   multiply      NaN 1 -> NaN
+dsmul627   multiply      NaN 1000 -> NaN
+dsmul628   multiply      NaN Inf -> NaN
+dsmul629   multiply      NaN NaN -> NaN
+dsmul630   multiply      -Inf NaN -> NaN
+dsmul631   multiply      -1000 NaN -> NaN
+dsmul632   multiply      -1 NaN -> NaN
+dsmul633   multiply      -0 NaN -> NaN
+dsmul634   multiply      0 NaN -> NaN
+dsmul635   multiply      1 NaN -> NaN
+dsmul636   multiply      1000 NaN -> NaN
+dsmul637   multiply      Inf NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul641   multiply      sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul642   multiply      sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul643   multiply      sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul644   multiply      sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul645   multiply      sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul646   multiply      sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul647   multiply      sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul648   multiply      sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul649   multiply      sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul650   multiply      NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul651   multiply      -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul652   multiply      -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul653   multiply      -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul654   multiply      -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul655   multiply      0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul656   multiply      1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul657   multiply      1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul658   multiply      Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul659   multiply      NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul661   multiply      NaN9 -Inf -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul662   multiply      NaN8 999 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul663   multiply      NaN71 Inf -> NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul664   multiply      NaN6 NaN5 -> NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul665   multiply      -Inf NaN4 -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul666   multiply      -999 NaN33 -> NaN33
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul667   multiply      Inf NaN2 -> NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul671   multiply      sNaN99 -Inf -> NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul672   multiply      sNaN98 -11 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul673   multiply      sNaN97 NaN -> NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul674   multiply      sNaN16 sNaN94 -> NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul675   multiply      NaN95 sNaN93 -> NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul676   multiply      -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul677   multiply      088 sNaN91 -> NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul678   multiply      Inf sNaN90 -> NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul679   multiply      NaN sNaN89 -> NaN89  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul681   multiply      -NaN9 -Inf -> -NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul682   multiply      -NaN8 999 -> -NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul683   multiply      -NaN71 Inf -> -NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul684   multiply      -NaN6 -NaN5 -> -NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul685   multiply      -Inf -NaN4 -> -NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul686   multiply      -999 -NaN33 -> -NaN33
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul687   multiply      Inf -NaN2 -> -NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul691   multiply      -sNaN99 -Inf -> -NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul692   multiply      -sNaN98 -11 -> -NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul693   multiply      -sNaN97 NaN -> -NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul694   multiply      -sNaN16 -sNaN94 -> -NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul695   multiply      -NaN95 -sNaN93 -> -NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul696   multiply      -Inf -sNaN92 -> -NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul697   multiply      088 -sNaN91 -> -NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul698   multiply      Inf -sNaN90 -> -NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul699   multiply      -NaN -sNaN89 -> -NaN89  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul701   multiply      -NaN -Inf -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul702   multiply      -NaN 999 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul703   multiply      -NaN Inf -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul704   multiply      -NaN -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul705   multiply      -Inf -NaN0 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul706   multiply      -999 -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul707   multiply      Inf -NaN -> -NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul711   multiply      -sNaN -Inf -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul712   multiply      -sNaN -11 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul713   multiply      -sNaN00 NaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul714   multiply      -sNaN -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul715   multiply      -NaN -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul716   multiply      -Inf -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul717   multiply      088 -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul718   multiply      Inf -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmul719   multiply      -NaN -sNaN -> -NaN  Invalid_operation
+
+-- overflow and underflow tests .. note subnormal results
+-- signs
+dsmul751   multiply      1E+69 1E+78 -> Infinity  Overflow Inexact Rounded
+dsmul752   multiply      1E+69 -1E+78 -> -Infinity  Overflow Inexact Rounded
+dsmul753   multiply      -1E+69 1E+78 -> -Infinity  Overflow Inexact Rounded
+dsmul754   multiply      -1E+69 -1E+78 -> Infinity  Overflow Inexact Rounded
+dsmul755   multiply      1E-69 1E-78 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsmul756   multiply      1E-69 -1E-78 -> -0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsmul757   multiply      -1E-69 1E-78 -> -0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsmul758   multiply      -1E-69 -1E-78 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+
+-- 'subnormal' boundary (all hard underflow or overflow in base arithemtic)
+dsmul760   multiply      1E-73 1E-25 -> 1E-98  Subnormal
+dsmul761   multiply      1E-73 1E-26 -> 1E-99  Subnormal
+dsmul762   multiply      1E-73 1E-26 -> 1E-99  Subnormal
+dsmul763   multiply      1E-73 1E-26 -> 1E-99  Subnormal
+dsmul764   multiply      1E-73 1E-26 -> 1E-99  Subnormal
+dsmul765   multiply      1E-73 1E-26 -> 1E-99  Subnormal
+dsmul766   multiply      1E-73 1E-27 -> 1E-100  Subnormal
+dsmul767   multiply      1E-73 1E-27 -> 1E-100  Subnormal
+dsmul768   multiply      1E-73 1E-27 -> 1E-100  Subnormal
+dsmul769   multiply      1E-73 1E-28 -> 1E-101  Subnormal
+-- [no equivalent of 'subnormal' for overflow]
+dsmul770   multiply      1E+15 1E+80 -> 1.00000E+95  Clamped
+dsmul771   multiply      1E+15 1E+80 -> 1.00000E+95  Clamped
+dsmul772   multiply      1E+15 1E+81 -> 1.000000E+96  Clamped
+dsmul773   multiply      1E+15 1E+81 -> 1.000000E+96  Clamped
+dsmul774   multiply      1E+15 1E+81 -> 1.000000E+96  Clamped
+dsmul775   multiply      1E+15 1E+82 -> Infinity  Overflow Inexact Rounded
+dsmul776   multiply      1E+15 1E+82 -> Infinity  Overflow Inexact Rounded
+dsmul777   multiply      1E+15 1E+82 -> Infinity  Overflow Inexact Rounded
+dsmul778   multiply      1E+15 1E+82 -> Infinity  Overflow Inexact Rounded
+dsmul779   multiply      1E+15 1E+82 -> Infinity  Overflow Inexact Rounded
+
+dsmul801   multiply      1.0000E-98 1 -> 1.000E-98  Rounded Subnormal
+dsmul802   multiply      1.000E-98 1E+0 -> 1.000E-98  Subnormal
+dsmul803   multiply      1.00E-98 1E+0 -> 1.00E-98  Subnormal
+dsmul804   multiply      1.0E-98 1E-1 -> 1.0E-99  Subnormal
+dsmul805   multiply      1.0E-98 1E-1 -> 1.0E-99  Subnormal
+dsmul806   multiply      1.3E-98 1E-1 -> 1.3E-99  Subnormal
+dsmul807   multiply      1.5E-98 1E-1 -> 1.5E-99  Subnormal
+dsmul808   multiply      1.7E-98 1E-1 -> 1.7E-99  Subnormal
+dsmul809   multiply      2.3E-98 1E-1 -> 2.3E-99  Subnormal
+dsmul810   multiply      2.5E-98 1E-1 -> 2.5E-99  Subnormal
+dsmul811   multiply      2.7E-98 1E-1 -> 2.7E-99  Subnormal
+dsmul812   multiply      1.49E-98 1E-1 -> 1.49E-99  Subnormal
+dsmul813   multiply      1.50E-98 1E-1 -> 1.50E-99  Subnormal
+dsmul814   multiply      1.51E-98 1E-1 -> 1.51E-99  Subnormal
+dsmul815   multiply      2.49E-98 1E-1 -> 2.49E-99  Subnormal
+dsmul816   multiply      2.50E-98 1E-1 -> 2.50E-99  Subnormal
+dsmul817   multiply      2.51E-98 1E-1 -> 2.51E-99  Subnormal
+
+dsmul818   multiply      1E-98 1E-1 -> 1E-99  Subnormal
+dsmul819   multiply      3E-98 1E-1 -> 3E-99  Subnormal
+dsmul820   multiply      5E-98 1E-1 -> 5E-99  Subnormal
+dsmul821   multiply      7E-98 1E-1 -> 7E-99  Subnormal
+dsmul822   multiply      9E-98 1E-1 -> 9E-99  Subnormal
+dsmul823   multiply      9.9E-98 1E-1 -> 9.9E-99  Subnormal
+
+dsmul824   multiply      1E-98 -1E-1 -> -1E-99  Subnormal
+dsmul825   multiply      3E-98 -1E-1 -> -3E-99  Subnormal
+dsmul826   multiply      -5E-98 1E-1 -> -5E-99  Subnormal
+dsmul827   multiply      7E-98 -1E-1 -> -7E-99  Subnormal
+dsmul828   multiply      -9E-98 1E-1 -> -9E-99  Subnormal
+dsmul829   multiply      9.9E-98 -1E-1 -> -9.9E-99  Subnormal
+dsmul830   multiply      3.0E-98 -1E-1 -> -3.0E-99  Subnormal
+
+dsmul831   multiply      1.0E-50 1E-50 -> 1.0E-100  Subnormal
+dsmul832   multiply      1.0E-50 1E-50 -> 1.0E-100  Subnormal
+dsmul833   multiply      1.0E-50 1E-50 -> 1.0E-100  Subnormal
+dsmul834   multiply      2.0E-50 2E-50 -> 4.0E-100  Subnormal
+dsmul835   multiply      4.0E-50 4E-50 -> 1.60E-99  Subnormal
+dsmul836   multiply      10.0E-50 10E-50 -> 1.000E-98  Subnormal
+dsmul837   multiply      30.0E-50 30E-50 -> 9.000E-98  Subnormal
+dsmul838   multiply      40.0E-50 40E-47 -> 1.6000E-94
+dsmul839   multiply      40.0E-50 40E-47 -> 1.6000E-94
+dsmul840   multiply      40.0E-50 40E-46 -> 1.6000E-93
+
+-- Long operand overflow may be a different path
+dsmul870   multiply      100 9.999E+96 -> Infinity  Overflow Inexact Rounded
+dsmul871   multiply      100 -9.999E+96 -> -Infinity  Overflow Inexact Rounded
+dsmul872   multiply      9.999E+96 100 -> Infinity  Overflow Inexact Rounded
+dsmul873   multiply      -9.999E+96 100 -> -Infinity  Overflow Inexact Rounded
+
+-- check for double-rounded subnormals
+dsmul881   multiply      1.2347E-89 1.2347E-10 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul882   multiply      1.234E-89 1.234E-10 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul883   multiply      1.23E-89 1.23E-10 -> 1.51E-99  Underflow Inexact Rounded Subnormal
+dsmul884   multiply      1.2E-89 1.2E-10 -> 1.44E-99  Subnormal
+dsmul885   multiply      1.2E-89 1.2E-10 -> 1.44E-99  Subnormal
+dsmul886   multiply      1.2E-89 1.2E-10 -> 1.44E-99  Subnormal
+dsmul887   multiply      1.2E-89 1.3E-10 -> 1.56E-99  Subnormal
+dsmul888   multiply      1.3E-89 1.3E-10 -> 1.69E-99  Subnormal
+dsmul889   multiply      1.3E-89 1.3E-11 -> 1.7E-100  Underflow Inexact Rounded Subnormal
+dsmul890   multiply      1.3E-89 1.3E-11 -> 1.7E-100  Underflow Inexact Rounded Subnormal
+
+dsmul891   multiply      1.2345E-10 1.234E-89 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul892   multiply      1.23456E-10 1.234E-89 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul893   multiply      1.2345E-10 1.234E-89 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul894   multiply      1.23456E-10 1.234E-89 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul895   multiply      1.2345E-10 1.234E-89 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsmul896   multiply      1.23456E-10 1.234E-89 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+
+-- Now explore the case where we get a normal result with Underflow
+--                                                        1 234567890123456
+dsmul900   multiply      0.3000000E-48 0.3000000E-48 -> 9.000E-98  Rounded Subnormal
+dsmul901   multiply      0.3000001E-48 0.3000001E-48 -> 9.000E-98  Underflow Inexact Rounded Subnormal
+dsmul902   multiply      9.999999E-96 0.09999999 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsmul903   multiply      9.999999E-96 0.09999999 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsmul904   multiply      9.999999E-96 0.09999999 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsmul905   multiply      9.999999E-96 0.09999999 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+-- The next rounds to Nmin (b**emin); this is the distinguishing case
+-- for detecting tininess (before or after rounding) -- if after
+-- rounding then the result would be the same, but the Underflow flag
+-- would not be set
+dsmul906   multiply      9.999999E-96 0.09999999 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+-- prove those operands were exact
+dsmul907   multiply      9.999999E-96 1 -> 1.000000E-95  Underflow Inexact Rounded Subnormal
+dsmul908   multiply      1 0.09999999 -> 0.09999999
+
+-- reducing tiniest
+dsmul910   multiply      1E-100 0.99 -> 1.0E-100  Underflow Inexact Rounded Subnormal
+dsmul911   multiply      1E-100 0.75 -> 8E-101  Underflow Inexact Rounded Subnormal
+dsmul912   multiply      1E-100 0.5 -> 5E-101  Subnormal
+dsmul913   multiply      1E-100 0.25 -> 2E-101  Underflow Inexact Rounded Subnormal
+dsmul914   multiply      1E-100 0.01 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+
+-- hugest
+dsmul920   multiply      9999999 9999999 -> 9.999998E+13  Inexact Rounded
+
+-- power-of-ten edge cases
+dsmul1001  multiply      1 10 -> 10
+dsmul1002  multiply      1 100 -> 100
+dsmul1003  multiply      1 1000 -> 1000
+dsmul1004  multiply      1 10000 -> 10000
+dsmul1005  multiply      1 100000 -> 100000
+dsmul1006  multiply      1 1000000 -> 1000000
+dsmul1007  multiply      1 1000000 -> 1000000
+dsmul1008  multiply      1 1000000 -> 1000000
+dsmul1009  multiply      1 1000000 -> 1000000
+dsmul1010  multiply      1 1000000 -> 1000000
+dsmul1011  multiply      1 1000000 -> 1000000
+dsmul1012  multiply      1 1000000 -> 1000000
+dsmul1013  multiply      1 1000000 -> 1000000
+dsmul1014  multiply      1 1000000 -> 1000000
+dsmul1015  multiply      1 1000000 -> 1000000
+dsmul1021  multiply      10 1 -> 10
+dsmul1022  multiply      10 10 -> 100
+dsmul1023  multiply      10 100 -> 1000
+dsmul1024  multiply      10 1000 -> 10000
+dsmul1025  multiply      10 10000 -> 100000
+dsmul1026  multiply      10 100000 -> 1000000
+dsmul1027  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1028  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1029  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1030  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1031  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1032  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1033  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1034  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1035  multiply      10 1000000 -> 1.000000E+7  Rounded
+dsmul1041  multiply      100 0.1 -> 10.0
+dsmul1042  multiply      100 1 -> 100
+dsmul1043  multiply      100 10 -> 1000
+dsmul1044  multiply      100 100 -> 10000
+dsmul1045  multiply      100 1000 -> 100000
+dsmul1046  multiply      100 10000 -> 1000000
+dsmul1047  multiply      100 100000 -> 1.000000E+7  Rounded
+dsmul1048  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1049  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1050  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1051  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1052  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1053  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1054  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1055  multiply      100 1000000 -> 1.000000E+8  Rounded
+dsmul1061  multiply      1000 0.01 -> 10.00
+dsmul1062  multiply      1000 0.1 -> 100.0
+dsmul1063  multiply      1000 1 -> 1000
+dsmul1064  multiply      1000 10 -> 10000
+dsmul1065  multiply      1000 100 -> 100000
+dsmul1066  multiply      1000 1000 -> 1000000
+dsmul1067  multiply      1000 10000 -> 1.000000E+7  Rounded
+dsmul1068  multiply      1000 100000 -> 1.000000E+8  Rounded
+dsmul1069  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1070  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1071  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1072  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1073  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1074  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1075  multiply      1000 1000000 -> 1.000000E+9  Rounded
+dsmul1081  multiply      10000 0.001 -> 10.000
+dsmul1082  multiply      10000 0.01 -> 100.00
+dsmul1083  multiply      10000 0.1 -> 1000.0
+dsmul1084  multiply      10000 1 -> 10000
+dsmul1085  multiply      10000 10 -> 100000
+dsmul1086  multiply      10000 100 -> 1000000
+dsmul1087  multiply      10000 1000 -> 1.000000E+7  Rounded
+dsmul1088  multiply      10000 10000 -> 1.000000E+8  Rounded
+dsmul1089  multiply      10000 100000 -> 1.000000E+9  Rounded
+dsmul1090  multiply      10000 1000000 -> 1.000000E+10  Rounded
+dsmul1091  multiply      10000 1000000 -> 1.000000E+10  Rounded
+dsmul1092  multiply      10000 1000000 -> 1.000000E+10  Rounded
+dsmul1093  multiply      10000 1000000 -> 1.000000E+10  Rounded
+dsmul1094  multiply      10000 1000000 -> 1.000000E+10  Rounded
+dsmul1095  multiply      10000 1000000 -> 1.000000E+10  Rounded
+
+dsmul1097  multiply      10000 9999999 -> 9.999999E+10  Rounded
+dsmul1098  multiply      10000 9999999 -> 9.999999E+10  Rounded
+
+-- test that is said to fail with some compiler(s) when optimized for IA64
+dsmul      multiply      9999999 9999999 -> 9.999998E+13  Inexact Rounded
+
+-- Null tests

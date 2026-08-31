@@ -1,0 +1,699 @@
+------------------------------------------------------------------------
+-- dsRemainderNear.decTest                                            --
+-- Generated for Boost.Decimal from ddRemainderNear.decTest           --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddRemainderNear narrowed to that context, with        --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+-- sanity checks (as base, above)
+dsrmn001   remaindernear 1 1 -> 0
+dsrmn002   remaindernear 2 1 -> 0
+dsrmn003   remaindernear 1 2 -> 1
+dsrmn004   remaindernear 2 2 -> 0
+dsrmn005   remaindernear 0 1 -> 0
+dsrmn006   remaindernear 0 2 -> 0
+dsrmn007   remaindernear 1 3 -> 1
+dsrmn008   remaindernear 2 3 -> -1
+dsrmn009   remaindernear 3 3 -> 0
+
+dsrmn010   remaindernear 2.4 1 -> 0.4
+dsrmn011   remaindernear 2.4 -1 -> 0.4
+dsrmn012   remaindernear -2.4 1 -> -0.4
+dsrmn013   remaindernear -2.4 -1 -> -0.4
+dsrmn014   remaindernear 2.40 1 -> 0.40
+dsrmn015   remaindernear 2.400 1 -> 0.400
+dsrmn016   remaindernear 2.4 2 -> 0.4
+dsrmn017   remaindernear 2.400 2 -> 0.400
+dsrmn018   remaindernear 2 2 -> 0
+dsrmn019   remaindernear 20 20 -> 0
+
+dsrmn020   remaindernear 187 187 -> 0
+dsrmn021   remaindernear 5 2 -> 1
+dsrmn022   remaindernear 5 2.0 -> 1.0
+dsrmn023   remaindernear 5 2.000 -> 1.000
+dsrmn024   remaindernear 5 0.200 -> 0.000
+dsrmn025   remaindernear 5 0.200 -> 0.000
+
+dsrmn030   remaindernear 1 2 -> 1
+dsrmn031   remaindernear 1 4 -> 1
+dsrmn032   remaindernear 1 8 -> 1
+
+dsrmn033   remaindernear 1 16 -> 1
+dsrmn034   remaindernear 1 32 -> 1
+dsrmn035   remaindernear 1 64 -> 1
+dsrmn040   remaindernear 1 -2 -> 1
+dsrmn041   remaindernear 1 -4 -> 1
+dsrmn042   remaindernear 1 -8 -> 1
+dsrmn043   remaindernear 1 -16 -> 1
+dsrmn044   remaindernear 1 -32 -> 1
+dsrmn045   remaindernear 1 -64 -> 1
+dsrmn050   remaindernear -1 2 -> -1
+dsrmn051   remaindernear -1 4 -> -1
+dsrmn052   remaindernear -1 8 -> -1
+dsrmn053   remaindernear -1 16 -> -1
+dsrmn054   remaindernear -1 32 -> -1
+dsrmn055   remaindernear -1 64 -> -1
+dsrmn060   remaindernear -1 -2 -> -1
+dsrmn061   remaindernear -1 -4 -> -1
+dsrmn062   remaindernear -1 -8 -> -1
+dsrmn063   remaindernear -1 -16 -> -1
+dsrmn064   remaindernear -1 -32 -> -1
+dsrmn065   remaindernear -1 -64 -> -1
+
+dsrmn066   remaindernear 9.9 1 -> -0.1
+dsrmn067   remaindernear 99.7 1 -> -0.3
+dsrmn068   remaindernear 9999999 1 -> 0
+dsrmn069   remaindernear 9999994 1 -> 0
+dsrmn070   remaindernear 9999995 1 -> 0
+dsrmn071   remaindernear 9999999 1 -> 0
+dsrmn072   remaindernear 9999999 1 -> 0
+dsrmn073   remaindernear 999999.9 1 -> -0.1
+dsrmn074   remaindernear 9 1 -> 0
+dsrmn075   remaindernear 9999999 1 -> 0
+dsrmn076   remaindernear 9999999 2 -> -1
+dsrmn077   remaindernear 9999999 3 -> 0
+dsrmn078   remaindernear 9999999 4 -> -1
+
+dsrmn080   remaindernear 0 1 -> 0
+dsrmn081   remaindernear 0.0 1 -> 0.0
+dsrmn082   remaindernear 0.00 1 -> 0.00
+dsrmn083   remaindernear 0.00E+2 1 -> 0
+dsrmn084   remaindernear 0.00E+1 1 -> 0.0
+dsrmn085   remaindernear 0.00E+0 1 -> 0.00
+dsrmn086   remaindernear 0.00E+0 1 -> 0.00
+dsrmn087   remaindernear 0.00E+0 1 -> 0.00
+dsrmn088   remaindernear 0.00E+0 1 -> 0.00
+dsrmn089   remaindernear 0.00E+0 1 -> 0.00
+dsrmn090   remaindernear 0.00E+0 1 -> 0.00
+dsrmn091   remaindernear 0.00E-1 1 -> 0.000
+dsrmn092   remaindernear 0.00E-1 1 -> 0.000
+dsrmn093   remaindernear 0.00E-1 1 -> 0.000
+dsrmn094   remaindernear 0.00E-2 1 -> 0.0000
+dsrmn095   remaindernear 0.0000E-12 1 -> 0E-16
+
+-- Various flavours of remaindernear by 0
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn101   remaindernear 0 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn102   remaindernear 0 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn103   remaindernear -0 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn104   remaindernear -0 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn105   remaindernear 0.0E+1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn106   remaindernear 0.000 0 -> NaN  Invalid_operation
+-- [Some think this next group should be Division_by_zero exception, but
+-- IEEE 854 is explicit that it is Invalid operation .. for
+-- remainder-near, anyway]
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn107   remaindernear 0.0001 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn108   remaindernear 0.01 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn109   remaindernear 0.1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn110   remaindernear 1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn111   remaindernear 1 0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn112   remaindernear 10 0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn113   remaindernear 1E+25 0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn114   remaindernear 1E+95 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn115   remaindernear 0.0001 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn116   remaindernear 0.01 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn119   remaindernear 0.1 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn120   remaindernear 1 -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn121   remaindernear 1 -0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn122   remaindernear 10 -0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn123   remaindernear 1E+25 -0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn124   remaindernear 1E+96 -0 -> NaN  Invalid_operation
+-- and zeros on left
+dsrmn130   remaindernear 0 1 -> 0
+dsrmn131   remaindernear 0 -1 -> 0
+dsrmn132   remaindernear 0.0 1 -> 0.0
+dsrmn133   remaindernear 0.0 -1 -> 0.0
+dsrmn134   remaindernear -0 1 -> -0
+dsrmn135   remaindernear -0 -1 -> -0
+dsrmn136   remaindernear -0.0 1 -> -0.0
+dsrmn137   remaindernear -0.0 -1 -> -0.0
+
+-- 0.5ers
+dsrmn143   remaindernear 0.5 2 -> 0.5
+dsrmn144   remaindernear 0.5 2.1 -> 0.5
+dsrmn145   remaindernear 0.5 2.01 -> 0.50
+dsrmn146   remaindernear 0.5 2.001 -> 0.500
+dsrmn147   remaindernear 0.50 2 -> 0.50
+dsrmn148   remaindernear 0.50 2.01 -> 0.50
+dsrmn149   remaindernear 0.50 2.001 -> 0.500
+
+-- steadies
+dsrmn150   remaindernear 1 1 -> 0
+dsrmn151   remaindernear 1 2 -> 1
+dsrmn152   remaindernear 1 3 -> 1
+dsrmn153   remaindernear 1 4 -> 1
+dsrmn154   remaindernear 1 5 -> 1
+dsrmn155   remaindernear 1 6 -> 1
+dsrmn156   remaindernear 1 7 -> 1
+dsrmn157   remaindernear 1 8 -> 1
+dsrmn158   remaindernear 1 9 -> 1
+dsrmn159   remaindernear 1 10 -> 1
+dsrmn160   remaindernear 1 1 -> 0
+dsrmn161   remaindernear 2 1 -> 0
+dsrmn162   remaindernear 3 1 -> 0
+dsrmn163   remaindernear 4 1 -> 0
+dsrmn164   remaindernear 5 1 -> 0
+dsrmn165   remaindernear 6 1 -> 0
+dsrmn166   remaindernear 7 1 -> 0
+dsrmn167   remaindernear 8 1 -> 0
+dsrmn168   remaindernear 9 1 -> 0
+dsrmn169   remaindernear 10 1 -> 0
+
+-- some differences from remainder
+dsrmn171   remaindernear 0.4 1.020 -> 0.400
+dsrmn172   remaindernear 0.50 1.020 -> 0.500
+dsrmn173   remaindernear 0.51 1.020 -> 0.510
+dsrmn174   remaindernear 0.52 1.020 -> -0.500
+dsrmn175   remaindernear 0.6 1.020 -> -0.420
+
+-- More flavours of remaindernear by 0
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn201   remaindernear 0 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn202   remaindernear 0.0E+1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn203   remaindernear 0.000 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn204   remaindernear 0.0001 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn205   remaindernear 0.01 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn206   remaindernear 0.1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn207   remaindernear 1 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn208   remaindernear 1 0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn209   remaindernear 10 0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn210   remaindernear 1E+25 0.0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn211   remaindernear 1E+95 0 -> NaN  Invalid_operation
+
+-- tests from the extended specification
+dsrmn221   remaindernear 2.1 3 -> -0.9
+dsrmn222   remaindernear 10 6 -> -2
+dsrmn223   remaindernear 10 3 -> 1
+dsrmn224   remaindernear -10 3 -> -1
+dsrmn225   remaindernear 10.2 1 -> 0.2
+dsrmn226   remaindernear 10 0.3 -> 0.1
+dsrmn227   remaindernear 3.6 1.3 -> -0.3
+
+-- some differences from remainder
+dsrmn231   remaindernear -0.4 1.020 -> -0.400
+dsrmn232   remaindernear -0.50 1.020 -> -0.500
+dsrmn233   remaindernear -0.51 1.020 -> -0.510
+dsrmn234   remaindernear -0.52 1.020 -> 0.500
+dsrmn235   remaindernear -0.6 1.020 -> 0.420
+
+-- high Xs
+dsrmn240   remaindernear 1E+0 1.00 -> 0.00
+
+-- ddrmn3xx are from DiagBigDecimal
+dsrmn301   remaindernear 1 3 -> 1
+dsrmn302   remaindernear 5 5 -> 0
+dsrmn303   remaindernear 13 10 -> 3
+dsrmn304   remaindernear 13 50 -> 13
+dsrmn305   remaindernear 13 100 -> 13
+dsrmn306   remaindernear 13 1000 -> 13
+dsrmn307   remaindernear 0.13 1 -> 0.13
+dsrmn308   remaindernear 0.133 1 -> 0.133
+dsrmn309   remaindernear 0.1033 1 -> 0.1033
+dsrmn310   remaindernear 1.033 1 -> 0.033
+dsrmn311   remaindernear 10.33 1 -> 0.33
+dsrmn312   remaindernear 10.33 10 -> 0.33
+dsrmn313   remaindernear 103.3 1 -> 0.3
+dsrmn314   remaindernear 133 10 -> 3
+dsrmn315   remaindernear 1033 10 -> 3
+dsrmn316   remaindernear 1033 50 -> -17
+dsrmn317   remaindernear 101.0 3 -> -1.0
+dsrmn318   remaindernear 102.0 3 -> 0.0
+dsrmn319   remaindernear 103.0 3 -> 1.0
+dsrmn320   remaindernear 2.40 1 -> 0.40
+dsrmn321   remaindernear 2.400 1 -> 0.400
+dsrmn322   remaindernear 2.4 1 -> 0.4
+dsrmn323   remaindernear 2.4 2 -> 0.4
+dsrmn324   remaindernear 2.400 2 -> 0.400
+dsrmn325   remaindernear 1 0.3 -> 0.1
+dsrmn326   remaindernear 1 0.30 -> 0.10
+dsrmn327   remaindernear 1 0.300 -> 0.100
+dsrmn328   remaindernear 1 0.3000 -> 0.1000
+dsrmn329   remaindernear 1.0 0.3 -> 0.1
+dsrmn330   remaindernear 1.00 0.3 -> 0.10
+dsrmn331   remaindernear 1.000 0.3 -> 0.100
+dsrmn332   remaindernear 1.0000 0.3 -> 0.1000
+dsrmn333   remaindernear 0.5 2 -> 0.5
+dsrmn334   remaindernear 0.5 2.1 -> 0.5
+dsrmn335   remaindernear 0.5 2.01 -> 0.50
+dsrmn336   remaindernear 0.5 2.001 -> 0.500
+dsrmn337   remaindernear 0.50 2 -> 0.50
+dsrmn338   remaindernear 0.50 2.01 -> 0.50
+dsrmn339   remaindernear 0.50 2.001 -> 0.500
+
+dsrmn340   remaindernear 0.5 0.5000001 -> -1E-7
+dsrmn341   remaindernear 0.5 0.5000001 -> -1E-7
+dsrmn342   remaindernear 0.5 0.5000001 -> -1E-7
+dsrmn343   remaindernear 0.5 0.5000001 -> -1E-7
+dsrmn344   remaindernear 0.5 0.5000001 -> -1E-7
+dsrmn345   remaindernear 0.5 0.4999999 -> 1E-7
+dsrmn346   remaindernear 0.5 0.4999999 -> 1E-7
+dsrmn347   remaindernear 0.5 0.4999999 -> 1E-7
+dsrmn348   remaindernear 0.5 0.4999999 -> 1E-7
+dsrmn349   remaindernear 0.5 0.4999999 -> 1E-7
+dsrmn350   remaindernear 0.5 0.4999999 -> 1E-7
+
+dsrmn351   remaindernear 0.03 7 -> 0.03
+dsrmn352   remaindernear 5 2 -> 1
+dsrmn353   remaindernear 4.1 2 -> 0.1
+dsrmn354   remaindernear 4.01 2 -> 0.01
+dsrmn355   remaindernear 4.001 2 -> 0.001
+dsrmn356   remaindernear 4.0001 2 -> 0.0001
+dsrmn357   remaindernear 4.00001 2 -> 0.00001
+dsrmn358   remaindernear 4.000001 2 -> 0.000001
+dsrmn359   remaindernear 4.000001 2 -> 0.000001
+
+dsrmn360   remaindernear 1.2 0.7345 -> -0.2690
+dsrmn361   remaindernear 0.8 12 -> 0.8
+dsrmn362   remaindernear 0.8 0.2 -> 0.0
+dsrmn363   remaindernear 0.8 0.3 -> -0.1
+dsrmn364   remaindernear 0.800 12 -> 0.800
+dsrmn365   remaindernear 0.800 1.7 -> 0.800
+dsrmn366   remaindernear 2.400 2 -> 0.400
+
+-- round to even
+dsrmn371   remaindernear 121 2 -> 1
+dsrmn372   remaindernear 122 2 -> 0
+dsrmn373   remaindernear 123 2 -> -1
+dsrmn374   remaindernear 124 2 -> 0
+dsrmn375   remaindernear 125 2 -> 1
+dsrmn376   remaindernear 126 2 -> 0
+dsrmn377   remaindernear 127 2 -> -1
+
+dsrmn381   remaindernear 12345 1 -> 0
+dsrmn382   remaindernear 12345 1.0001 -> -0.2344
+dsrmn383   remaindernear 12345 1.001 -> -0.333
+dsrmn384   remaindernear 12345 1.01 -> -0.23
+dsrmn385   remaindernear 12345 1.1 -> -0.3
+dsrmn386   remaindernear 12355 4 -> -1
+dsrmn387   remaindernear 12345 4 -> 1
+dsrmn388   remaindernear 12355 4.0001 -> -1.3089
+dsrmn389   remaindernear 12345 4.0001 -> 0.6914
+dsrmn390   remaindernear 12345 4.9 -> 1.9
+dsrmn391   remaindernear 12345 4.99 -> -0.26
+dsrmn392   remaindernear 12345 4.999 -> 2.469
+dsrmn393   remaindernear 12345 4.9999 -> 0.2469
+dsrmn394   remaindernear 12345 5 -> 0
+dsrmn395   remaindernear 12345 5.0001 -> -0.2469
+dsrmn396   remaindernear 12345 5.001 -> -2.469
+dsrmn397   remaindernear 12345 5.01 -> 0.36
+dsrmn398   remaindernear 12345 5.1 -> -2.1
+
+-- the nasty division-by-1 cases
+dsrmn401   remaindernear 0.4 1 -> 0.4
+dsrmn402   remaindernear 0.45 1 -> 0.45
+dsrmn403   remaindernear 0.455 1 -> 0.455
+dsrmn404   remaindernear 0.4555 1 -> 0.4555
+dsrmn405   remaindernear 0.45555 1 -> 0.45555
+dsrmn406   remaindernear 0.455555 1 -> 0.455555
+dsrmn407   remaindernear 0.4555555 1 -> 0.4555555
+dsrmn408   remaindernear 0.4555555 1 -> 0.4555555
+dsrmn409   remaindernear 0.4555555 1 -> 0.4555555
+-- with spill... [412 exercises sticktab loop]
+dsrmn411   remaindernear 0.5 1 -> 0.5
+dsrmn412   remaindernear 0.55 1 -> -0.45
+dsrmn413   remaindernear 0.555 1 -> -0.445
+dsrmn414   remaindernear 0.5555 1 -> -0.4445
+dsrmn415   remaindernear 0.55555 1 -> -0.44445
+dsrmn416   remaindernear 0.555555 1 -> -0.444445
+dsrmn417   remaindernear 0.5555555 1 -> -0.4444445
+dsrmn418   remaindernear 0.5555555 1 -> -0.4444445
+dsrmn419   remaindernear 0.5555555 1 -> -0.4444445
+
+-- folddowns
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn421   remaindernear 1E+96 1 -> NaN  Invalid_operation
+dsrmn422   remaindernear 1E+96 1E+96 -> 0E+90  Clamped
+dsrmn423   remaindernear 1E+96 2E+96 -> 1.000000E+96  Clamped
+dsrmn424   remaindernear 1E+96 3E+96 -> 1.000000E+96  Clamped
+dsrmn425   remaindernear 1E+96 4E+96 -> 1.000000E+96  Clamped
+dsrmn426   remaindernear 1E+96 5E+96 -> 1.000000E+96  Clamped
+dsrmn427   remaindernear 1E+96 6E+96 -> 1.000000E+96  Clamped
+dsrmn428   remaindernear 1E+96 7E+96 -> 1.000000E+96  Clamped
+dsrmn429   remaindernear 1E+96 8E+96 -> 1.000000E+96  Clamped
+dsrmn430   remaindernear 1E+96 9E+96 -> 1.000000E+96  Clamped
+-- tinies
+dsrmn431   remaindernear 1E-99 1E-100 -> 0E-100
+dsrmn432   remaindernear 1E-99 2E-100 -> 0E-100
+dsrmn433   remaindernear 1E-99 3E-100 -> 1E-100  Subnormal
+dsrmn434   remaindernear 1E-99 4E-100 -> 2E-100  Subnormal
+dsrmn435   remaindernear 1E-99 5E-100 -> 0E-100
+dsrmn436   remaindernear 1E-99 6E-100 -> -2E-100  Subnormal
+dsrmn437   remaindernear 1E-99 7E-100 -> 3E-100  Subnormal
+dsrmn438   remaindernear 1E-99 8E-100 -> 2E-100  Subnormal
+dsrmn439   remaindernear 1E-99 9E-100 -> 1E-100  Subnormal
+dsrmn440   remaindernear 1E-99 10E-100 -> 0E-100
+dsrmn441   remaindernear 1E-99 11E-100 -> -1E-100  Subnormal
+dsrmn442   remaindernear 100E-99 11E-100 -> -1E-100  Subnormal
+dsrmn443   remaindernear 100E-99 20E-100 -> 0E-100
+dsrmn444   remaindernear 100E-99 21E-100 -> -8E-100  Subnormal
+dsrmn445   remaindernear 100E-99 30E-100 -> 1.0E-99  Subnormal
+
+-- zero signs
+dsrmn650   remaindernear 1 1 -> 0
+dsrmn651   remaindernear -1 1 -> -0
+dsrmn652   remaindernear 1 -1 -> 0
+dsrmn653   remaindernear -1 -1 -> -0
+dsrmn654   remaindernear 0 1 -> 0
+dsrmn655   remaindernear -0 1 -> -0
+dsrmn656   remaindernear 0 -1 -> 0
+dsrmn657   remaindernear -0 -1 -> -0
+dsrmn658   remaindernear 0.00 1 -> 0.00
+dsrmn659   remaindernear -0.00 1 -> -0.00
+
+-- Specials
+dsrmn680   remaindernear Inf -Inf -> NaN  Invalid_operation
+dsrmn681   remaindernear Inf -1000 -> NaN  Invalid_operation
+dsrmn682   remaindernear Inf -1 -> NaN  Invalid_operation
+dsrmn683   remaindernear Inf 0 -> NaN  Invalid_operation
+dsrmn684   remaindernear Inf -0 -> NaN  Invalid_operation
+dsrmn685   remaindernear Inf 1 -> NaN  Invalid_operation
+dsrmn686   remaindernear Inf 1000 -> NaN  Invalid_operation
+dsrmn687   remaindernear Inf Inf -> NaN  Invalid_operation
+dsrmn688   remaindernear -1000 Inf -> -1000
+dsrmn689   remaindernear -Inf Inf -> NaN  Invalid_operation
+dsrmn691   remaindernear -1 Inf -> -1
+dsrmn692   remaindernear 0 Inf -> 0
+dsrmn693   remaindernear -0 Inf -> -0
+dsrmn694   remaindernear 1 Inf -> 1
+dsrmn695   remaindernear 1000 Inf -> 1000
+dsrmn696   remaindernear Inf Inf -> NaN  Invalid_operation
+
+dsrmn700   remaindernear -Inf -Inf -> NaN  Invalid_operation
+dsrmn701   remaindernear -Inf -1000 -> NaN  Invalid_operation
+dsrmn702   remaindernear -Inf -1 -> NaN  Invalid_operation
+dsrmn703   remaindernear -Inf -0 -> NaN  Invalid_operation
+dsrmn704   remaindernear -Inf 0 -> NaN  Invalid_operation
+dsrmn705   remaindernear -Inf 1 -> NaN  Invalid_operation
+dsrmn706   remaindernear -Inf 1000 -> NaN  Invalid_operation
+dsrmn707   remaindernear -Inf Inf -> NaN  Invalid_operation
+dsrmn708   remaindernear -Inf -Inf -> NaN  Invalid_operation
+dsrmn709   remaindernear -1000 Inf -> -1000
+dsrmn710   remaindernear -1 -Inf -> -1
+dsrmn711   remaindernear -0 -Inf -> -0
+dsrmn712   remaindernear 0 -Inf -> 0
+dsrmn713   remaindernear 1 -Inf -> 1
+dsrmn714   remaindernear 1000 -Inf -> 1000
+dsrmn715   remaindernear Inf -Inf -> NaN  Invalid_operation
+
+dsrmn721   remaindernear NaN -Inf -> NaN
+dsrmn722   remaindernear NaN -1000 -> NaN
+dsrmn723   remaindernear NaN -1 -> NaN
+dsrmn724   remaindernear NaN -0 -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn725   remaindernear -NaN 0 -> -NaN
+dsrmn726   remaindernear NaN 1 -> NaN
+dsrmn727   remaindernear NaN 1000 -> NaN
+dsrmn728   remaindernear NaN Inf -> NaN
+dsrmn729   remaindernear NaN -NaN -> NaN
+dsrmn730   remaindernear -Inf NaN -> NaN
+dsrmn731   remaindernear -1000 NaN -> NaN
+dsrmn732   remaindernear -1 NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn733   remaindernear -0 -NaN -> -NaN
+dsrmn734   remaindernear 0 NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn735   remaindernear 1 -NaN -> -NaN
+dsrmn736   remaindernear 1000 NaN -> NaN
+dsrmn737   remaindernear Inf NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn741   remaindernear sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn742   remaindernear sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn743   remaindernear -sNaN -1 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn744   remaindernear sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn745   remaindernear sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn746   remaindernear sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn747   remaindernear sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn749   remaindernear sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn750   remaindernear sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn751   remaindernear NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn752   remaindernear -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn753   remaindernear -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn754   remaindernear -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn755   remaindernear -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn756   remaindernear 0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn757   remaindernear 1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn758   remaindernear 1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn759   remaindernear Inf -sNaN -> -NaN  Invalid_operation
+
+-- propaging NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn760   remaindernear NaN1 NaN7 -> NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn761   remaindernear sNaN2 NaN8 -> NaN2  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn762   remaindernear NaN3 sNaN9 -> NaN9  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn763   remaindernear sNaN4 sNaN10 -> NaN4  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn764   remaindernear 15 NaN11 -> NaN11
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn765   remaindernear NaN6 NaN12 -> NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn766   remaindernear Inf NaN13 -> NaN13
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn767   remaindernear NaN14 -Inf -> NaN14
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn768   remaindernear 0 NaN15 -> NaN15
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsrmn769   remaindernear NaN16 -0 -> NaN16
+
+-- edge cases of impossible
+dsrmn770   remaindernear 1234566 10 -> -4
+dsrmn771   remaindernear 1234566 1 -> 0
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn772   remaindernear 1234566 0.1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn773   remaindernear 1234566 0.01 -> NaN  Invalid_operation
+
+-- long operand checks
+dsrmn801   remaindernear 1234560 100 -> -40
+dsrmn802   remaindernear 1 1234560 -> 1
+dsrmn803   remaindernear 1234560 10 -> 0
+dsrmn804   remaindernear 1 1234560 -> 1
+dsrmn805   remaindernear 1234560 10 -> 0
+dsrmn806   remaindernear 1 1234560 -> 1
+dsrmn807   remaindernear 1234561 10 -> 1
+dsrmn808   remaindernear 1 1234561 -> 1
+dsrmn809   remaindernear 1234561 100 -> -39
+dsrmn810   remaindernear 1 1234561 -> 1
+dsrmn811   remaindernear 1234566 10 -> -4
+dsrmn812   remaindernear 1 1234566 -> 1
+
+dsrmn821   remaindernear 1234560 100 -> -40
+dsrmn822   remaindernear 1 1234560 -> 1
+dsrmn823   remaindernear 1234560 10 -> 0
+dsrmn824   remaindernear 1 1234560 -> 1
+dsrmn825   remaindernear 1234560 10 -> 0
+dsrmn826   remaindernear 1 1234560 -> 1
+dsrmn827   remaindernear 1234561 10 -> 1
+dsrmn828   remaindernear 1 1234561 -> 1
+dsrmn829   remaindernear 1234561 100 -> -39
+dsrmn830   remaindernear 1 1234561 -> 1
+dsrmn831   remaindernear 1234566 10 -> -4
+dsrmn832   remaindernear 1 1234566 -> 1
+
+-- from divideint
+dsrmn840   remaindernear 1000000 1 -> 0
+dsrmn841   remaindernear 1000004 1 -> 0
+dsrmn842   remaindernear 1000005 1 -> 0
+dsrmn843   remaindernear 1000009 1 -> 0
+dsrmn844   remaindernear 1000009 1 -> 0
+dsrmn850   remaindernear 1000003 5 -> -2
+dsrmn851   remaindernear 1000003 5 -> -2
+dsrmn852   remaindernear 1000003 5 -> -2
+dsrmn853   remaindernear 100003 5 -> -2
+dsrmn854   remaindernear 10003 5 -> -2
+dsrmn855   remaindernear 1003 5 -> -2
+dsrmn856   remaindernear 103 5 -> -2
+dsrmn857   remaindernear 13 5 -> -2
+dsrmn858   remaindernear 1 5 -> 1
+
+-- Vladimir's cases         1234567890123456
+dsrmn860   remaindernear 123.0E+0 1000000 -> 123.0
+dsrmn861   remaindernear 1230 1000000 -> 1230
+dsrmn862   remaindernear 12.3E+0 1000000 -> 12.3
+dsrmn863   remaindernear 1.23E+1 1000000 -> 12.3
+dsrmn864   remaindernear 123E+0 1000000 -> 123
+dsrmn870   remaindernear 123E+0 1000000 -> 123
+dsrmn871   remaindernear 123E+0 1000000 -> 123
+dsrmn872   remaindernear 123E+0 1000000 -> 123
+dsrmn873   remaindernear 123E+0 1000000 -> 123
+dsrmn874   remaindernear 123E+0 1000000 -> 123
+dsrmn875   remaindernear 123E+0 1000000 -> 123
+dsrmn876   remaindernear 123E+0 1000000 -> 123
+dsrmn877   remaindernear 123E+0 1000000 -> 123
+dsrmn878   remaindernear 1230 1000000 -> 1230
+dsrmn879   remaindernear 123E+0 1000000 -> 123
+dsrmn880   remaindernear 123E+0 1000000 -> 123
+dsrmn881   remaindernear 123E+0 100000 -> 123
+dsrmn882   remaindernear 123E+0 10000 -> 123
+dsrmn883   remaindernear 123E+0 1000 -> 123
+dsrmn884   remaindernear 123E+0 100 -> 23
+dsrmn885   remaindernear 123E+0 10 -> 3
+dsrmn886   remaindernear 123E+0 1 -> 0
+
+dsrmn890   remaindernear 123E+0 2000000 -> 123
+dsrmn891   remaindernear 123E+0 2000000 -> 123
+dsrmn892   remaindernear 123E+0 2000000 -> 123
+dsrmn893   remaindernear 123E+0 2000000 -> 123
+dsrmn894   remaindernear 123E+0 2000000 -> 123
+dsrmn895   remaindernear 123E+0 2000000 -> 123
+dsrmn896   remaindernear 123E+0 2000000 -> 123
+dsrmn897   remaindernear 123E+0 2000000 -> 123
+dsrmn899   remaindernear 123E+0 2000000 -> 123
+dsrmn900   remaindernear 123E+0 2000000 -> 123
+dsrmn901   remaindernear 123E+0 200000 -> 123
+dsrmn902   remaindernear 123E+0 20000 -> 123
+dsrmn903   remaindernear 123E+0 2000 -> 123
+dsrmn904   remaindernear 123E+0 200 -> -77
+dsrmn905   remaindernear 123E+0 20 -> 3
+dsrmn906   remaindernear 123E+0 2 -> -1
+
+dsrmn910   remaindernear 123E+0 5000000 -> 123
+dsrmn911   remaindernear 123E+0 5000000 -> 123
+dsrmn912   remaindernear 123E+0 5000000 -> 123
+dsrmn913   remaindernear 123E+0 5000000 -> 123
+dsrmn914   remaindernear 123E+0 5000000 -> 123
+dsrmn915   remaindernear 123E+0 5000000 -> 123
+dsrmn916   remaindernear 123E+0 5000000 -> 123
+dsrmn917   remaindernear 123E+0 5000000 -> 123
+dsrmn919   remaindernear 123E+0 5000000 -> 123
+dsrmn920   remaindernear 123E+0 5000000 -> 123
+dsrmn921   remaindernear 123E+0 500000 -> 123
+dsrmn922   remaindernear 123E+0 50000 -> 123
+dsrmn923   remaindernear 123E+0 5000 -> 123
+dsrmn924   remaindernear 123E+0 500 -> 123
+dsrmn925   remaindernear 123E+0 50 -> 23
+dsrmn926   remaindernear 123E+0 5 -> -2
+
+dsrmn930   remaindernear 123E+0 9000000 -> 123
+dsrmn931   remaindernear 123E+0 9000000 -> 123
+dsrmn932   remaindernear 123E+0 9000000 -> 123
+dsrmn933   remaindernear 123E+0 9000000 -> 123
+dsrmn934   remaindernear 123E+0 9000000 -> 123
+dsrmn935   remaindernear 123E+0 9000000 -> 123
+dsrmn936   remaindernear 123E+0 9000000 -> 123
+dsrmn937   remaindernear 123E+0 9000000 -> 123
+dsrmn939   remaindernear 123E+0 9000000 -> 123
+dsrmn940   remaindernear 123E+0 9000000 -> 123
+dsrmn941   remaindernear 123E+0 900000 -> 123
+dsrmn942   remaindernear 123E+0 90000 -> 123
+dsrmn943   remaindernear 123E+0 9000 -> 123
+dsrmn944   remaindernear 123E+0 900 -> 123
+dsrmn945   remaindernear 123E+0 90 -> 33
+dsrmn946   remaindernear 123E+0 9 -> -3
+
+dsrmn950   remaindernear 123E+0 1000000 -> 123
+dsrmn961   remaindernear 123E+0 2999999 -> 123
+dsrmn962   remaindernear 123E+0 3999999 -> 123
+dsrmn963   remaindernear 123E+0 4999999 -> 123
+dsrmn964   remaindernear 123E+0 5999999 -> 123
+dsrmn965   remaindernear 123E+0 6999999 -> 123
+dsrmn966   remaindernear 123E+0 7999999 -> 123
+dsrmn967   remaindernear 123E+0 8999999 -> 123
+dsrmn968   remaindernear 123E+0 9999999 -> 123
+dsrmn969   remaindernear 123E+0 9876544 -> 123
+
+dsrmn980   remaindernear 123E+0 1000E+75 -> 123
+
+
+-- overflow and underflow tests [from divide]
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn1051  remaindernear 1E+69 1E-78 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn1052  remaindernear 1E+69 -1E-78 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn1053  remaindernear -1E+69 1E-78 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsrmn1054  remaindernear -1E+69 -1E-78 -> NaN  Invalid_operation
+dsrmn1055  remaindernear 1E-69 1E+78 -> 1E-69
+dsrmn1056  remaindernear 1E-69 -1E+78 -> 1E-69
+dsrmn1057  remaindernear -1E-69 1E+78 -> -1E-69
+dsrmn1058  remaindernear -1E-69 -1E+78 -> -1E-69
+
+-- destructive subtract
+dsrmn1100  remainderNear 1234566 1.000001 -> -0.234565
+dsrmn1101  remainderNear 1234566 1.000001 -> -0.234565
+dsrmn1102  remainderNear 1234566 1.000001 -> -0.234565
+dsrmn1103  remainderNear 1234565 4.000001 -> 0.691359
+dsrmn1104  remainderNear 1234566 4.000001 -> 1.691359
+dsrmn1115  remainderNear 1234566 4.999999 -> 1.246913
+dsrmn1116  remainderNear 1234566 4.999999 -> 1.246913
+dsrmn1117  remainderNear 1234566 4.999999 -> 1.246913
+dsrmn1118  remainderNear 1234566 5.000001 -> 0.753087
+dsrmn1119  remainderNear 1234566 5.000001 -> 0.753087
+dsrmn1110  remainderNear 1234566 5.000001 -> 0.753087
+
+-- Null tests

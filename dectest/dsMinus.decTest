@@ -1,0 +1,102 @@
+------------------------------------------------------------------------
+-- dsMinus.decTest                                                    --
+-- Generated for Boost.Decimal from ddMinus.decTest                   --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddMinus narrowed to that context, with                --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- Sanity check
+dsmns001   minus         +7.50 -> -7.50
+
+-- Infinities
+dsmns011   minus         Infinity -> -Infinity
+dsmns012   minus         -Infinity -> Infinity
+
+-- NaNs, 0 payload
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns021   minus         NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns022   minus         -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns023   minus         sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns024   minus         -sNaN -> -NaN  Invalid_operation
+
+-- NaNs, non-0 payload
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns031   minus         NaN13 -> NaN13
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns032   minus         -NaN13 -> -NaN13
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns033   minus         sNaN13 -> NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns034   minus         -sNaN13 -> -NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns035   minus         NaN70 -> NaN70
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns036   minus         -NaN70 -> -NaN70
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns037   minus         sNaN101 -> NaN101  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmns038   minus         -sNaN101 -> -NaN101  Invalid_operation
+
+-- finites
+dsmns101   minus         7 -> -7
+dsmns102   minus         -7 -> 7
+dsmns103   minus         75 -> -75
+dsmns104   minus         -75 -> 75
+dsmns105   minus         7.50 -> -7.50
+dsmns106   minus         -7.50 -> 7.50
+dsmns107   minus         7.500 -> -7.500
+dsmns108   minus         -7.500 -> 7.500
+
+-- zeros
+dsmns111   minus         0 -> 0
+dsmns112   minus         -0 -> 0
+dsmns113   minus         0E+1 -> 0E+1
+dsmns114   minus         -0E+1 -> 0E+1
+dsmns115   minus         0.0000 -> 0.0000
+dsmns116   minus         -0.0000 -> 0.0000
+dsmns117   minus         0E-35 -> 0E-35
+dsmns118   minus         -0E-35 -> 0E-35
+
+-- full coefficients, alternating bits
+dsmns121   minus         2682682 -> -2682682
+dsmns122   minus         -2682682 -> 2682682
+dsmns123   minus         1341341 -> -1341341
+dsmns124   minus         -1341341 -> 1341341
+
+-- Nmax, Nmin, Ntiny
+dsmns131   minus         9.999999E+96 -> -9.999999E+96
+dsmns132   minus         1E-96 -> -1E-96  Subnormal
+dsmns133   minus         1.000000E-96 -> -1.00000E-96  Rounded Subnormal
+dsmns134   minus         1E-100 -> -1E-100  Subnormal
+
+dsmns135   minus         -1E-100 -> 1E-100  Subnormal
+dsmns136   minus         -1.000000E-96 -> 1.00000E-96  Rounded Subnormal
+dsmns137   minus         -1E-96 -> 1E-96  Subnormal
+dsmns138   minus         -9.999999E+96 -> 9.999999E+96

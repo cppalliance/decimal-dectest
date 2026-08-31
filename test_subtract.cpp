@@ -14,6 +14,7 @@ int main()
     test_two_arg_harness("dectest/subtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
     test_two_arg_harness("dectest/ddSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
     test_two_arg_harness("dectest/dqSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
+    test_two_arg_harness("dectest/dsSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
 
     return boost::report_errors();
 }

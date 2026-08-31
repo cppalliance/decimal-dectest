@@ -1,0 +1,101 @@
+------------------------------------------------------------------------
+-- dsPlus.decTest                                                     --
+-- Generated for Boost.Decimal from ddPlus.decTest                    --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddPlus narrowed to that context, with                 --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- Sanity check
+dspls001   plus          +7.50 -> 7.50
+
+-- Infinities
+dspls011   plus          Infinity -> Infinity
+dspls012   plus          -Infinity -> -Infinity
+
+-- NaNs, 0 payload
+dspls021   plus          NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls022   plus          -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls023   plus          sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls024   plus          -sNaN -> -NaN  Invalid_operation
+
+-- NaNs, non-0 payload
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls031   plus          NaN13 -> NaN13
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls032   plus          -NaN13 -> -NaN13
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls033   plus          sNaN13 -> NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls034   plus          -sNaN13 -> -NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls035   plus          NaN70 -> NaN70
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls036   plus          -NaN70 -> -NaN70
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls037   plus          sNaN101 -> NaN101  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dspls038   plus          -sNaN101 -> -NaN101  Invalid_operation
+
+-- finites
+dspls101   plus          7 -> 7
+dspls102   plus          -7 -> -7
+dspls103   plus          75 -> 75
+dspls104   plus          -75 -> -75
+dspls105   plus          7.50 -> 7.50
+dspls106   plus          -7.50 -> -7.50
+dspls107   plus          7.500 -> 7.500
+dspls108   plus          -7.500 -> -7.500
+
+-- zeros
+dspls111   plus          0 -> 0
+dspls112   plus          -0 -> 0
+dspls113   plus          0E+1 -> 0E+1
+dspls114   plus          -0E+1 -> 0E+1
+dspls115   plus          0.0000 -> 0.0000
+dspls116   plus          -0.0000 -> 0.0000
+dspls117   plus          0E-35 -> 0E-35
+dspls118   plus          -0E-35 -> 0E-35
+
+-- full coefficients, alternating bits
+dspls121   plus          2682682 -> 2682682
+dspls122   plus          -2682682 -> -2682682
+dspls123   plus          1341341 -> 1341341
+dspls124   plus          -1341341 -> -1341341
+
+-- Nmax, Nmin, Ntiny
+dspls131   plus          9.999999E+96 -> 9.999999E+96
+dspls132   plus          1E-96 -> 1E-96  Subnormal
+dspls133   plus          1.000000E-96 -> 1.00000E-96  Rounded Subnormal
+dspls134   plus          1E-100 -> 1E-100  Subnormal
+
+dspls135   plus          -1E-100 -> -1E-100  Subnormal
+dspls136   plus          -1.000000E-96 -> -1.00000E-96  Rounded Subnormal
+dspls137   plus          -1E-96 -> -1E-96  Subnormal
+dspls138   plus          -9.999999E+96 -> -9.999999E+96

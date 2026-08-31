@@ -22,6 +22,7 @@ int main()
     test_one_arg_harness("dectest/tointegralx.decTest", "tointegralx", op);
     test_one_arg_harness("dectest/ddToIntegral.decTest", "tointegralx", op);
     test_one_arg_harness("dectest/dqToIntegral.decTest", "tointegralx", op);
+    test_one_arg_harness("dectest/dsToIntegral.decTest", "tointegralx", op);
 
     return boost::report_errors();
 }

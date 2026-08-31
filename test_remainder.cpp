@@ -14,6 +14,7 @@ int main()
     test_two_arg_harness("dectest/remainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
     test_two_arg_harness("dectest/ddRemainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
     test_two_arg_harness("dectest/dqRemainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
+    test_two_arg_harness("dectest/dsRemainder.decTest", "remainder", [](const auto x, const auto y) { return x % y; });
 
     return boost::report_errors();
 }

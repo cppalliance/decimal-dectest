@@ -15,6 +15,7 @@ int main()
 
     std::cerr << std::setprecision(34);
     test_two_arg_harness("dectest/dqMax.decTest", "max", [](const auto x, const auto y) { return boost::decimal::fmax(x, y); });
+    test_two_arg_harness("dectest/dsMax.decTest", "max", [](const auto x, const auto y) { return boost::decimal::fmax(x, y); });
 
     return boost::report_errors();
 }

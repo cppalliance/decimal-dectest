@@ -1,0 +1,1811 @@
+------------------------------------------------------------------------
+-- dsFMA.decTest                                                      --
+-- Generated for Boost.Decimal from ddFMA.decTest                     --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddFMA narrowed to that context, with                  --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+-- These tests comprese three parts:
+--   1. Sanity checks and other three-operand tests (especially those
+--      where the fused operation makes a difference)
+--   2. Multiply tests (third operand is neutral zero [0E+emax])
+--   3. Addition tests (first operand is 1)
+-- The multiply and addition tests are extensive because FMA may have
+-- its own dedicated multiplication or addition routine(s), and they
+-- also inherently check the left-to-right properties.
+
+-- Sanity checks
+dsfma0001  fma           1 1 1 -> 2
+dsfma0002  fma           1 1 2 -> 3
+dsfma0003  fma           2 2 3 -> 7
+dsfma0004  fma           9 9 9 -> 90
+dsfma0005  fma           -1 1 1 -> 0
+dsfma0006  fma           -1 1 2 -> 1
+dsfma0007  fma           -2 2 3 -> -1
+dsfma0008  fma           -9 9 9 -> -72
+dsfma0011  fma           1 -1 1 -> 0
+dsfma0012  fma           1 -1 2 -> 1
+dsfma0013  fma           2 -2 3 -> -1
+dsfma0014  fma           9 -9 9 -> -72
+dsfma0015  fma           1 1 -1 -> 0
+dsfma0016  fma           1 1 -2 -> -1
+dsfma0017  fma           2 2 -3 -> 1
+dsfma0018  fma           9 9 -9 -> 72
+
+-- non-integer exacts
+dsfma0100  fma           25.2 63.6 -438 -> 1164.72
+dsfma0101  fma           0.301 0.380 334 -> 334.1144  Inexact Rounded
+dsfma0102  fma           49.2 -4.8 23.3 -> -212.86
+dsfma0103  fma           4.22 0.079 -94.6 -> -94.26662
+dsfma0104  fma           903 0.797 0.887 -> 720.578
+dsfma0105  fma           6.13 -161 65.9 -> -921.03
+dsfma0106  fma           28.2 727 5.45 -> 20506.85
+dsfma0107  fma           4 605 688 -> 3108
+dsfma0108  fma           93.3 0.19 0.226 -> 17.953
+dsfma0109  fma           0.169 -341 5.61 -> -52.019
+dsfma0110  fma           -72.2 30 -51.2 -> -2217.2
+dsfma0111  fma           -0.409 13 20.4 -> 15.083
+dsfma0112  fma           317 77.0 19.0 -> 24428.0
+dsfma0113  fma           47 6.58 1.62 -> 310.88
+dsfma0114  fma           1.36 0.984 0.493 -> 1.83124
+dsfma0115  fma           72.7 274 1.56 -> 19921.36
+dsfma0116  fma           335 847 83 -> 283828
+dsfma0117  fma           666 0.247 25.4 -> 189.902
+dsfma0118  fma           -3.87 3.06 78.0 -> 66.1578
+dsfma0119  fma           0.742 192 35.6 -> 178.064
+dsfma0120  fma           -91.6 5.29 0.153 -> -484.411
+
+-- cases where result is different from separate multiply + add; each
+-- is preceded by the result of unfused multiply and add
+-- [this is about 20% of all similar  cases in general]
+--                                                                      ->  7.123356429257969E+16
+dsfma0201  fma           2758345 2582474 2593181 -> 7.123357E+12  Inexact Rounded
+--                                                                      ->  22813275328.80506
+dsfma0208  fma           24280.36 939577.3 2032.012 -> 2.281328E+10  Inexact Rounded
+--                                                                      ->  -2.030397734278062E+16
+dsfma0209  fma           7848972 -2586831 137903.9 -> -2.030396E+13  Inexact Rounded
+--                                                                      ->  2040774094814.077
+dsfma0217  fma           56890.31 3587205 339337.0 -> 2.040775E+11  Inexact Rounded
+--                                                                      ->  2.714469575205049E+18
+dsfma0220  fma           7533545 3603178 5073398 -> 2.714471E+13  Inexact Rounded
+--                                                                      ->  1.011676297716716E+19
+dsfma0223  fma           7399453 1367231 -994381.2 -> 1.011676E+13  Inexact Rounded
+--                                                                      ->  -2.914135721455315E+23
+dsfma0224  fma           -4135108 7047290 9234160 -> -2.914130E+13  Inexact Rounded
+--                                                                      ->  2.620119863365786E+17
+dsfma0226  fma           437484.1 5989060 8944502 -> 2.620127E+12  Inexact Rounded
+--                                                                      ->  1.272647995808178E+19
+dsfma0253  fma           7328759 1736514 -3583129 -> 1.272649E+13  Inexact Rounded
+--                                                                      ->  -1.753769320861851E+18
+dsfma0257  fma           2032586 -8628276 153127.7 -> -1.753771E+13  Inexact Rounded
+--                                                                      ->  -1.550737835263346E+17
+dsfma0260  fma           4256054 -3643606 178277.7 -> -1.550738E+13  Inexact Rounded
+--                                                                      ->  2.897624620576005E+22
+dsfma0269  fma           1426565 2031180 6045761 -> 2.897616E+12  Inexact Rounded
+
+-- Cases where multiply would overflow or underflow if separate
+dsfma00    fma           9E+96 10 0 -> Infinity  Overflow Inexact Rounded
+dsfma01    fma           1E+96 10 0 -> Infinity  Overflow Inexact Rounded
+dsfma02    fma           1E+96 10 -1E+96 -> 9.000000E+96  Clamped
+dsfma03    fma           1E+96 10 -9E+96 -> 1.000000E+96  Clamped
+-- subnormal etc.
+dsfma05    fma           1E-100 0.1 0 -> 1E-101  Subnormal
+dsfma06    fma           1E-100 0.1 1 -> 1.000000  Inexact Rounded
+dsfma07    fma           1E-100 0.1 1E-100 -> 1.1E-100  Subnormal
+
+-- Infinite combinations
+dsfma0800  fma           Inf Inf Inf -> Infinity
+dsfma0801  fma           Inf Inf -Inf -> NaN  Invalid_operation
+dsfma0802  fma           Inf -Inf Inf -> NaN  Invalid_operation
+dsfma0803  fma           Inf -Inf -Inf -> -Infinity
+dsfma0804  fma           -Inf Inf Inf -> NaN  Invalid_operation
+dsfma0805  fma           -Inf Inf -Inf -> -Infinity
+dsfma0806  fma           -Inf -Inf Inf -> Infinity
+dsfma0807  fma           -Inf -Inf -Inf -> NaN  Invalid_operation
+
+-- Triple NaN propagation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0900  fma           NaN2 NaN3 NaN5 -> NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0901  fma           0 NaN3 NaN5 -> NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0902  fma           0 0 NaN5 -> NaN5
+-- first sNaN wins (consider qNaN from earlier sNaN being
+-- overridden by an sNaN in third operand)
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0903  fma           sNaN1 sNaN2 sNaN3 -> NaN1  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0904  fma           0 sNaN2 sNaN3 -> NaN2  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0905  fma           0 0 sNaN3 -> NaN3  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0906  fma           sNaN1 sNaN2 sNaN3 -> NaN1  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0907  fma           NaN7 sNaN2 sNaN3 -> NaN2  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma0908  fma           NaN7 NaN5 sNaN3 -> NaN3  Invalid_operation
+
+-- MULTIPLICATION TESTS ------------------------------------------------
+
+-- sanity checks
+dsfma2000  fma           2 2 0E+96 -> 4
+dsfma2001  fma           2 3 0E+96 -> 6
+dsfma2002  fma           5 1 0E+96 -> 5
+dsfma2003  fma           5 2 0E+96 -> 10
+dsfma2004  fma           1.20 2 0E+96 -> 2.40
+dsfma2005  fma           1.20 0 0E+96 -> 0.00
+dsfma2006  fma           1.20 -2 0E+96 -> -2.40
+dsfma2007  fma           -1.20 2 0E+96 -> -2.40
+dsfma2008  fma           -1.20 0 0E+96 -> 0.00
+dsfma2009  fma           -1.20 -2 0E+96 -> 2.40
+dsfma2010  fma           5.09 7.1 0E+96 -> 36.139
+dsfma2011  fma           2.5 4 0E+96 -> 10.0
+dsfma2012  fma           2.50 4 0E+96 -> 10.00
+dsfma2013  fma           1.234569 1.000000 0E+96 -> 1.234569  Rounded
+dsfma2015  fma           2.50 4 0E+96 -> 10.00
+dsfma2016  fma           9.999999 9.999999 0E+96 -> 99.99998  Inexact Rounded
+dsfma2017  fma           9.999999 -9.999999 0E+96 -> -99.99998  Inexact Rounded
+dsfma2018  fma           -9.999999 9.999999 0E+96 -> -99.99998  Inexact Rounded
+dsfma2019  fma           -9.999999 -9.999999 0E+96 -> 99.99998  Inexact Rounded
+
+-- zeros, etc.
+dsfma2021  fma           0 0 0E+96 -> 0
+dsfma2022  fma           0 -0 0E+96 -> 0
+dsfma2023  fma           -0 0 0E+96 -> 0
+dsfma2024  fma           -0 -0 0E+96 -> 0
+dsfma2025  fma           -0.0 -0.0 0E+96 -> 0.00
+dsfma2026  fma           -0.0 -0.0 0E+96 -> 0.00
+dsfma2027  fma           -0.0 -0.0 0E+96 -> 0.00
+dsfma2028  fma           -0.0 -0.0 0E+96 -> 0.00
+dsfma2030  fma           5.00 1E-1 0E+96 -> 0.500
+dsfma2031  fma           00.00 0.000 0E+96 -> 0.00000
+dsfma2032  fma           00.00 0E-1 0E+96 -> 0.000
+dsfma2033  fma           0E-1 00.00 0E+96 -> 0.000
+dsfma2034  fma           -5.00 1E-1 0E+96 -> -0.500
+dsfma2035  fma           -00.00 0.000 0E+96 -> 0.00000
+dsfma2036  fma           -00.00 0E-1 0E+96 -> 0.000
+dsfma2037  fma           -0E-1 00.00 0E+96 -> 0.000
+dsfma2038  fma           5.00 -1E-1 0E+96 -> -0.500
+dsfma2039  fma           00.00 -0.000 0E+96 -> 0.00000
+dsfma2040  fma           00.00 -0E-1 0E+96 -> 0.000
+dsfma2041  fma           0E-1 -00.00 0E+96 -> 0.000
+dsfma2042  fma           -5.00 -1E-1 0E+96 -> 0.500
+dsfma2043  fma           -00.00 -0.000 0E+96 -> 0.00000
+dsfma2044  fma           -00.00 -0E-1 0E+96 -> 0.000
+dsfma2045  fma           -0E-1 -00.00 -0E+96 -> 0.000
+dsfma2046  fma           -0E-1 00.00 -0E+96 -> -0.000
+dsfma2047  fma           0E-1 -00.00 -0E+96 -> -0.000
+dsfma2048  fma           0E-1 00.00 -0E+96 -> 0.000
+
+-- examples from decarith
+dsfma2050  fma           1.20 3 0E+96 -> 3.60
+dsfma2051  fma           7 3 0E+96 -> 21
+dsfma2052  fma           0.9 0.8 0E+96 -> 0.72
+dsfma2053  fma           0.9 -0 0E+96 -> 0.0
+dsfma2054  fma           654321 654321 0E+96 -> 4.281360E+11  Inexact Rounded
+
+dsfma2060  fma           123.45 1E+2 0E+96 -> 12345
+dsfma2061  fma           123.45 1E+2 0E+96 -> 12345
+dsfma2062  fma           123.45 1E+2 0E+96 -> 12345
+dsfma2063  fma           123.45 1E+2 0E+96 -> 12345
+dsfma2064  fma           123.45 1E+3 0E+96 -> 1.2345E+5
+dsfma2065  fma           123.45 1E+3 0E+96 -> 1.2345E+5
+dsfma2066  fma           123.45 1E+3 0E+96 -> 1.2345E+5
+
+
+-- test some intermediate lengths
+--                    1234567890123456
+dsfma2080  fma           0.1 1230129 0E+96 -> 123012.9
+dsfma2084  fma           0.1 1230129 0E+96 -> 123012.9
+dsfma2090  fma           1230129 0.1 0E+96 -> 123012.9
+dsfma2094  fma           1230129 0.1 0E+96 -> 123012.9
+
+-- test some more edge cases and carries
+dsfma2101  fma           9 9 0E+96 -> 81
+dsfma2102  fma           9 90 0E+96 -> 810
+dsfma2103  fma           9 900 0E+96 -> 8100
+dsfma2104  fma           9 9000 0E+96 -> 81000
+dsfma2105  fma           9 90000 0E+96 -> 810000
+dsfma2106  fma           9 900000 0E+96 -> 8100000
+dsfma2107  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2108  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2109  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2110  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2111  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2112  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2113  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2114  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2115  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+--ddfma2116 fma  9 9000000000000000     0e+384  ->  81000000000000000
+--ddfma2117 fma  9 90000000000000000     0e+384  ->  810000000000000000
+--ddfma2118 fma  9 900000000000000000     0e+384  ->  8100000000000000000
+--ddfma2119 fma  9 9000000000000000000     0e+384  ->  81000000000000000000
+--ddfma2120 fma  9 90000000000000000000     0e+384  ->  810000000000000000000
+--ddfma2121 fma  9 900000000000000000000     0e+384  ->  8100000000000000000000
+--ddfma2122 fma  9 9000000000000000000000     0e+384  ->  81000000000000000000000
+--ddfma2123 fma  9 90000000000000000000000     0e+384  ->  810000000000000000000000
+-- test some more edge cases without carries
+dsfma2131  fma           3 3 0E+96 -> 9
+dsfma2132  fma           3 30 0E+96 -> 90
+dsfma2133  fma           3 300 0E+96 -> 900
+dsfma2134  fma           3 3000 0E+96 -> 9000
+dsfma2135  fma           3 30000 0E+96 -> 90000
+dsfma2136  fma           3 300000 0E+96 -> 900000
+dsfma2137  fma           3 3000000 0E+96 -> 9000000
+dsfma2138  fma           3 3000000 0E+96 -> 9000000
+dsfma2139  fma           3 3000000 0E+96 -> 9000000
+dsfma2140  fma           3 3000000 0E+96 -> 9000000
+dsfma2141  fma           3 3000000 0E+96 -> 9000000
+dsfma2142  fma           3 3000000 0E+96 -> 9000000
+dsfma2143  fma           3 3000000 0E+96 -> 9000000
+dsfma2144  fma           3 3000000 0E+96 -> 9000000
+dsfma2145  fma           3 3000000 0E+96 -> 9000000
+
+-- test some edge cases with exact rounding
+dsfma2301  fma           9 9 0E+96 -> 81
+dsfma2302  fma           9 90 0E+96 -> 810
+dsfma2303  fma           9 900 0E+96 -> 8100
+dsfma2304  fma           9 9000 0E+96 -> 81000
+dsfma2305  fma           9 90000 0E+96 -> 810000
+dsfma2306  fma           9 900000 0E+96 -> 8100000
+dsfma2307  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2308  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2309  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2310  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2311  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2312  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2313  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2314  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2315  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2316  fma           9 9000000 0E+96 -> 8.100000E+7  Rounded
+dsfma2317  fma           90 9000000 0E+96 -> 8.100000E+8  Rounded
+dsfma2318  fma           900 9000000 0E+96 -> 8.100000E+9  Rounded
+dsfma2319  fma           9000 9000000 0E+96 -> 8.100000E+10  Rounded
+dsfma2320  fma           90000 9000000 0E+96 -> 8.100000E+11  Rounded
+dsfma2321  fma           900000 9000000 0E+96 -> 8.100000E+12  Rounded
+dsfma2322  fma           9000000 9000000 0E+96 -> 8.100000E+13  Rounded
+dsfma2323  fma           9000000 9000000 0E+96 -> 8.100000E+13  Rounded
+
+-- tryzeros cases
+dsfma2504  fma           0E-65 1000E-65 0E+96 -> 0E-101  Clamped
+dsfma2505  fma           100E+65 0E+65 0E+96 -> 0E+90  Clamped
+
+-- mixed with zeros
+dsfma2541  fma           0 -1 0E+96 -> 0
+dsfma2542  fma           -0 -1 0E+96 -> 0
+dsfma2543  fma           0 1 0E+96 -> 0
+dsfma2544  fma           -0 1 0E+96 -> 0
+dsfma2545  fma           -1 0 0E+96 -> 0
+dsfma2546  fma           -1 -0 0E+96 -> 0
+dsfma2547  fma           1 0 0E+96 -> 0
+dsfma2548  fma           1 -0 0E+96 -> 0
+
+dsfma2551  fma           0.0 -1 0E+96 -> 0.0
+dsfma2552  fma           -0.0 -1 0E+96 -> 0.0
+dsfma2553  fma           0.0 1 0E+96 -> 0.0
+dsfma2554  fma           -0.0 1 0E+96 -> 0.0
+dsfma2555  fma           -1.0 0 0E+96 -> 0.0
+dsfma2556  fma           -1.0 -0 0E+96 -> 0.0
+dsfma2557  fma           1.0 0 0E+96 -> 0.0
+dsfma2558  fma           1.0 -0 0E+96 -> 0.0
+
+dsfma2561  fma           0 -1.0 0E+96 -> 0.0
+dsfma2562  fma           -0 -1.0 0E+96 -> 0.0
+dsfma2563  fma           0 1.0 0E+96 -> 0.0
+dsfma2564  fma           -0 1.0 0E+96 -> 0.0
+dsfma2565  fma           -1 0.0 0E+96 -> 0.0
+dsfma2566  fma           -1 -0.0 0E+96 -> 0.0
+dsfma2567  fma           1 0.0 0E+96 -> 0.0
+dsfma2568  fma           1 -0.0 0E+96 -> 0.0
+
+dsfma2571  fma           0.0 -1.0 0E+96 -> 0.00
+dsfma2572  fma           -0.0 -1.0 0E+96 -> 0.00
+dsfma2573  fma           0.0 1.0 0E+96 -> 0.00
+dsfma2574  fma           -0.0 1.0 0E+96 -> 0.00
+dsfma2575  fma           -1.0 0.0 0E+96 -> 0.00
+dsfma2576  fma           -1.0 -0.0 0E+96 -> 0.00
+dsfma2577  fma           1.0 0.0 0E+96 -> 0.00
+dsfma2578  fma           1.0 -0.0 0E+96 -> 0.00
+
+-- Specials
+dsfma2580  fma           Inf -Inf 0E+96 -> -Infinity
+dsfma2581  fma           Inf -1000 0E+96 -> -Infinity
+dsfma2582  fma           Inf -1 0E+96 -> -Infinity
+dsfma2583  fma           Inf -0 0E+96 -> NaN  Invalid_operation
+dsfma2584  fma           Inf 0 0E+96 -> NaN  Invalid_operation
+dsfma2585  fma           Inf 1 0E+96 -> Infinity
+dsfma2586  fma           Inf 1000 0E+96 -> Infinity
+dsfma2587  fma           Inf Inf 0E+96 -> Infinity
+dsfma2588  fma           -1000 Inf 0E+96 -> -Infinity
+dsfma2589  fma           -Inf Inf 0E+96 -> -Infinity
+dsfma2590  fma           -1 Inf 0E+96 -> -Infinity
+dsfma2591  fma           -0 Inf 0E+96 -> NaN  Invalid_operation
+dsfma2592  fma           0 Inf 0E+96 -> NaN  Invalid_operation
+dsfma2593  fma           1 Inf 0E+96 -> Infinity
+dsfma2594  fma           1000 Inf 0E+96 -> Infinity
+dsfma2595  fma           Inf Inf 0E+96 -> Infinity
+
+dsfma2600  fma           -Inf -Inf 0E+96 -> Infinity
+dsfma2601  fma           -Inf -1000 0E+96 -> Infinity
+dsfma2602  fma           -Inf -1 0E+96 -> Infinity
+dsfma2603  fma           -Inf -0 0E+96 -> NaN  Invalid_operation
+dsfma2604  fma           -Inf 0 0E+96 -> NaN  Invalid_operation
+dsfma2605  fma           -Inf 1 0E+96 -> -Infinity
+dsfma2606  fma           -Inf 1000 0E+96 -> -Infinity
+dsfma2607  fma           -Inf Inf 0E+96 -> -Infinity
+dsfma2608  fma           -1000 Inf 0E+96 -> -Infinity
+dsfma2609  fma           -Inf -Inf 0E+96 -> Infinity
+dsfma2610  fma           -1 -Inf 0E+96 -> Infinity
+dsfma2611  fma           -0 -Inf 0E+96 -> NaN  Invalid_operation
+dsfma2612  fma           0 -Inf 0E+96 -> NaN  Invalid_operation
+dsfma2613  fma           1 -Inf 0E+96 -> -Infinity
+dsfma2614  fma           1000 -Inf 0E+96 -> -Infinity
+dsfma2615  fma           Inf -Inf 0E+96 -> -Infinity
+
+dsfma2621  fma           NaN -Inf 0E+96 -> NaN
+dsfma2622  fma           NaN -1000 0E+96 -> NaN
+dsfma2623  fma           NaN -1 0E+96 -> NaN
+dsfma2624  fma           NaN -0 0E+96 -> NaN
+dsfma2625  fma           NaN 0 0E+96 -> NaN
+dsfma2626  fma           NaN 1 0E+96 -> NaN
+dsfma2627  fma           NaN 1000 0E+96 -> NaN
+dsfma2628  fma           NaN Inf 0E+96 -> NaN
+dsfma2629  fma           NaN NaN 0E+96 -> NaN
+dsfma2630  fma           -Inf NaN 0E+96 -> NaN
+dsfma2631  fma           -1000 NaN 0E+96 -> NaN
+dsfma2632  fma           -1 NaN 0E+96 -> NaN
+dsfma2633  fma           -0 NaN 0E+96 -> NaN
+dsfma2634  fma           0 NaN 0E+96 -> NaN
+dsfma2635  fma           1 NaN 0E+96 -> NaN
+dsfma2636  fma           1000 NaN 0E+96 -> NaN
+dsfma2637  fma           Inf NaN 0E+96 -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2641  fma           sNaN -Inf 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2642  fma           sNaN -1000 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2643  fma           sNaN -1 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2644  fma           sNaN -0 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2645  fma           sNaN 0 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2646  fma           sNaN 1 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2647  fma           sNaN 1000 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2648  fma           sNaN NaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2649  fma           sNaN sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2650  fma           NaN sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2651  fma           -Inf sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2652  fma           -1000 sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2653  fma           -1 sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2654  fma           -0 sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2655  fma           0 sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2656  fma           1 sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2657  fma           1000 sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2658  fma           Inf sNaN 0E+96 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2659  fma           NaN sNaN 0E+96 -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2661  fma           NaN9 -Inf 0E+96 -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2662  fma           NaN8 999 0E+96 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2663  fma           NaN71 Inf 0E+96 -> NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2664  fma           NaN6 NaN5 0E+96 -> NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2665  fma           -Inf NaN4 0E+96 -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2666  fma           -999 NaN33 0E+96 -> NaN33
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2667  fma           Inf NaN2 0E+96 -> NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2671  fma           sNaN99 -Inf 0E+96 -> NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2672  fma           sNaN98 -11 0E+96 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2673  fma           sNaN97 NaN 0E+96 -> NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2674  fma           sNaN16 sNaN94 0E+96 -> NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2675  fma           NaN95 sNaN93 0E+96 -> NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2676  fma           -Inf sNaN92 0E+96 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2677  fma           088 sNaN91 0E+96 -> NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2678  fma           Inf sNaN90 0E+96 -> NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2679  fma           NaN sNaN89 0E+96 -> NaN89  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2681  fma           -NaN9 -Inf 0E+96 -> -NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2682  fma           -NaN8 999 0E+96 -> -NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2683  fma           -NaN71 Inf 0E+96 -> -NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2684  fma           -NaN6 -NaN5 0E+96 -> -NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2685  fma           -Inf -NaN4 0E+96 -> -NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2686  fma           -999 -NaN33 0E+96 -> -NaN33
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2687  fma           Inf -NaN2 0E+96 -> -NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2691  fma           -sNaN99 -Inf 0E+96 -> -NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2692  fma           -sNaN98 -11 0E+96 -> -NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2693  fma           -sNaN97 NaN 0E+96 -> -NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2694  fma           -sNaN16 -sNaN94 0E+96 -> -NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2695  fma           -NaN95 -sNaN93 0E+96 -> -NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2696  fma           -Inf -sNaN92 0E+96 -> -NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2697  fma           088 -sNaN91 0E+96 -> -NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2698  fma           Inf -sNaN90 0E+96 -> -NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2699  fma           -NaN -sNaN89 0E+96 -> -NaN89  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2701  fma           -NaN -Inf 0E+96 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2702  fma           -NaN 999 0E+96 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2703  fma           -NaN Inf 0E+96 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2704  fma           -NaN -NaN 0E+96 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2705  fma           -Inf -NaN0 0E+96 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2706  fma           -999 -NaN 0E+96 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2707  fma           Inf -NaN 0E+96 -> -NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2711  fma           -sNaN -Inf 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2712  fma           -sNaN -11 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2713  fma           -sNaN00 NaN 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2714  fma           -sNaN -sNaN 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2715  fma           -NaN -sNaN 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2716  fma           -Inf -sNaN 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2717  fma           088 -sNaN 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2718  fma           Inf -sNaN 0E+96 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma2719  fma           -NaN -sNaN 0E+96 -> -NaN  Invalid_operation
+
+-- overflow and underflow tests .. note subnormal results
+-- signs
+dsfma2751  fma           1E+69 1E+78 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2752  fma           1E+69 -1E+78 0E+96 -> -Infinity  Overflow Inexact Rounded
+dsfma2753  fma           -1E+69 1E+78 0E+96 -> -Infinity  Overflow Inexact Rounded
+dsfma2754  fma           -1E+69 -1E+78 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2755  fma           1E-69 1E-78 0E+96 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsfma2756  fma           1E-69 -1E-78 0E+96 -> -0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsfma2757  fma           -1E-69 1E-78 0E+96 -> -0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsfma2758  fma           -1E-69 -1E-78 0E+96 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+
+-- 'subnormal' boundary (all hard underflow or overflow in base arithemtic)
+dsfma2760  fma           1E-73 1E-25 0E+96 -> 1E-98  Subnormal
+dsfma2761  fma           1E-73 1E-26 0E+96 -> 1E-99  Subnormal
+dsfma2762  fma           1E-73 1E-26 0E+96 -> 1E-99  Subnormal
+dsfma2763  fma           1E-73 1E-26 0E+96 -> 1E-99  Subnormal
+dsfma2764  fma           1E-73 1E-26 0E+96 -> 1E-99  Subnormal
+dsfma2765  fma           1E-73 1E-26 0E+96 -> 1E-99  Subnormal
+dsfma2766  fma           1E-73 1E-27 0E+96 -> 1E-100  Subnormal
+dsfma2767  fma           1E-73 1E-27 0E+96 -> 1E-100  Subnormal
+dsfma2768  fma           1E-73 1E-27 0E+96 -> 1E-100  Subnormal
+dsfma2769  fma           1E-73 1E-28 0E+96 -> 1E-101  Subnormal
+-- [no equivalent of 'subnormal' for overflow]
+dsfma2770  fma           1E+15 1E+80 0E+96 -> 1.00000E+95  Clamped
+dsfma2771  fma           1E+15 1E+80 0E+96 -> 1.00000E+95  Clamped
+dsfma2772  fma           1E+15 1E+81 0E+96 -> 1.000000E+96  Clamped
+dsfma2773  fma           1E+15 1E+81 0E+96 -> 1.000000E+96  Clamped
+dsfma2774  fma           1E+15 1E+81 0E+96 -> 1.000000E+96  Clamped
+dsfma2775  fma           1E+15 1E+82 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2776  fma           1E+15 1E+82 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2777  fma           1E+15 1E+82 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2778  fma           1E+15 1E+82 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2779  fma           1E+15 1E+82 0E+96 -> Infinity  Overflow Inexact Rounded
+
+dsfma2801  fma           1.0000E-98 1 0E+96 -> 1.000E-98  Rounded Subnormal
+dsfma2802  fma           1.000E-98 1E+0 0E+96 -> 1.000E-98  Subnormal
+dsfma2803  fma           1.00E-98 1E+0 0E+96 -> 1.00E-98  Subnormal
+dsfma2804  fma           1.0E-98 1E-1 0E+96 -> 1.0E-99  Subnormal
+dsfma2805  fma           1.0E-98 1E-1 0E+96 -> 1.0E-99  Subnormal
+dsfma2806  fma           1.3E-98 1E-1 0E+96 -> 1.3E-99  Subnormal
+dsfma2807  fma           1.5E-98 1E-1 0E+96 -> 1.5E-99  Subnormal
+dsfma2808  fma           1.7E-98 1E-1 0E+96 -> 1.7E-99  Subnormal
+dsfma2809  fma           2.3E-98 1E-1 0E+96 -> 2.3E-99  Subnormal
+dsfma2810  fma           2.5E-98 1E-1 0E+96 -> 2.5E-99  Subnormal
+dsfma2811  fma           2.7E-98 1E-1 0E+96 -> 2.7E-99  Subnormal
+dsfma2812  fma           1.49E-98 1E-1 0E+96 -> 1.49E-99  Subnormal
+dsfma2813  fma           1.50E-98 1E-1 0E+96 -> 1.50E-99  Subnormal
+dsfma2814  fma           1.51E-98 1E-1 0E+96 -> 1.51E-99  Subnormal
+dsfma2815  fma           2.49E-98 1E-1 0E+96 -> 2.49E-99  Subnormal
+dsfma2816  fma           2.50E-98 1E-1 0E+96 -> 2.50E-99  Subnormal
+dsfma2817  fma           2.51E-98 1E-1 0E+96 -> 2.51E-99  Subnormal
+
+dsfma2818  fma           1E-98 1E-1 0E+96 -> 1E-99  Subnormal
+dsfma2819  fma           3E-98 1E-1 0E+96 -> 3E-99  Subnormal
+dsfma2820  fma           5E-98 1E-1 0E+96 -> 5E-99  Subnormal
+dsfma2821  fma           7E-98 1E-1 0E+96 -> 7E-99  Subnormal
+dsfma2822  fma           9E-98 1E-1 0E+96 -> 9E-99  Subnormal
+dsfma2823  fma           9.9E-98 1E-1 0E+96 -> 9.9E-99  Subnormal
+
+dsfma2824  fma           1E-98 -1E-1 0E+96 -> -1E-99  Subnormal
+dsfma2825  fma           3E-98 -1E-1 0E+96 -> -3E-99  Subnormal
+dsfma2826  fma           -5E-98 1E-1 0E+96 -> -5E-99  Subnormal
+dsfma2827  fma           7E-98 -1E-1 0E+96 -> -7E-99  Subnormal
+dsfma2828  fma           -9E-98 1E-1 0E+96 -> -9E-99  Subnormal
+dsfma2829  fma           9.9E-98 -1E-1 0E+96 -> -9.9E-99  Subnormal
+dsfma2830  fma           3.0E-98 -1E-1 0E+96 -> -3.0E-99  Subnormal
+
+dsfma2831  fma           1.0E-50 1E-50 0E+96 -> 1.0E-100  Subnormal
+dsfma2832  fma           1.0E-50 1E-50 0E+96 -> 1.0E-100  Subnormal
+dsfma2833  fma           1.0E-50 1E-50 0E+96 -> 1.0E-100  Subnormal
+dsfma2834  fma           2.0E-50 2E-50 0E+96 -> 4.0E-100  Subnormal
+dsfma2835  fma           4.0E-50 4E-50 0E+96 -> 1.60E-99  Subnormal
+dsfma2836  fma           10.0E-50 10E-50 0E+96 -> 1.000E-98  Subnormal
+dsfma2837  fma           30.0E-50 30E-50 0E+96 -> 9.000E-98  Subnormal
+dsfma2838  fma           40.0E-50 40E-47 0E+96 -> 1.6000E-94
+dsfma2839  fma           40.0E-50 40E-47 0E+96 -> 1.6000E-94
+dsfma2840  fma           40.0E-50 40E-46 0E+96 -> 1.6000E-93
+
+-- Long operand overflow may be a different path
+dsfma2870  fma           100 9.999E+96 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2871  fma           100 -9.999E+96 0E+96 -> -Infinity  Overflow Inexact Rounded
+dsfma2872  fma           9.999E+96 100 0E+96 -> Infinity  Overflow Inexact Rounded
+dsfma2873  fma           -9.999E+96 100 0E+96 -> -Infinity  Overflow Inexact Rounded
+
+-- check for double-rounded subnormals
+dsfma2881  fma           1.2347E-89 1.2347E-10 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2882  fma           1.234E-89 1.234E-10 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2883  fma           1.23E-89 1.23E-10 0E+96 -> 1.51E-99  Underflow Inexact Rounded Subnormal
+dsfma2884  fma           1.2E-89 1.2E-10 0E+96 -> 1.44E-99  Subnormal
+dsfma2885  fma           1.2E-89 1.2E-10 0E+96 -> 1.44E-99  Subnormal
+dsfma2886  fma           1.2E-89 1.2E-10 0E+96 -> 1.44E-99  Subnormal
+dsfma2887  fma           1.2E-89 1.3E-10 0E+96 -> 1.56E-99  Subnormal
+dsfma2888  fma           1.3E-89 1.3E-10 0E+96 -> 1.69E-99  Subnormal
+dsfma2889  fma           1.3E-89 1.3E-11 0E+96 -> 1.7E-100  Underflow Inexact Rounded Subnormal
+dsfma2890  fma           1.3E-89 1.3E-11 0E+96 -> 1.7E-100  Underflow Inexact Rounded Subnormal
+
+dsfma2891  fma           1.2345E-10 1.234E-89 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2892  fma           1.23456E-10 1.234E-89 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2893  fma           1.2345E-10 1.234E-89 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2894  fma           1.23456E-10 1.234E-89 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2895  fma           1.2345E-10 1.234E-89 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+dsfma2896  fma           1.23456E-10 1.234E-89 0E+96 -> 1.52E-99  Underflow Inexact Rounded Subnormal
+
+-- Now explore the case where we get a normal result with Underflow
+dsfma2900  fma           0.3000000E-48 0.3000000E-48 0E+96 -> 9.000E-98  Rounded Subnormal
+dsfma2901  fma           0.3000001E-48 0.3000001E-48 0E+96 -> 9.000E-98  Underflow Inexact Rounded Subnormal
+dsfma2902  fma           9.999999E-96 0.09999999 0E+96 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsfma2903  fma           9.999999E-96 0.09999999 0E+96 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsfma2904  fma           9.999999E-96 0.09999999 0E+96 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+dsfma2905  fma           9.999999E-96 0.09999999 0E+96 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+-- prove operands are exact
+dsfma2906  fma           9.999999E-96 1 0E+96 -> 1.000000E-95  Underflow Inexact Rounded Subnormal
+dsfma2907  fma           1 0.09999999 0E+96 -> 0.09999999
+-- the next rounds to Nmin
+dsfma2908  fma           9.999999E-96 0.09999999 0E+96 -> 1.00000E-96  Underflow Inexact Rounded Subnormal
+
+-- hugest
+dsfma2909  fma           9999999 9999999 0E+96 -> 9.999998E+13  Inexact Rounded
+
+-- Null tests
+
+
+-- ADDITION TESTS ------------------------------------------------------
+
+-- [first group are 'quick confidence check']
+dsfma3001  fma           1 1 1 -> 2
+dsfma3002  fma           1 2 3 -> 5
+dsfma3003  fma           1 5.75 3.3 -> 9.05
+dsfma3004  fma           1 5 -3 -> 2
+dsfma3005  fma           1 -5 -3 -> -8
+dsfma3006  fma           1 -7 2.5 -> -4.5
+dsfma3007  fma           1 0.7 0.3 -> 1.0
+dsfma3008  fma           1 1.25 1.25 -> 2.50
+dsfma3009  fma           1 1.234569 1.000000 -> 2.234569
+dsfma3010  fma           1 1.234569 1.000001 -> 2.234570
+
+--             1234567890123456      1234567890123456
+dsfma3011  fma           1 0.4444446 0.5555555 -> 1.000000  Inexact Rounded
+dsfma3012  fma           1 0.4444445 0.5555555 -> 1.000000  Rounded
+dsfma3013  fma           1 0.4444444 0.5555555 -> 0.9999999
+dsfma3014  fma           1 4444444 0.49 -> 4444444  Inexact Rounded
+dsfma3015  fma           1 4444444 0.499 -> 4444444  Inexact Rounded
+dsfma3016  fma           1 4444444 0.4999 -> 4444444  Inexact Rounded
+dsfma3017  fma           1 4444444 0.5000 -> 4444444  Inexact Rounded
+dsfma3018  fma           1 4444444 0.5001 -> 4444445  Inexact Rounded
+dsfma3019  fma           1 4444444 0.501 -> 4444445  Inexact Rounded
+dsfma3020  fma           1 4444444 0.51 -> 4444445  Inexact Rounded
+
+dsfma3021  fma           1 0 1 -> 1
+dsfma3022  fma           1 1 1 -> 2
+dsfma3023  fma           1 2 1 -> 3
+dsfma3024  fma           1 3 1 -> 4
+dsfma3025  fma           1 4 1 -> 5
+dsfma3026  fma           1 5 1 -> 6
+dsfma3027  fma           1 6 1 -> 7
+dsfma3028  fma           1 7 1 -> 8
+dsfma3029  fma           1 8 1 -> 9
+dsfma3030  fma           1 9 1 -> 10
+
+-- some carrying effects
+dsfma3031  fma           1 0.9998 0.0000 -> 0.9998
+dsfma3032  fma           1 0.9998 0.0001 -> 0.9999
+dsfma3033  fma           1 0.9998 0.0002 -> 1.0000
+dsfma3034  fma           1 0.9998 0.0003 -> 1.0001
+
+dsfma3035  fma           1 70 10000E+4 -> 1.000001E+8  Inexact Rounded
+dsfma3036  fma           1 700 10000E+4 -> 1.000007E+8  Rounded
+dsfma3037  fma           1 7000 10000E+4 -> 1.000070E+8  Rounded
+dsfma3038  fma           1 70000 10000E+4 -> 1.000700E+8  Rounded
+dsfma3039  fma           1 700000 10000E+4 -> 1.007000E+8  Rounded
+
+-- symmetry:
+dsfma3040  fma           1 10000E+4 70 -> 1.000001E+8  Inexact Rounded
+dsfma3041  fma           1 10000E+4 700 -> 1.000007E+8  Rounded
+dsfma3042  fma           1 10000E+4 7000 -> 1.000070E+8  Rounded
+dsfma3044  fma           1 10000E+4 70000 -> 1.000700E+8  Rounded
+dsfma3045  fma           1 10000E+4 700000 -> 1.007000E+8  Rounded
+
+-- same, without rounding
+dsfma3046  fma           1 10000E+2 7 -> 1000007
+dsfma3047  fma           1 10000E+2 70 -> 1000070
+dsfma3048  fma           1 10000E+2 700 -> 1000700
+dsfma3049  fma           1 10000E+2 7000 -> 1007000
+dsfma3050  fma           1 10000E+2 70000 -> 1070000
+dsfma3051  fma           1 10000E+2 700000 -> 1700000
+dsfma3052  fma           1 10000E+2 7000000 -> 8000000
+
+-- examples from decarith
+dsfma3053  fma           1 12 7.00 -> 19.00
+dsfma3054  fma           1 1.3 -1.07 -> 0.23
+dsfma3055  fma           1 1.3 -1.30 -> 0.00
+dsfma3056  fma           1 1.3 -2.07 -> -0.77
+dsfma3057  fma           1 1E+0 1E+1 -> 11
+
+-- leading zero preservation
+dsfma3061  fma           1 1 0.0001 -> 1.0001
+dsfma3062  fma           1 1 0.00001 -> 1.00001
+dsfma3063  fma           1 1 0.000001 -> 1.000001
+dsfma3064  fma           1 1 0.0000001 -> 1.000000  Inexact Rounded
+dsfma3065  fma           1 1 0.00000001 -> 1.000000  Inexact Rounded
+
+-- some funny zeros [in case of bad signum]
+dsfma3070  fma           1 1 0 -> 1
+dsfma3071  fma           1 1 0 -> 1
+dsfma3072  fma           1 1 0.0 -> 1.0
+dsfma3073  fma           1 1 0.0 -> 1.0
+dsfma3074  fma           1 1 0.00 -> 1.00
+dsfma3075  fma           1 0 1 -> 1
+dsfma3076  fma           1 0 1 -> 1
+dsfma3077  fma           1 0.0 1 -> 1.0
+dsfma3078  fma           1 0.0 1 -> 1.0
+dsfma3079  fma           1 0.00 1 -> 1.00
+
+-- some carries
+dsfma3080  fma           1 9999998 1 -> 9999999
+dsfma3081  fma           1 9999999 1 -> 1.000000E+7  Rounded
+dsfma3082  fma           1 9999999 1 -> 1.000000E+7  Rounded
+dsfma3083  fma           1 9999999 1 -> 1.000000E+7  Rounded
+dsfma3084  fma           1 999999 1 -> 1000000
+dsfma3085  fma           1 99999 1 -> 100000
+dsfma3086  fma           1 9999 1 -> 10000
+dsfma3087  fma           1 999 1 -> 1000
+dsfma3088  fma           1 99 1 -> 100
+dsfma3089  fma           1 9 1 -> 10
+
+
+-- more LHS swaps
+dsfma3090  fma           1 -56267E-2 0 -> -562.67
+dsfma3091  fma           1 -56267E-2 0 -> -562.67
+dsfma3092  fma           1 -56267E-1 0 -> -5626.7
+dsfma3093  fma           1 -56267E-1 0 -> -5626.7
+dsfma3094  fma           1 -56267E-1 0 -> -5626.7
+dsfma3095  fma           1 -56267E+0 0 -> -56267
+dsfma3096  fma           1 -56267E+0 0 -> -56267
+dsfma3097  fma           1 -56267E+0 0 -> -56267
+dsfma3098  fma           1 -5E-2 0 -> -0.05
+dsfma3099  fma           1 -5E-2 0 -> -0.05
+dsfma3100  fma           1 -5E-2 0 -> -0.05
+dsfma3101  fma           1 -5E-1 0 -> -0.5
+dsfma3102  fma           1 -5E-1 0 -> -0.5
+dsfma3103  fma           1 -5E+0 0 -> -5
+dsfma3104  fma           1 -5E+0 0 -> -5
+dsfma3105  fma           1 -5E+0 0 -> -5
+dsfma3106  fma           1 -5E+1 0 -> -50
+dsfma3107  fma           1 -5E+4 0 -> -50000
+dsfma3108  fma           1 -5E+4 0 -> -50000
+dsfma3109  fma           1 -5E+4 0 -> -50000
+dsfma3110  fma           1 -5E+4 0 -> -50000
+dsfma3111  fma           1 -5E+25 0 -> -5.000000E+25  Rounded
+
+-- more RHS swaps
+dsfma3113  fma           1 0 -56267E-2 -> -562.67
+dsfma3114  fma           1 0 -56267E-2 -> -562.67
+dsfma3116  fma           1 0 -56267E-1 -> -5626.7
+dsfma3117  fma           1 0 -56267E-1 -> -5626.7
+dsfma3119  fma           1 0 -56267E-1 -> -5626.7
+dsfma3120  fma           1 0 -56267E+0 -> -56267
+dsfma3121  fma           1 0 -56267E+0 -> -56267
+dsfma3122  fma           1 0 -56267E+0 -> -56267
+dsfma3123  fma           1 0 -5E-2 -> -0.05
+dsfma3124  fma           1 0 -5E-2 -> -0.05
+dsfma3125  fma           1 0 -5E-2 -> -0.05
+dsfma3126  fma           1 0 -5E-1 -> -0.5
+dsfma3127  fma           1 0 -5E-1 -> -0.5
+dsfma3128  fma           1 0 -5E+0 -> -5
+dsfma3129  fma           1 0 -5E+0 -> -5
+dsfma3130  fma           1 0 -5E+0 -> -5
+dsfma3131  fma           1 0 -5E+1 -> -50
+dsfma3132  fma           1 0 -5E+4 -> -50000
+dsfma3133  fma           1 0 -5E+4 -> -50000
+dsfma3134  fma           1 0 -5E+4 -> -50000
+dsfma3135  fma           1 0 -5E+4 -> -50000
+dsfma3136  fma           1 0 -5E+25 -> -5.000000E+25  Rounded
+
+-- related
+dsfma3137  fma           1 1 0E-5 -> 1.00000
+dsfma3138  fma           1 -1 0E-5 -> -1.00000
+dsfma3139  fma           1 0E-5 1 -> 1.00000
+dsfma3140  fma           1 0E-5 -1 -> -1.00000
+dsfma3141  fma           1 1E+3 0.0000 -> 1000.000  Rounded
+dsfma3142  fma           1 1E+3 0.00000 -> 1000.000  Rounded
+dsfma3143  fma           1 0.000 1E+3 -> 1000.000
+dsfma3144  fma           1 0.0000 1E+3 -> 1000.000  Rounded
+
+-- [some of the next group are really constructor tests]
+dsfma3146  fma           1 00.0 0 -> 0.0
+dsfma3147  fma           1 0.00 0 -> 0.00
+dsfma3148  fma           1 0 0.00 -> 0.00
+dsfma3149  fma           1 0 00.0 -> 0.0
+dsfma3150  fma           1 00.0 0.00 -> 0.00
+dsfma3151  fma           1 0.00 00.0 -> 0.00
+dsfma3152  fma           1 3 0.3 -> 3.3
+dsfma3153  fma           1 3 0.3 -> 3.3
+dsfma3154  fma           1 3.0 0.3 -> 3.3
+dsfma3155  fma           1 3.00 0.3 -> 3.30
+dsfma3156  fma           1 3 3 -> 6
+dsfma3157  fma           1 3 +3 -> 6
+dsfma3158  fma           1 3 -3 -> 0
+dsfma3159  fma           1 0.3 -0.3 -> 0.0
+dsfma3160  fma           1 0.03 -0.03 -> 0.00
+
+-- try borderline precision, with carries, etc.
+dsfma3161  fma           1 1E+3 -1 -> 999
+dsfma3162  fma           1 1E+3 1.11 -> 1001.11
+dsfma3163  fma           1 1.11 1E+3 -> 1001.11
+dsfma3164  fma           1 -1 1E+3 -> 999
+dsfma3165  fma           1 7E+3 -1 -> 6999
+dsfma3166  fma           1 7E+3 1.11 -> 7001.11
+dsfma3167  fma           1 1.11 7E+3 -> 7001.11
+dsfma3168  fma           1 -1 7E+3 -> 6999
+
+rounding:    half_up
+--           1.234567890123456      1234567890123456      1 234567890123456
+dsfma3170  fma           1 4.444444 0.5555557 -> 5.000000  Inexact Rounded
+dsfma3171  fma           1 4.444444 0.5555556 -> 5.000000  Inexact Rounded
+dsfma3172  fma           1 4.444444 0.5555555 -> 5.000000  Inexact Rounded
+dsfma3173  fma           1 4.444444 0.5555554 -> 4.999999  Inexact Rounded
+dsfma3174  fma           1 4.444444 0.5555553 -> 4.999999  Inexact Rounded
+dsfma3175  fma           1 4.444444 0.5555552 -> 4.999999  Inexact Rounded
+dsfma3176  fma           1 4.444444 0.5555551 -> 4.999999  Inexact Rounded
+dsfma3177  fma           1 4.444444 0.5555550 -> 4.999999  Rounded
+dsfma3178  fma           1 4.444444 0.5555555 -> 5.000000  Inexact Rounded
+dsfma3179  fma           1 4.444444 0.5555554 -> 4.999999  Inexact Rounded
+dsfma3180  fma           1 4.444444 0.5555553 -> 4.999999  Inexact Rounded
+dsfma3181  fma           1 4.444444 0.5555552 -> 4.999999  Inexact Rounded
+dsfma3182  fma           1 4.444444 0.5555551 -> 4.999999  Inexact Rounded
+dsfma3183  fma           1 4.444444 0.5555550 -> 4.999999  Rounded
+
+-- and some more, including residue effects and different roundings
+rounding:    half_up
+dsfma3200  fma           1 1234569 0 -> 1234569
+dsfma3201  fma           1 1234569 0.000000001 -> 1234569  Inexact Rounded
+dsfma3202  fma           1 1234569 0.000001 -> 1234569  Inexact Rounded
+dsfma3203  fma           1 1234569 0.1 -> 1234569  Inexact Rounded
+dsfma3204  fma           1 1234569 0.4 -> 1234569  Inexact Rounded
+dsfma3205  fma           1 1234569 0.49 -> 1234569  Inexact Rounded
+dsfma3206  fma           1 1234569 0.499999 -> 1234569  Inexact Rounded
+dsfma3207  fma           1 1234569 0.4999999 -> 1234569  Inexact Rounded
+dsfma3208  fma           1 1234569 0.5 -> 1234570  Inexact Rounded
+dsfma3209  fma           1 1234569 0.5000001 -> 1234570  Inexact Rounded
+dsfma3210  fma           1 1234569 0.500001 -> 1234570  Inexact Rounded
+dsfma3211  fma           1 1234569 0.51 -> 1234570  Inexact Rounded
+dsfma3212  fma           1 1234569 0.6 -> 1234570  Inexact Rounded
+dsfma3213  fma           1 1234569 0.9 -> 1234570  Inexact Rounded
+dsfma3214  fma           1 1234569 0.99999 -> 1234570  Inexact Rounded
+dsfma3215  fma           1 1234569 0.9999999 -> 1234570  Inexact Rounded
+dsfma3216  fma           1 1234569 1 -> 1234570
+dsfma3217  fma           1 1234569 1.000001 -> 1234570  Inexact Rounded
+dsfma3218  fma           1 1234569 1.00001 -> 1234570  Inexact Rounded
+dsfma3219  fma           1 1234569 1.1 -> 1234570  Inexact Rounded
+
+rounding:    half_even
+dsfma3220  fma           1 1234569 0 -> 1234569
+dsfma3221  fma           1 1234569 0.000000001 -> 1234569  Inexact Rounded
+dsfma3222  fma           1 1234569 0.000001 -> 1234569  Inexact Rounded
+dsfma3223  fma           1 1234569 0.1 -> 1234569  Inexact Rounded
+dsfma3224  fma           1 1234569 0.4 -> 1234569  Inexact Rounded
+dsfma3225  fma           1 1234569 0.49 -> 1234569  Inexact Rounded
+dsfma3226  fma           1 1234569 0.499999 -> 1234569  Inexact Rounded
+dsfma3227  fma           1 1234569 0.4999999 -> 1234569  Inexact Rounded
+dsfma3228  fma           1 1234569 0.5 -> 1234570  Inexact Rounded
+dsfma3229  fma           1 1234569 0.5000001 -> 1234570  Inexact Rounded
+dsfma3230  fma           1 1234569 0.500001 -> 1234570  Inexact Rounded
+dsfma3231  fma           1 1234569 0.51 -> 1234570  Inexact Rounded
+dsfma3232  fma           1 1234569 0.6 -> 1234570  Inexact Rounded
+dsfma3233  fma           1 1234569 0.9 -> 1234570  Inexact Rounded
+dsfma3234  fma           1 1234569 0.99999 -> 1234570  Inexact Rounded
+dsfma3235  fma           1 1234569 0.9999999 -> 1234570  Inexact Rounded
+dsfma3236  fma           1 1234569 1 -> 1234570
+dsfma3237  fma           1 1234569 1.000001 -> 1234570  Inexact Rounded
+dsfma3238  fma           1 1234569 1.00001 -> 1234570  Inexact Rounded
+dsfma3239  fma           1 1234569 1.1 -> 1234570  Inexact Rounded
+-- critical few with even bottom digit...
+dsfma3240  fma           1 1234568 0.4999999 -> 1234568  Inexact Rounded
+dsfma3241  fma           1 1234568 0.5 -> 1234568  Inexact Rounded
+dsfma3242  fma           1 1234568 0.5000001 -> 1234569  Inexact Rounded
+
+rounding:    down
+dsfma3250  fma           1 1234569 0 -> 1234569
+dsfma3251  fma           1 1234569 0.000000001 -> 1234569  Inexact Rounded
+dsfma3252  fma           1 1234569 0.000001 -> 1234569  Inexact Rounded
+dsfma3253  fma           1 1234569 0.1 -> 1234569  Inexact Rounded
+dsfma3254  fma           1 1234569 0.4 -> 1234569  Inexact Rounded
+dsfma3255  fma           1 1234569 0.49 -> 1234569  Inexact Rounded
+dsfma3256  fma           1 1234569 0.499999 -> 1234569  Inexact Rounded
+dsfma3257  fma           1 1234569 0.4999999 -> 1234569  Inexact Rounded
+dsfma3258  fma           1 1234569 0.5 -> 1234569  Inexact Rounded
+dsfma3259  fma           1 1234569 0.5000001 -> 1234569  Inexact Rounded
+dsfma3260  fma           1 1234569 0.500001 -> 1234569  Inexact Rounded
+dsfma3261  fma           1 1234569 0.51 -> 1234569  Inexact Rounded
+dsfma3262  fma           1 1234569 0.6 -> 1234569  Inexact Rounded
+dsfma3263  fma           1 1234569 0.9 -> 1234569  Inexact Rounded
+dsfma3264  fma           1 1234569 0.99999 -> 1234569  Inexact Rounded
+dsfma3265  fma           1 1234569 0.9999999 -> 1234569  Inexact Rounded
+dsfma3266  fma           1 1234569 1 -> 1234570
+dsfma3267  fma           1 1234569 1.000001 -> 1234570  Inexact Rounded
+dsfma3268  fma           1 1234569 1.00001 -> 1234570  Inexact Rounded
+dsfma3269  fma           1 1234569 1.1 -> 1234570  Inexact Rounded
+
+-- 1 in last place tests
+rounding:    half_up
+dsfma3301  fma           1 -1 1 -> 0
+dsfma3302  fma           1 0 1 -> 1
+dsfma3303  fma           1 1 1 -> 2
+dsfma3304  fma           1 12 1 -> 13
+dsfma3305  fma           1 98 1 -> 99
+dsfma3306  fma           1 99 1 -> 100
+dsfma3307  fma           1 100 1 -> 101
+dsfma3308  fma           1 101 1 -> 102
+dsfma3309  fma           1 -1 -1 -> -2
+dsfma3310  fma           1 0 -1 -> -1
+dsfma3311  fma           1 1 -1 -> 0
+dsfma3312  fma           1 12 -1 -> 11
+dsfma3313  fma           1 98 -1 -> 97
+dsfma3314  fma           1 99 -1 -> 98
+dsfma3315  fma           1 100 -1 -> 99
+dsfma3316  fma           1 101 -1 -> 100
+
+dsfma3321  fma           1 -0.01 0.01 -> 0.00
+dsfma3322  fma           1 0.00 0.01 -> 0.01
+dsfma3323  fma           1 0.01 0.01 -> 0.02
+dsfma3324  fma           1 0.12 0.01 -> 0.13
+dsfma3325  fma           1 0.98 0.01 -> 0.99
+dsfma3326  fma           1 0.99 0.01 -> 1.00
+dsfma3327  fma           1 1.00 0.01 -> 1.01
+dsfma3328  fma           1 1.01 0.01 -> 1.02
+dsfma3329  fma           1 -0.01 -0.01 -> -0.02
+dsfma3330  fma           1 0.00 -0.01 -> -0.01
+dsfma3331  fma           1 0.01 -0.01 -> 0.00
+dsfma3332  fma           1 0.12 -0.01 -> 0.11
+dsfma3333  fma           1 0.98 -0.01 -> 0.97
+dsfma3334  fma           1 0.99 -0.01 -> 0.98
+dsfma3335  fma           1 1.00 -0.01 -> 0.99
+dsfma3336  fma           1 1.01 -0.01 -> 1.00
+
+-- some more cases where adding 0 affects the coefficient
+dsfma3340  fma           1 1E+1 0 -> 10
+dsfma3341  fma           1 1E+4 0 -> 10000
+dsfma3342  fma           1 1E+4 0 -> 10000
+dsfma3343  fma           1 1E+5 0 -> 100000
+-- which simply follow from these cases ...
+dsfma3344  fma           1 1E+1 1 -> 11
+dsfma3345  fma           1 1E+4 1 -> 10001
+dsfma3346  fma           1 1E+4 1 -> 10001
+dsfma3347  fma           1 1E+5 1 -> 100001
+dsfma3348  fma           1 1E+1 7 -> 17
+dsfma3349  fma           1 1E+4 7 -> 10007
+dsfma3350  fma           1 1E+4 7 -> 10007
+dsfma3351  fma           1 1E+5 7 -> 100007
+
+-- tryzeros cases
+rounding:    half_up
+dsfma3360  fma           1 0E+12 10000E+0 -> 10000
+dsfma3361  fma           1 0E-12 10000E+0 -> 10000.00  Rounded
+dsfma3362  fma           1 10000E+0 0E-12 -> 10000.00  Rounded
+dsfma3363  fma           1 10000E+0 10000E-12 -> 10000.00  Inexact Rounded
+dsfma3364  fma           1 9.999999E+96 -9.999999E+96 -> 0E+90
+
+-- a curiosity from JSR 13 testing
+rounding:    half_down
+dsfma3370  fma           1 9999999 815 -> 1.000081E+7  Inexact Rounded
+dsfma3371  fma           1 9999999 815 -> 1.000081E+7  Inexact Rounded
+rounding:    half_up
+dsfma3372  fma           1 9999999 815 -> 1.000081E+7  Inexact Rounded
+dsfma3373  fma           1 9999999 815 -> 1.000081E+7  Inexact Rounded
+rounding:    half_even
+dsfma3374  fma           1 9999999 815 -> 1.000081E+7  Inexact Rounded
+dsfma3375  fma           1 9999999 815 -> 1.000081E+7  Inexact Rounded
+
+-- ulp replacement tests
+dsfma3400  fma           1 1 77E-4 -> 1.0077
+dsfma3401  fma           1 1 77E-4 -> 1.0077
+dsfma3402  fma           1 1 77E-4 -> 1.0077
+dsfma3403  fma           1 1 77E-4 -> 1.0077
+dsfma3404  fma           1 1 77E-4 -> 1.0077
+dsfma3405  fma           1 1 77E-5 -> 1.00077
+dsfma3406  fma           1 1 77E-75 -> 1.000000  Inexact Rounded
+
+dsfma3410  fma           1 10 77E-4 -> 10.0077
+dsfma3411  fma           1 10 77E-4 -> 10.0077
+dsfma3412  fma           1 10 77E-4 -> 10.0077
+dsfma3413  fma           1 10 77E-4 -> 10.0077
+dsfma3414  fma           1 10 77E-4 -> 10.0077
+dsfma3415  fma           1 10 77E-5 -> 10.00077
+dsfma3416  fma           1 10 77E-75 -> 10.00000  Inexact Rounded
+
+dsfma3420  fma           1 77E-4 1 -> 1.0077
+dsfma3421  fma           1 77E-4 1 -> 1.0077
+dsfma3422  fma           1 77E-4 1 -> 1.0077
+dsfma3423  fma           1 77E-4 1 -> 1.0077
+dsfma3424  fma           1 77E-4 1 -> 1.0077
+dsfma3425  fma           1 77E-5 1 -> 1.00077
+dsfma3426  fma           1 77E-75 1 -> 1.000000  Inexact Rounded
+
+dsfma3430  fma           1 77E-4 10 -> 10.0077
+dsfma3431  fma           1 77E-4 10 -> 10.0077
+dsfma3432  fma           1 77E-4 10 -> 10.0077
+dsfma3433  fma           1 77E-4 10 -> 10.0077
+dsfma3434  fma           1 77E-4 10 -> 10.0077
+dsfma3435  fma           1 77E-5 10 -> 10.00077
+dsfma3436  fma           1 77E-75 10 -> 10.00000  Inexact Rounded
+
+-- negative ulps
+dsfma36440 fma           1 1 -77E-4 -> 0.9923
+dsfma36441 fma           1 1 -77E-4 -> 0.9923
+dsfma36442 fma           1 1 -77E-4 -> 0.9923
+dsfma36443 fma           1 1 -77E-4 -> 0.9923
+dsfma36444 fma           1 1 -77E-4 -> 0.9923
+dsfma36445 fma           1 1 -77E-5 -> 0.99923
+dsfma36446 fma           1 1 -77E-25 -> 1.000000  Inexact Rounded
+
+dsfma36450 fma           1 10 -77E-4 -> 9.9923
+dsfma36451 fma           1 10 -77E-4 -> 9.9923
+dsfma36452 fma           1 10 -77E-4 -> 9.9923
+dsfma36453 fma           1 10 -77E-4 -> 9.9923
+dsfma36454 fma           1 10 -77E-4 -> 9.9923
+dsfma36455 fma           1 10 -77E-5 -> 9.99923
+dsfma36456 fma           1 10 -77E-25 -> 10.00000  Inexact Rounded
+
+dsfma36460 fma           1 -77E-4 1 -> 0.9923
+dsfma36461 fma           1 -77E-4 1 -> 0.9923
+dsfma36462 fma           1 -77E-4 1 -> 0.9923
+dsfma36463 fma           1 -77E-4 1 -> 0.9923
+dsfma36464 fma           1 -77E-4 1 -> 0.9923
+dsfma36465 fma           1 -77E-5 1 -> 0.99923
+dsfma36466 fma           1 -77E-25 1 -> 1.000000  Inexact Rounded
+
+dsfma36470 fma           1 -77E-4 10 -> 9.9923
+dsfma36471 fma           1 -77E-4 10 -> 9.9923
+dsfma36472 fma           1 -77E-4 10 -> 9.9923
+dsfma36473 fma           1 -77E-4 10 -> 9.9923
+dsfma36474 fma           1 -77E-4 10 -> 9.9923
+dsfma36475 fma           1 -77E-5 10 -> 9.99923
+dsfma36476 fma           1 -77E-25 10 -> 10.00000  Inexact Rounded
+
+-- negative ulps
+dsfma36480 fma           1 -1 77E-4 -> -0.9923
+dsfma36481 fma           1 -1 77E-4 -> -0.9923
+dsfma36482 fma           1 -1 77E-4 -> -0.9923
+dsfma36483 fma           1 -1 77E-4 -> -0.9923
+dsfma36484 fma           1 -1 77E-4 -> -0.9923
+dsfma36485 fma           1 -1 77E-5 -> -0.99923
+dsfma36486 fma           1 -1 77E-25 -> -1.000000  Inexact Rounded
+
+dsfma36490 fma           1 -10 77E-4 -> -9.9923
+dsfma36491 fma           1 -10 77E-4 -> -9.9923
+dsfma36492 fma           1 -10 77E-4 -> -9.9923
+dsfma36493 fma           1 -10 77E-4 -> -9.9923
+dsfma36494 fma           1 -10 77E-4 -> -9.9923
+dsfma36495 fma           1 -10 77E-5 -> -9.99923
+dsfma36496 fma           1 -10 77E-25 -> -10.00000  Inexact Rounded
+
+dsfma36500 fma           1 77E-4 -1 -> -0.9923
+dsfma36501 fma           1 77E-4 -1 -> -0.9923
+dsfma36502 fma           1 77E-4 -1 -> -0.9923
+dsfma36503 fma           1 77E-4 -1 -> -0.9923
+dsfma36504 fma           1 77E-4 -1 -> -0.9923
+dsfma36505 fma           1 77E-5 -1 -> -0.99923
+dsfma36506 fma           1 77E-25 -1 -> -1.000000  Inexact Rounded
+
+dsfma36510 fma           1 77E-4 -10 -> -9.9923
+dsfma36511 fma           1 77E-4 -10 -> -9.9923
+dsfma36512 fma           1 77E-4 -10 -> -9.9923
+dsfma36513 fma           1 77E-4 -10 -> -9.9923
+dsfma36514 fma           1 77E-4 -10 -> -9.9923
+dsfma36515 fma           1 77E-5 -10 -> -9.99923
+dsfma36516 fma           1 77E-25 -10 -> -10.00000  Inexact Rounded
+
+-- and a couple more with longer RHS
+dsfma36520 fma           1 1 -7777E-4 -> 0.2223
+dsfma36521 fma           1 1 -7777E-4 -> 0.2223
+dsfma36522 fma           1 1 -7777E-4 -> 0.2223
+dsfma36523 fma           1 1 -7777E-5 -> 0.92223
+dsfma36524 fma           1 1 -7777E-5 -> 0.92223
+dsfma36525 fma           1 1 -7777E-5 -> 0.92223
+dsfma36526 fma           1 1 -7777E-6 -> 0.992223
+
+
+-- and some more residue effects and different roundings
+rounding:    half_up
+dsfma36540 fma           1 6543219 0 -> 6543219
+dsfma36541 fma           1 6543219 0.000000001 -> 6543219  Inexact Rounded
+dsfma36542 fma           1 6543219 0.000001 -> 6543219  Inexact Rounded
+dsfma36543 fma           1 6543219 0.1 -> 6543219  Inexact Rounded
+dsfma36544 fma           1 6543219 0.4 -> 6543219  Inexact Rounded
+dsfma36545 fma           1 6543219 0.49 -> 6543219  Inexact Rounded
+dsfma36546 fma           1 6543219 0.499999 -> 6543219  Inexact Rounded
+dsfma36547 fma           1 6543219 0.4999999 -> 6543219  Inexact Rounded
+dsfma36548 fma           1 6543219 0.5 -> 6543220  Inexact Rounded
+dsfma36549 fma           1 6543219 0.5000001 -> 6543220  Inexact Rounded
+dsfma36550 fma           1 6543219 0.500001 -> 6543220  Inexact Rounded
+dsfma36551 fma           1 6543219 0.51 -> 6543220  Inexact Rounded
+dsfma36552 fma           1 6543219 0.6 -> 6543220  Inexact Rounded
+dsfma36553 fma           1 6543219 0.9 -> 6543220  Inexact Rounded
+dsfma36554 fma           1 6543219 0.99999 -> 6543220  Inexact Rounded
+dsfma36555 fma           1 6543219 0.9999999 -> 6543220  Inexact Rounded
+dsfma36556 fma           1 6543219 1 -> 6543220
+dsfma36557 fma           1 6543219 1.000001 -> 6543220  Inexact Rounded
+dsfma36558 fma           1 6543219 1.00001 -> 6543220  Inexact Rounded
+dsfma36559 fma           1 6543219 1.1 -> 6543220  Inexact Rounded
+
+rounding:    half_even
+dsfma36560 fma           1 6543219 0 -> 6543219
+dsfma36561 fma           1 6543219 0.000000001 -> 6543219  Inexact Rounded
+dsfma36562 fma           1 6543219 0.000001 -> 6543219  Inexact Rounded
+dsfma36563 fma           1 6543219 0.1 -> 6543219  Inexact Rounded
+dsfma36564 fma           1 6543219 0.4 -> 6543219  Inexact Rounded
+dsfma36565 fma           1 6543219 0.49 -> 6543219  Inexact Rounded
+dsfma36566 fma           1 6543219 0.499999 -> 6543219  Inexact Rounded
+dsfma36567 fma           1 6543219 0.4999999 -> 6543219  Inexact Rounded
+dsfma36568 fma           1 6543219 0.5 -> 6543220  Inexact Rounded
+dsfma36569 fma           1 6543219 0.5000001 -> 6543220  Inexact Rounded
+dsfma36570 fma           1 6543219 0.500001 -> 6543220  Inexact Rounded
+dsfma36571 fma           1 6543219 0.51 -> 6543220  Inexact Rounded
+dsfma36572 fma           1 6543219 0.6 -> 6543220  Inexact Rounded
+dsfma36573 fma           1 6543219 0.9 -> 6543220  Inexact Rounded
+dsfma36574 fma           1 6543219 0.99999 -> 6543220  Inexact Rounded
+dsfma36575 fma           1 6543219 0.9999999 -> 6543220  Inexact Rounded
+dsfma36576 fma           1 6543219 1 -> 6543220
+dsfma36577 fma           1 6543219 1.000001 -> 6543220  Inexact Rounded
+dsfma36578 fma           1 6543219 1.00001 -> 6543220  Inexact Rounded
+dsfma36579 fma           1 6543219 1.1 -> 6543220  Inexact Rounded
+
+-- critical few with even bottom digit...
+dsfma37540 fma           1 6543218 0.4999999 -> 6543218  Inexact Rounded
+dsfma37541 fma           1 6543218 0.5 -> 6543218  Inexact Rounded
+dsfma37542 fma           1 6543218 0.5000001 -> 6543219  Inexact Rounded
+
+rounding:    down
+dsfma37550 fma           1 6543219 0 -> 6543219
+dsfma37551 fma           1 6543219 0.000000001 -> 6543219  Inexact Rounded
+dsfma37552 fma           1 6543219 0.000001 -> 6543219  Inexact Rounded
+dsfma37553 fma           1 6543219 0.1 -> 6543219  Inexact Rounded
+dsfma37554 fma           1 6543219 0.4 -> 6543219  Inexact Rounded
+dsfma37555 fma           1 6543219 0.49 -> 6543219  Inexact Rounded
+dsfma37556 fma           1 6543219 0.499999 -> 6543219  Inexact Rounded
+dsfma37557 fma           1 6543219 0.4999999 -> 6543219  Inexact Rounded
+dsfma37558 fma           1 6543219 0.5 -> 6543219  Inexact Rounded
+dsfma37559 fma           1 6543219 0.5000001 -> 6543219  Inexact Rounded
+dsfma37560 fma           1 6543219 0.500001 -> 6543219  Inexact Rounded
+dsfma37561 fma           1 6543219 0.51 -> 6543219  Inexact Rounded
+dsfma37562 fma           1 6543219 0.6 -> 6543219  Inexact Rounded
+dsfma37563 fma           1 6543219 0.9 -> 6543219  Inexact Rounded
+dsfma37564 fma           1 6543219 0.99999 -> 6543219  Inexact Rounded
+dsfma37565 fma           1 6543219 0.9999999 -> 6543219  Inexact Rounded
+dsfma37566 fma           1 6543219 1 -> 6543220
+dsfma37567 fma           1 6543219 1.000001 -> 6543220  Inexact Rounded
+dsfma37568 fma           1 6543219 1.00001 -> 6543220  Inexact Rounded
+dsfma37569 fma           1 6543219 1.1 -> 6543220  Inexact Rounded
+
+
+-- verify a query
+rounding:    down
+dsfma37661 fma           1 1E-100 9.000000E+96 -> 9.000000E+96  Inexact Rounded
+dsfma37662 fma           1 0 9.000000E+96 -> 9.000000E+96  Rounded
+dsfma37663 fma           1 1E-97 9.000000E+94 -> 9.000000E+94  Inexact Rounded
+dsfma37664 fma           1 0 9.000000E+94 -> 9.000000E+94  Rounded
+
+-- more zeros, etc.
+rounding:    half_even
+
+dsfma37701 fma           1 5.00 1.00E-1 -> 5.100
+dsfma37702 fma           1 00.00 0.000 -> 0.000
+dsfma37703 fma           1 00.00 0E-1 -> 0.00
+dsfma37704 fma           1 0E-1 00.00 -> 0.00
+
+dsfma37710 fma           1 0E+1 00.00 -> 0.00
+dsfma37711 fma           1 0E+1 00.0 -> 0.0
+dsfma37712 fma           1 0E+1 00 -> 0
+dsfma37713 fma           1 0E+1 00E+0 -> 0
+dsfma37714 fma           1 0E+1 00E+0 -> 0
+dsfma37715 fma           1 0E+1 00E+1 -> 0E+1
+dsfma37716 fma           1 0E+1 00E+1 -> 0E+1
+dsfma37717 fma           1 0E+1 00E+1 -> 0E+1
+dsfma37718 fma           1 0E+1 -00.0 -> 0.0
+dsfma37719 fma           1 0E+1 -00 -> 0
+dsfma37731 fma           1 0E+1 -00E+0 -> 0
+
+dsfma37720 fma           1 00.00 0E+1 -> 0.00
+dsfma37721 fma           1 00.0 0E+1 -> 0.0
+dsfma37722 fma           1 00 0E+1 -> 0
+dsfma37723 fma           1 00E+0 0E+1 -> 0
+dsfma37724 fma           1 00E+0 0E+1 -> 0
+dsfma37725 fma           1 00E+1 0E+1 -> 0E+1
+dsfma37726 fma           1 00E+1 0E+1 -> 0E+1
+dsfma37727 fma           1 00E+1 0E+1 -> 0E+1
+dsfma37728 fma           1 -00.00 0E+1 -> 0.00
+dsfma37729 fma           1 -00.0 0E+1 -> 0.0
+dsfma37730 fma           1 -00 0E+1 -> 0
+
+dsfma37732 fma           1 0 0 -> 0
+dsfma37733 fma           1 0 -0 -> 0
+dsfma37734 fma           1 -0 0 -> 0
+dsfma37735 fma           1 -0 -0 -> -0
+
+dsfma37736 fma           1 1 -1 -> 0
+dsfma37737 fma           1 -1 -1 -> -2
+dsfma37738 fma           1 1 1 -> 2
+dsfma37739 fma           1 -1 1 -> 0
+
+dsfma37741 fma           1 0 -1 -> -1
+dsfma37742 fma           1 -0 -1 -> -1
+dsfma37743 fma           1 0 1 -> 1
+dsfma37744 fma           1 -0 1 -> 1
+dsfma37745 fma           1 -1 0 -> -1
+dsfma37746 fma           1 -1 -0 -> -1
+dsfma37747 fma           1 1 0 -> 1
+dsfma37748 fma           1 1 -0 -> 1
+
+dsfma37751 fma           1 0.0 -1 -> -1.0
+dsfma37752 fma           1 -0.0 -1 -> -1.0
+dsfma37753 fma           1 0.0 1 -> 1.0
+dsfma37754 fma           1 -0.0 1 -> 1.0
+dsfma37755 fma           1 -1.0 0 -> -1.0
+dsfma37756 fma           1 -1.0 -0 -> -1.0
+dsfma37757 fma           1 1.0 0 -> 1.0
+dsfma37758 fma           1 1.0 -0 -> 1.0
+
+dsfma37761 fma           1 0 -1.0 -> -1.0
+dsfma37762 fma           1 -0 -1.0 -> -1.0
+dsfma37763 fma           1 0 1.0 -> 1.0
+dsfma37764 fma           1 -0 1.0 -> 1.0
+dsfma37765 fma           1 -1 0.0 -> -1.0
+dsfma37766 fma           1 -1 -0.0 -> -1.0
+dsfma37767 fma           1 1 0.0 -> 1.0
+dsfma37768 fma           1 1 -0.0 -> 1.0
+
+dsfma37771 fma           1 0.0 -1.0 -> -1.0
+dsfma37772 fma           1 -0.0 -1.0 -> -1.0
+dsfma37773 fma           1 0.0 1.0 -> 1.0
+dsfma37774 fma           1 -0.0 1.0 -> 1.0
+dsfma37775 fma           1 -1.0 0.0 -> -1.0
+dsfma37776 fma           1 -1.0 -0.0 -> -1.0
+dsfma37777 fma           1 1.0 0.0 -> 1.0
+dsfma37778 fma           1 1.0 -0.0 -> 1.0
+
+-- Specials
+dsfma37780 fma           1 -Inf -Inf -> -Infinity
+dsfma37781 fma           1 -Inf -1000 -> -Infinity
+dsfma37782 fma           1 -Inf -1 -> -Infinity
+dsfma37783 fma           1 -Inf -0 -> -Infinity
+dsfma37784 fma           1 -Inf 0 -> -Infinity
+dsfma37785 fma           1 -Inf 1 -> -Infinity
+dsfma37786 fma           1 -Inf 1000 -> -Infinity
+dsfma37787 fma           1 -1000 -Inf -> -Infinity
+dsfma37788 fma           1 -Inf -Inf -> -Infinity
+dsfma37789 fma           1 -1 -Inf -> -Infinity
+dsfma37790 fma           1 -0 -Inf -> -Infinity
+dsfma37791 fma           1 0 -Inf -> -Infinity
+dsfma37792 fma           1 1 -Inf -> -Infinity
+dsfma37793 fma           1 1000 -Inf -> -Infinity
+dsfma37794 fma           1 Inf -Inf -> NaN  Invalid_operation
+
+dsfma37800 fma           1 Inf -Inf -> NaN  Invalid_operation
+dsfma37801 fma           1 Inf -1000 -> Infinity
+dsfma37802 fma           1 Inf -1 -> Infinity
+dsfma37803 fma           1 Inf -0 -> Infinity
+dsfma37804 fma           1 Inf 0 -> Infinity
+dsfma37805 fma           1 Inf 1 -> Infinity
+dsfma37806 fma           1 Inf 1000 -> Infinity
+dsfma37807 fma           1 Inf Inf -> Infinity
+dsfma37808 fma           1 -1000 Inf -> Infinity
+dsfma37809 fma           1 -Inf Inf -> NaN  Invalid_operation
+dsfma37810 fma           1 -1 Inf -> Infinity
+dsfma37811 fma           1 -0 Inf -> Infinity
+dsfma37812 fma           1 0 Inf -> Infinity
+dsfma37813 fma           1 1 Inf -> Infinity
+dsfma37814 fma           1 1000 Inf -> Infinity
+dsfma37815 fma           1 Inf Inf -> Infinity
+
+dsfma37821 fma           1 NaN -Inf -> NaN
+dsfma37822 fma           1 NaN -1000 -> NaN
+dsfma37823 fma           1 NaN -1 -> NaN
+dsfma37824 fma           1 NaN -0 -> NaN
+dsfma37825 fma           1 NaN 0 -> NaN
+dsfma37826 fma           1 NaN 1 -> NaN
+dsfma37827 fma           1 NaN 1000 -> NaN
+dsfma37828 fma           1 NaN Inf -> NaN
+dsfma37829 fma           1 NaN NaN -> NaN
+dsfma37830 fma           1 -Inf NaN -> NaN
+dsfma37831 fma           1 -1000 NaN -> NaN
+dsfma37832 fma           1 -1 NaN -> NaN
+dsfma37833 fma           1 -0 NaN -> NaN
+dsfma37834 fma           1 0 NaN -> NaN
+dsfma37835 fma           1 1 NaN -> NaN
+dsfma37836 fma           1 1000 NaN -> NaN
+dsfma37837 fma           1 Inf NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37841 fma           1 sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37842 fma           1 sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37843 fma           1 sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37844 fma           1 sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37845 fma           1 sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37846 fma           1 sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37847 fma           1 sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37848 fma           1 sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37849 fma           1 sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37850 fma           1 NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37851 fma           1 -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37852 fma           1 -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37853 fma           1 -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37854 fma           1 -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37855 fma           1 0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37856 fma           1 1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37857 fma           1 1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37858 fma           1 Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37859 fma           1 NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37861 fma           1 NaN1 -Inf -> NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37862 fma           1 +NaN2 -1000 -> NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37863 fma           1 NaN3 1000 -> NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37864 fma           1 NaN4 Inf -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37865 fma           1 NaN5 +NaN6 -> NaN5
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37866 fma           1 -Inf NaN7 -> NaN7
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37867 fma           1 -1000 NaN8 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37868 fma           1 1000 NaN9 -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37869 fma           1 Inf +NaN10 -> NaN10
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37871 fma           1 sNaN11 -Inf -> NaN11  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37872 fma           1 sNaN12 -1000 -> NaN12  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37873 fma           1 sNaN13 1000 -> NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37874 fma           1 sNaN14 NaN17 -> NaN14  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37875 fma           1 sNaN15 sNaN18 -> NaN15  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37876 fma           1 NaN16 sNaN19 -> NaN19  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37877 fma           1 -Inf +sNaN20 -> NaN20  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37878 fma           1 -1000 sNaN21 -> NaN21  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37879 fma           1 1000 sNaN22 -> NaN22  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37880 fma           1 Inf sNaN23 -> NaN23  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37881 fma           1 +NaN25 +sNaN24 -> NaN24  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37882 fma           1 -NaN26 NaN28 -> -NaN26
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37883 fma           1 -sNaN27 sNaN29 -> -NaN27  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37884 fma           1 1000 -NaN30 -> -NaN30
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsfma37885 fma           1 1000 -sNaN31 -> -NaN31  Invalid_operation
+
+-- Here we explore near the boundary of rounding a subnormal to Nmin
+dsfma37575 fma           1 1E-96 -1E-100 -> 9.999E-97  Subnormal
+dsfma37576 fma           1 -1E-96 +1E-100 -> -9.999E-97  Subnormal
+
+-- check overflow edge case
+--               1234567890123456
+dsfma37973 fma           1 9.999999E+96 1 -> 9.999999E+96  Inexact Rounded
+dsfma37974 fma           1 9999999E+92 1 -> Infinity  Overflow Inexact Rounded
+dsfma37975 fma           1 9999999E+92 1E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37976 fma           1 9999999E+92 9E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37977 fma           1 9999999E+92 8E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37978 fma           1 9999999E+92 7E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37979 fma           1 9999999E+92 6E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37980 fma           1 9999999E+92 5E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37981 fma           1 9999999E+92 4E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37982 fma           1 9999999E+92 3E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37983 fma           1 9999999E+92 2E+92 -> Infinity  Overflow Inexact Rounded
+dsfma37984 fma           1 9999999E+92 1E+92 -> Infinity  Overflow Inexact Rounded
+
+dsfma37986 fma           1 -9.999999E+96 -1 -> -9.999999E+96  Inexact Rounded
+dsfma37987 fma           1 -9999999E+92 -1 -> -Infinity  Overflow Inexact Rounded
+dsfma37988 fma           1 -9999999E+92 -1E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37989 fma           1 -9999999E+92 -9E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37990 fma           1 -9999999E+92 -8E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37991 fma           1 -9999999E+92 -7E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37992 fma           1 -9999999E+92 -6E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37993 fma           1 -9999999E+92 -5E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37994 fma           1 -9999999E+92 -4E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37995 fma           1 -9999999E+92 -3E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37996 fma           1 -9999999E+92 -2E+92 -> -Infinity  Overflow Inexact Rounded
+dsfma37997 fma           1 -9999999E+92 -1E+92 -> -Infinity  Overflow Inexact Rounded
+
+-- And for round down full and subnormal results
+rounding:    down
+dsfma371100 fma           1 1E+0 -1E-96 -> 0.9999999  Inexact Rounded
+dsfma371101 fma           1 1E+0 -1E-96 -> 0.9999999  Inexact Rounded
+dsfma371103 fma           1 +1 -1E-96 -> 0.9999999  Inexact Rounded
+dsfma371104 fma           1 1E+0 -1E-96 -> 0.9999999  Inexact Rounded
+dsfma371105 fma           1 1E+0 -1E-96 -> 0.9999999  Inexact Rounded
+dsfma371106 fma           1 1E-1 -1E-96 -> 0.09999999  Inexact Rounded
+dsfma371107 fma           1 1E-1 -1E-96 -> 0.09999999  Inexact Rounded
+dsfma371108 fma           1 1E-1 -1E-96 -> 0.09999999  Inexact Rounded
+dsfma371109 fma           1 1E-2 -1E-96 -> 0.009999999  Inexact Rounded
+
+rounding:    ceiling
+dsfma371110 fma           1 -1E+0 +1E-96 -> -0.9999999  Inexact Rounded
+dsfma371111 fma           1 -1E+0 +1E-96 -> -0.9999999  Inexact Rounded
+dsfma371113 fma           1 -1 +1E-96 -> -0.9999999  Inexact Rounded
+dsfma371114 fma           1 -1E+0 +1E-96 -> -0.9999999  Inexact Rounded
+dsfma371115 fma           1 -1E+0 +1E-96 -> -0.9999999  Inexact Rounded
+dsfma371116 fma           1 -1E-1 +1E-96 -> -0.09999999  Inexact Rounded
+dsfma371117 fma           1 -1E-1 +1E-96 -> -0.09999999  Inexact Rounded
+dsfma371118 fma           1 -1E-1 +1E-96 -> -0.09999999  Inexact Rounded
+dsfma371119 fma           1 -1E-2 +1E-96 -> -0.009999999  Inexact Rounded
+
+-- tests based on Gunnar Degnbol's edge case
+rounding:    half_even
+
+dsfma371300 fma           1 1E+4 -0.5 -> 9999.5
+dsfma371310 fma           1 1E+4 -0.51 -> 9999.49
+dsfma371311 fma           1 1E+4 -0.501 -> 9999.499
+dsfma371312 fma           1 1E+4 -0.5001 -> 9999.500  Inexact Rounded
+dsfma371313 fma           1 1E+4 -0.50001 -> 9999.500  Inexact Rounded
+dsfma371314 fma           1 1E+4 -0.500001 -> 9999.500  Inexact Rounded
+dsfma371315 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371316 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371317 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371318 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371319 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371320 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371321 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371322 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371323 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371324 fma           1 1E+4 -0.5000001 -> 9999.500  Inexact Rounded
+dsfma371325 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371326 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371327 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371328 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371329 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371330 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371331 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371332 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371333 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371334 fma           1 1E+4 -0.5000000 -> 9999.500  Rounded
+dsfma371335 fma           1 1E+4 -0.500000 -> 9999.500  Rounded
+dsfma371336 fma           1 1E+4 -0.50000 -> 9999.500  Rounded
+dsfma371337 fma           1 1E+4 -0.5000 -> 9999.500  Rounded
+dsfma371338 fma           1 1E+4 -0.500 -> 9999.500
+dsfma371339 fma           1 1E+4 -0.50 -> 9999.50
+
+dsfma371340 fma           1 1E+4 -5000001 -> -4990001
+dsfma371341 fma           1 1E+4 -5000001 -> -4990001
+
+dsfma371349 fma           1 9999999 0.4 -> 9999999  Inexact Rounded
+dsfma371350 fma           1 9999999 0.49 -> 9999999  Inexact Rounded
+dsfma371351 fma           1 9999999 0.499 -> 9999999  Inexact Rounded
+dsfma371352 fma           1 9999999 0.4999 -> 9999999  Inexact Rounded
+dsfma371353 fma           1 9999999 0.49999 -> 9999999  Inexact Rounded
+dsfma371354 fma           1 9999999 0.499999 -> 9999999  Inexact Rounded
+dsfma371355 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371356 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371357 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371358 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371359 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371360 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371361 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371362 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371363 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371364 fma           1 9999999 0.4999999 -> 9999999  Inexact Rounded
+dsfma371365 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371367 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371368 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371369 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371370 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371371 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371372 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371373 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371374 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371375 fma           1 9999999 0.5000000 -> 1.000000E+7  Inexact Rounded
+dsfma371376 fma           1 9999999 0.500000 -> 1.000000E+7  Inexact Rounded
+dsfma371377 fma           1 9999999 0.50000 -> 1.000000E+7  Inexact Rounded
+dsfma371378 fma           1 9999999 0.5000 -> 1.000000E+7  Inexact Rounded
+dsfma371379 fma           1 9999999 0.500 -> 1.000000E+7  Inexact Rounded
+dsfma371380 fma           1 9999999 0.50 -> 1.000000E+7  Inexact Rounded
+dsfma371381 fma           1 9999999 0.5 -> 1.000000E+7  Inexact Rounded
+dsfma371382 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371383 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371384 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371385 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371386 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371387 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371388 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371389 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371390 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371391 fma           1 9999999 0.5000001 -> 1.000000E+7  Inexact Rounded
+dsfma371392 fma           1 9999999 0.500001 -> 1.000000E+7  Inexact Rounded
+dsfma371393 fma           1 9999999 0.50001 -> 1.000000E+7  Inexact Rounded
+dsfma371394 fma           1 9999999 0.5001 -> 1.000000E+7  Inexact Rounded
+dsfma371395 fma           1 9999999 0.501 -> 1.000000E+7  Inexact Rounded
+dsfma371396 fma           1 9999999 0.51 -> 1.000000E+7  Inexact Rounded
+
+-- More GD edge cases, where difference between the unadjusted
+-- exponents is larger than the maximum precision and one side is 0
+dsfma371420 fma           1 0 1.123455 -> 1.123455
+dsfma371421 fma           1 0 1.123455E+0 -> 1.123455
+dsfma371422 fma           1 0 1.123455E+0 -> 1.123455
+dsfma371423 fma           1 0 1.123455E-1 -> 0.1123455
+dsfma371424 fma           1 0 1.123455E-1 -> 0.1123455
+dsfma371425 fma           1 0 1.123455E-1 -> 0.1123455
+dsfma371426 fma           1 0 1.123455E-2 -> 0.01123455
+dsfma371427 fma           1 0 1.123455E-2 -> 0.01123455
+dsfma371428 fma           1 0 1.123455E-2 -> 0.01123455
+dsfma371429 fma           1 0 1.123455E-2 -> 0.01123455
+dsfma371430 fma           1 0 1.123455E-2 -> 0.01123455
+dsfma371431 fma           1 0 1.123455E-3 -> 0.001123455
+dsfma371432 fma           1 0 1.123455E-3 -> 0.001123455
+dsfma371433 fma           1 0 1.123455E-3 -> 0.001123455
+dsfma371434 fma           1 0 1.123455E-4 -> 0.0001123455
+dsfma371435 fma           1 0 1.123455E-4 -> 0.0001123455
+dsfma371436 fma           1 0 1.123455E-4 -> 0.0001123455
+dsfma371437 fma           1 0 1.123455E-4 -> 0.0001123455
+dsfma371438 fma           1 0 1.123455E-4 -> 0.0001123455
+dsfma371439 fma           1 0 1.123455E-5 -> 0.00001123455
+
+-- same, reversed 0
+dsfma371440 fma           1 1.123455 0 -> 1.123455
+dsfma371441 fma           1 1.123455E+0 0 -> 1.123455
+dsfma371442 fma           1 1.123455E+0 0 -> 1.123455
+dsfma371443 fma           1 1.123455E-1 0 -> 0.1123455
+dsfma371444 fma           1 1.123455E-1 0 -> 0.1123455
+dsfma371445 fma           1 1.123455E-1 0 -> 0.1123455
+dsfma371446 fma           1 1.123455E-2 0 -> 0.01123455
+dsfma371447 fma           1 1.123455E-2 0 -> 0.01123455
+dsfma371448 fma           1 1.123455E-2 0 -> 0.01123455
+dsfma371449 fma           1 1.123455E-2 0 -> 0.01123455
+dsfma371450 fma           1 1.123455E-2 0 -> 0.01123455
+dsfma371451 fma           1 1.123455E-3 0 -> 0.001123455
+dsfma371452 fma           1 1.123455E-3 0 -> 0.001123455
+dsfma371453 fma           1 1.123455E-3 0 -> 0.001123455
+dsfma371454 fma           1 1.123455E-4 0 -> 0.0001123455
+dsfma371455 fma           1 1.123455E-4 0 -> 0.0001123455
+dsfma371456 fma           1 1.123455E-4 0 -> 0.0001123455
+dsfma371457 fma           1 1.123455E-4 0 -> 0.0001123455
+dsfma371458 fma           1 1.123455E-4 0 -> 0.0001123455
+dsfma371459 fma           1 1.123455E-5 0 -> 0.00001123455
+
+-- same, Es on the 0
+dsfma371460 fma           1 1.123455 0E+0 -> 1.123455
+dsfma371461 fma           1 1.123455 0E+0 -> 1.123455
+dsfma371462 fma           1 1.123455 0E+0 -> 1.123455
+dsfma371463 fma           1 1.123455 0E-1 -> 1.123455
+dsfma371464 fma           1 1.123455 0E-1 -> 1.123455
+dsfma371465 fma           1 1.123455 0E-1 -> 1.123455
+dsfma371466 fma           1 1.123455 0E-2 -> 1.123455
+dsfma371467 fma           1 1.123455 0E-2 -> 1.123455
+dsfma371468 fma           1 1.123455 0E-2 -> 1.123455
+dsfma371469 fma           1 1.123455 0E-2 -> 1.123455
+dsfma371470 fma           1 1.123455 0E-2 -> 1.123455
+dsfma371471 fma           1 1.123455 0E-3 -> 1.123455
+dsfma371472 fma           1 1.123455 0E-3 -> 1.123455
+dsfma371473 fma           1 1.123455 0E-3 -> 1.123455
+dsfma371474 fma           1 1.123455 0E-4 -> 1.123455
+dsfma371475 fma           1 1.123455 0E-4 -> 1.123455
+-- next four flag Rounded because the 0 extends the result
+dsfma371476 fma           1 1.123455 0E-4 -> 1.123455
+dsfma371477 fma           1 1.123455 0E-4 -> 1.123455
+dsfma371478 fma           1 1.123455 0E-4 -> 1.123455
+dsfma371479 fma           1 1.123455 0E-5 -> 1.123455
+
+-- sum of two opposite-sign operands is exactly 0 and floor => -0
+rounding:    half_up
+-- exact zeros from zeros
+dsfma371500 fma           1 0 0E-5 -> 0.00000
+dsfma371501 fma           1 -0 0E-5 -> 0.00000
+dsfma371502 fma           1 0 -0E-5 -> 0.00000
+dsfma371503 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371511 fma           1 -11 11 -> 0
+dsfma371512 fma           1 11 -11 -> 0
+
+rounding:    half_down
+-- exact zeros from zeros
+dsfma371520 fma           1 0 0E-5 -> 0.00000
+dsfma371521 fma           1 -0 0E-5 -> 0.00000
+dsfma371522 fma           1 0 -0E-5 -> 0.00000
+dsfma371523 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371531 fma           1 -11 11 -> 0
+dsfma371532 fma           1 11 -11 -> 0
+
+rounding:    half_even
+-- exact zeros from zeros
+dsfma371540 fma           1 0 0E-5 -> 0.00000
+dsfma371541 fma           1 -0 0E-5 -> 0.00000
+dsfma371542 fma           1 0 -0E-5 -> 0.00000
+dsfma371543 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371551 fma           1 -11 11 -> 0
+dsfma371552 fma           1 11 -11 -> 0
+
+rounding:    up
+-- exact zeros from zeros
+dsfma371560 fma           1 0 0E-5 -> 0.00000
+dsfma371561 fma           1 -0 0E-5 -> 0.00000
+dsfma371562 fma           1 0 -0E-5 -> 0.00000
+dsfma371563 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371571 fma           1 -11 11 -> 0
+dsfma371572 fma           1 11 -11 -> 0
+
+rounding:    down
+-- exact zeros from zeros
+dsfma371580 fma           1 0 0E-5 -> 0.00000
+dsfma371581 fma           1 -0 0E-5 -> 0.00000
+dsfma371582 fma           1 0 -0E-5 -> 0.00000
+dsfma371583 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371591 fma           1 -11 11 -> 0
+dsfma371592 fma           1 11 -11 -> 0
+
+rounding:    ceiling
+-- exact zeros from zeros
+dsfma371600 fma           1 0 0E-5 -> 0.00000
+dsfma371601 fma           1 -0 0E-5 -> 0.00000
+dsfma371602 fma           1 0 -0E-5 -> 0.00000
+dsfma371603 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371611 fma           1 -11 11 -> 0
+dsfma371612 fma           1 11 -11 -> 0
+
+-- and the extra-special ugly case; unusual minuses marked by -- *
+rounding:    floor
+-- exact zeros from zeros
+dsfma371620 fma           1 0 0E-5 -> 0.00000
+dsfma371621 fma           1 -0 0E-5 -> -0.00000
+dsfma371622 fma           1 0 -0E-5 -> -0.00000
+dsfma371623 fma           1 -0 -0E-5 -> -0.00000
+-- exact zeros from non-zeros
+dsfma371631 fma           1 -11 11 -> -0
+dsfma371632 fma           1 11 -11 -> -0
+
+-- Examples from SQL proposal (Krishna Kulkarni)
+dsfma371701 fma           1 130E+0 120E+0 -> 250
+dsfma371702 fma           1 130E+0 12E+0 -> 142
+dsfma371703 fma           1 130E+0 1E+0 -> 131
+dsfma371704 fma           1 1E+0 1E+1 -> 11
+dsfma371705 fma           1 130E+0 -120E+0 -> 10
+dsfma371706 fma           1 130E+0 -12E+0 -> 118
+dsfma371707 fma           1 130E+0 -1E+0 -> 129
+dsfma371708 fma           1 1E+0 -1E+1 -> -9
+
+-- Gappy coefficients; check residue handling even with full coefficient gap
+rounding:    half_even
+
+dsfma375001 fma           1 1234566 1 -> 1234567
+dsfma375002 fma           1 1234566 0.6 -> 1234567  Inexact Rounded
+dsfma375003 fma           1 1234566 0.06 -> 1234566  Inexact Rounded
+dsfma375004 fma           1 1234566 6E-1 -> 1234567  Inexact Rounded
+dsfma375005 fma           1 1234566 6E-1 -> 1234567  Inexact Rounded
+dsfma375006 fma           1 1234566 6E-1 -> 1234567  Inexact Rounded
+dsfma375007 fma           1 1234566 6E-2 -> 1234566  Inexact Rounded
+dsfma375008 fma           1 1234566 6E-2 -> 1234566  Inexact Rounded
+dsfma375009 fma           1 1234566 6E-2 -> 1234566  Inexact Rounded
+dsfma375010 fma           1 1234566 6E-2 -> 1234566  Inexact Rounded
+dsfma375011 fma           1 1234566 6E-2 -> 1234566  Inexact Rounded
+dsfma375012 fma           1 1234566 6E-3 -> 1234566  Inexact Rounded
+dsfma375013 fma           1 1234566 6E-3 -> 1234566  Inexact Rounded
+dsfma375014 fma           1 1234566 6E-3 -> 1234566  Inexact Rounded
+dsfma375015 fma           1 1234566 6E-4 -> 1234566  Inexact Rounded
+dsfma375016 fma           1 1234566 6E-4 -> 1234566  Inexact Rounded
+dsfma375017 fma           1 1234566 6E-4 -> 1234566  Inexact Rounded
+dsfma375018 fma           1 1234566 6E-4 -> 1234566  Inexact Rounded
+dsfma375019 fma           1 1234566 6E-4 -> 1234566  Inexact Rounded
+dsfma375020 fma           1 1234566 6E-5 -> 1234566  Inexact Rounded
+dsfma375021 fma           1 1234566 6E-5 -> 1234566  Inexact Rounded
+
+-- widening second argument at gap
+dsfma375030 fma           1 1234568 1 -> 1234569
+dsfma375031 fma           1 1234568 0.1 -> 1234568  Inexact Rounded
+dsfma375032 fma           1 1234568 0.12 -> 1234568  Inexact Rounded
+dsfma375033 fma           1 1234568 0.123 -> 1234568  Inexact Rounded
+dsfma375034 fma           1 1234568 0.1234 -> 1234568  Inexact Rounded
+dsfma375035 fma           1 1234568 0.12345 -> 1234568  Inexact Rounded
+dsfma375036 fma           1 1234568 0.123456 -> 1234568  Inexact Rounded
+dsfma375037 fma           1 1234568 0.1234567 -> 1234568  Inexact Rounded
+dsfma375038 fma           1 1234568 0.1234568 -> 1234568  Inexact Rounded
+dsfma375039 fma           1 1234568 0.1234569 -> 1234568  Inexact Rounded
+dsfma375040 fma           1 1234568 0.1234565 -> 1234568  Inexact Rounded
+dsfma375041 fma           1 1234568 0.1234560 -> 1234568  Inexact Rounded
+dsfma375042 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375043 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375044 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375045 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375046 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375047 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375048 fma           1 1234568 0.1234561 -> 1234568  Inexact Rounded
+dsfma375049 fma           1 1234568 0.1234560 -> 1234568  Inexact Rounded
+--                               90123456
+rounding:    half_even
+dsfma375050 fma           1 1234568 0.02345670 -> 1234568  Inexact Rounded
+dsfma375051 fma           1 1234568 0.003456770 -> 1234568  Inexact Rounded
+dsfma375052 fma           1 1234568 0.0004567750 -> 1234568  Inexact Rounded
+dsfma375053 fma           1 1234568 0.00005677500 -> 1234568  Inexact Rounded
+dsfma375054 fma           1 1234568 0.000006775000 -> 1234568  Inexact Rounded
+dsfma375055 fma           1 1234568 0.0000007750000 -> 1234568  Inexact Rounded
+dsfma375056 fma           1 1234568 0.00000007500000 -> 1234568  Inexact Rounded
+dsfma375057 fma           1 1234568 0.000000005000000 -> 1234568  Inexact Rounded
+dsfma375060 fma           1 1234568 0.02345671 -> 1234568  Inexact Rounded
+dsfma375061 fma           1 1234568 0.003456771 -> 1234568  Inexact Rounded
+dsfma375062 fma           1 1234568 0.0004567751 -> 1234568  Inexact Rounded
+dsfma375063 fma           1 1234568 0.00005677501 -> 1234568  Inexact Rounded
+dsfma375064 fma           1 1234568 0.000006775001 -> 1234568  Inexact Rounded
+dsfma375065 fma           1 1234568 0.0000007750001 -> 1234568  Inexact Rounded
+dsfma375066 fma           1 1234568 0.00000007500001 -> 1234568  Inexact Rounded
+dsfma375067 fma           1 1234568 0.000000005000001 -> 1234568  Inexact Rounded
+-- far-out residues (full coefficient gap is 16+15 digits)
+rounding:    up
+dsfma375070 fma           1 1234568 1E-2 -> 1234569  Inexact Rounded
+dsfma375071 fma           1 1234568 1E-2 -> 1234569  Inexact Rounded
+dsfma375072 fma           1 1234568 1E-2 -> 1234569  Inexact Rounded
+dsfma375073 fma           1 1234568 1E-3 -> 1234569  Inexact Rounded
+dsfma375074 fma           1 1234568 1E-3 -> 1234569  Inexact Rounded
+dsfma375075 fma           1 1234568 1E-3 -> 1234569  Inexact Rounded
+dsfma375076 fma           1 1234568 1E-4 -> 1234569  Inexact Rounded
+dsfma375077 fma           1 1234568 1E-4 -> 1234569  Inexact Rounded
+dsfma375078 fma           1 1234568 1E-4 -> 1234569  Inexact Rounded
+dsfma375079 fma           1 1234568 1E-4 -> 1234569  Inexact Rounded
+dsfma375080 fma           1 1234568 1E-4 -> 1234569  Inexact Rounded
+dsfma375081 fma           1 1234568 1E-5 -> 1234569  Inexact Rounded
+dsfma375082 fma           1 1234568 1E-5 -> 1234569  Inexact Rounded
+dsfma375083 fma           1 1234568 1E-6 -> 1234569  Inexact Rounded
+dsfma375084 fma           1 1234568 1E-8 -> 1234569  Inexact Rounded
+dsfma375085 fma           1 1234568 1E-8 -> 1234569  Inexact Rounded
+dsfma375086 fma           1 1234568 1E-8 -> 1234569  Inexact Rounded
+dsfma375087 fma           1 1234568 1E-8 -> 1234569  Inexact Rounded
+dsfma375088 fma           1 1234568 1E-8 -> 1234569  Inexact Rounded
+dsfma375089 fma           1 1234568 1E-9 -> 1234569  Inexact Rounded
+
+-- desctructive subtraction (from remainder tests)
+
+-- +++ some of these will be off-by-one remainder vs remainderNear
+
+dsfma4000  fma           -1234564 1.000001 1234566 -> 0.765436
+dsfma4001  fma           -1234563 1.000001 1234566 -> 1.765437
+dsfma4002  fma           -1234562 1.000001 1234566 -> 2.765438
+dsfma4003  fma           -3086413 4.000001 1234565 -> -1.111110E+7  Inexact Rounded
+dsfma4004  fma           -3086413 4.000001 1234566 -> -1.111109E+7  Inexact Rounded
+dsfma4005  fma           -2469136 4.999999 1234566 -> -1.111112E+7  Inexact Rounded
+dsfma4006  fma           -2469131 4.999999 1234566 -> -1.111109E+7  Inexact Rounded
+dsfma4007  fma           -2469131 4.999999 1234566 -> -1.111109E+7  Inexact Rounded
+dsfma4008  fma           -2469131 5.000001 1234566 -> -1.111110E+7  Inexact Rounded
+dsfma4009  fma           -2469130 5.000001 1234566 -> -1.111109E+7  Inexact Rounded
+dsfma4010  fma           -2469136 5.000001 1234566 -> -1.111112E+7  Inexact Rounded
+dsfma4011  fma           -1234565 1.000001 1234566 -> -0.234565
+dsfma4012  fma           -1234564 1.000001 1234566 -> 0.765436
+dsfma4013  fma           -1234563 1.000001 1234566 -> 1.765437
+dsfma4014  fma           -3086414 4.000001 1234565 -> -1.111110E+7  Inexact Rounded
+dsfma4015  fma           -3086414 4.000001 1234566 -> -1.111110E+7  Inexact Rounded
+dsfma4016  fma           -2469136 4.999999 1234566 -> -1.111112E+7  Inexact Rounded
+dsfma4017  fma           -2469132 4.999999 1234566 -> -1.111110E+7  Inexact Rounded
+dsfma4018  fma           -2469131 4.999999 1234566 -> -1.111109E+7  Inexact Rounded
+dsfma4019  fma           -2469131 5.000001 1234566 -> -1.111110E+7  Inexact Rounded
+dsfma4020  fma           -2469131 5.000001 1234566 -> -1.111110E+7  Inexact Rounded
+dsfma4021  fma           -2469136 5.000001 1234566 -> -1.111112E+7  Inexact Rounded
+
+
+-- Null tests

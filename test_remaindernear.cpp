@@ -22,6 +22,7 @@ int main()
     test_two_arg_harness<false, true>("dectest/remaindernear.decTest", "remaindernear", op);
     test_two_arg_harness<false, true>("dectest/ddRemainderNear.decTest", "remaindernear", op);
     test_two_arg_harness<false, true>("dectest/dqRemainderNear.decTest", "remaindernear", op);
+    test_two_arg_harness<false, true>("dectest/dsRemainderNear.decTest", "remaindernear", op);
 
     return boost::report_errors();
 }

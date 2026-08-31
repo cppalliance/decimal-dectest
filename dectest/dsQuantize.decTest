@@ -1,0 +1,897 @@
+------------------------------------------------------------------------
+-- dsQuantize.decTest                                                 --
+-- Generated for Boost.Decimal from ddQuantize.decTest                --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddQuantize narrowed to that context, with             --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- Most of the tests here assume a "regular pattern", where the
+-- sign and coefficient are +1.
+-- 2004.03.15 Underflow for quantize is suppressed
+-- 2005.06.08 More extensive tests for 'does not fit'
+rounding:    half_even
+
+-- sanity checks
+dsqua001   quantize      0 1E+0 -> 0
+dsqua002   quantize      1 1E+0 -> 1
+dsqua003   quantize      0.1 1E+0 -> 0  Inexact Rounded
+dsqua005   quantize      0.1 1E+0 -> 0  Inexact Rounded
+dsqua006   quantize      0.1 1E+0 -> 0  Inexact Rounded
+dsqua007   quantize      0.1 1E+0 -> 0  Inexact Rounded
+dsqua008   quantize      0.1 1E+0 -> 0  Inexact Rounded
+dsqua009   quantize      0.1 1E-1 -> 0.1
+dsqua010   quantize      0.9 1E+0 -> 1  Inexact Rounded
+dsqua011   quantize      0.9 1E+0 -> 1  Inexact Rounded
+dsqua012   quantize      0.9 1E+0 -> 1  Inexact Rounded
+dsqua013   quantize      0.9 1E+0 -> 1  Inexact Rounded
+dsqua014   quantize      0.9 1E+0 -> 1  Inexact Rounded
+dsqua015   quantize      0.9 1E-1 -> 0.9
+-- negatives
+dsqua021   quantize      -0 1E+0 -> -0
+dsqua022   quantize      -1 1E+0 -> -1
+dsqua023   quantize      -0.1 1E+0 -> -0  Inexact Rounded
+dsqua025   quantize      -0.1 1E+0 -> -0  Inexact Rounded
+dsqua026   quantize      -0.1 1E+0 -> -0  Inexact Rounded
+dsqua027   quantize      -0.1 1E+0 -> -0  Inexact Rounded
+dsqua028   quantize      -0.1 1E+0 -> -0  Inexact Rounded
+dsqua029   quantize      -0.1 1E-1 -> -0.1
+dsqua030   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua031   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua032   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua033   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua034   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua035   quantize      -0.9 1E-1 -> -0.9
+dsqua036   quantize      -0.5 1E+0 -> -0  Inexact Rounded
+dsqua037   quantize      -0.5 1E+0 -> -0  Inexact Rounded
+dsqua038   quantize      -0.5 1E+0 -> -0  Inexact Rounded
+dsqua039   quantize      -0.5 1E+0 -> -0  Inexact Rounded
+dsqua040   quantize      -0.5 1E+0 -> -0  Inexact Rounded
+dsqua041   quantize      -0.5 1E-1 -> -0.5
+dsqua042   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua043   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua044   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua045   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua046   quantize      -0.9 1E+0 -> -1  Inexact Rounded
+dsqua047   quantize      -0.9 1E-1 -> -0.9
+
+-- examples from Specification
+dsqua060   quantize      2.17 0.001 -> 2.170
+dsqua061   quantize      2.17 0.01 -> 2.17
+dsqua062   quantize      2.17 0.1 -> 2.2  Inexact Rounded
+dsqua063   quantize      2.17 1E+0 -> 2  Inexact Rounded
+dsqua064   quantize      2.17 1E+0 -> 2  Inexact Rounded
+dsqua065   quantize      -Inf Inf -> -Infinity
+dsqua066   quantize      2 Inf -> NaN  Invalid_operation
+dsqua067   quantize      -0.1 1 -> -0  Inexact Rounded
+dsqua068   quantize      -0 1E+1 -> -0E+1
+dsqua069   quantize      +1234566 1E+0 -> 1234566
+dsqua070   quantize      -9876546 1E+0 -> -9876546
+dsqua071   quantize      217 1E+0 -> 217
+dsqua072   quantize      217 1E+0 -> 217
+dsqua073   quantize      217 1E+0 -> 217
+dsqua074   quantize      217 1E+0 -> 217
+
+-- general tests ..
+dsqua089   quantize      12 1E+1 -> 1E+1  Inexact Rounded
+dsqua090   quantize      12 1E+1 -> 1E+1  Inexact Rounded
+dsqua091   quantize      12 1E+0 -> 12
+dsqua092   quantize      12 1E+0 -> 12
+dsqua093   quantize      1.2345 1E+0 -> 1  Inexact Rounded
+dsqua094   quantize      1.2355 1E+0 -> 1  Inexact Rounded
+dsqua095   quantize      1.2345 1E-2 -> 1.23  Inexact Rounded
+dsqua096   quantize      9.9999 1E+0 -> 10  Inexact Rounded
+dsqua097   quantize      0.0001 1E+0 -> 0  Inexact Rounded
+dsqua098   quantize      0.001 1E+0 -> 0  Inexact Rounded
+dsqua099   quantize      0.009 1E+0 -> 0  Inexact Rounded
+dsqua100   quantize      92 1E+0 -> 92
+
+dsqua101   quantize      -1 1E+0 -> -1
+dsqua102   quantize      -1 1E+0 -> -1
+dsqua103   quantize      -1 1E+0 -> -1
+dsqua104   quantize      0 1E+0 -> 0
+dsqua105   quantize      0 1E+0 -> 0
+dsqua106   quantize      0 1E+0 -> 0
+dsqua107   quantize      0.00 1E+0 -> 0
+dsqua108   quantize      0 1E+0 -> 0
+dsqua109   quantize      0 1E+0 -> 0
+dsqua110   quantize      +1 1E+0 -> 1
+dsqua111   quantize      +1 1E+0 -> 1
+dsqua112   quantize      +1 1E+0 -> 1
+
+dsqua120   quantize      1.04 1E-1 -> 1.0  Inexact Rounded
+dsqua121   quantize      1.04 1E+0 -> 1  Inexact Rounded
+dsqua122   quantize      1.04 1E+0 -> 1  Inexact Rounded
+dsqua123   quantize      1.04 1E+0 -> 1  Inexact Rounded
+dsqua124   quantize      1.05 1E-1 -> 1.0  Inexact Rounded
+dsqua125   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua126   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua131   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua132   quantize      1.06 1E-1 -> 1.1  Inexact Rounded
+dsqua133   quantize      1.06 1E+0 -> 1  Inexact Rounded
+dsqua134   quantize      1.06 1E+0 -> 1  Inexact Rounded
+dsqua135   quantize      1.06 1E+0 -> 1  Inexact Rounded
+
+dsqua140   quantize      -10 1E+0 -> -10
+dsqua141   quantize      +1 1E+0 -> 1
+dsqua142   quantize      +10 1E+0 -> 10
+dsqua143   quantize      1E+4 1E+0 -> 10000
+dsqua144   quantize      1E-4 1E+0 -> 0  Inexact Rounded
+dsqua145   quantize      1E-1 1E+0 -> 0  Inexact Rounded
+dsqua146   quantize      1E+0 1E+0 -> 1
+dsqua147   quantize      1E+0 1E+0 -> 1
+dsqua148   quantize      0E-4 1E+0 -> 0
+
+dsqua150   quantize      1.0600 1E-1 -> 1.1  Inexact Rounded
+dsqua151   quantize      1.0600 1E-1 -> 1.1  Inexact Rounded
+dsqua152   quantize      1.0600 1E-1 -> 1.1  Inexact Rounded
+dsqua153   quantize      1.0600 1E+0 -> 1  Inexact Rounded
+dsqua154   quantize      1.0600 1E+0 -> 1  Inexact Rounded
+dsqua155   quantize      1.0600 1E+0 -> 1  Inexact Rounded
+
+-- a couple where rounding was different in base tests
+rounding:    half_up
+dsqua157   quantize      -0.5 1E+0 -> -1  Inexact Rounded
+dsqua158   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua159   quantize      1.06 1E+0 -> 1  Inexact Rounded
+rounding:    half_even
+
+-- base tests with non-1 coefficients
+dsqua161   quantize      0 -9E+0 -> 0
+dsqua162   quantize      1 -7E+0 -> 1
+dsqua163   quantize      0.1 -1E+0 -> 0  Inexact Rounded
+dsqua165   quantize      0.1 0E+0 -> 0  Inexact Rounded
+dsqua166   quantize      0.1 2E+0 -> 0  Inexact Rounded
+dsqua167   quantize      0.1 3E+0 -> 0  Inexact Rounded
+dsqua168   quantize      0.1 44E+0 -> 0  Inexact Rounded
+dsqua169   quantize      0.1 555E-1 -> 0.1
+dsqua170   quantize      0.9 6666E+0 -> 1  Inexact Rounded
+dsqua171   quantize      0.9 -777E+0 -> 1  Inexact Rounded
+dsqua172   quantize      0.9 -88E+0 -> 1  Inexact Rounded
+dsqua173   quantize      0.9 -9E+0 -> 1  Inexact Rounded
+dsqua174   quantize      0.9 0E+0 -> 1  Inexact Rounded
+dsqua175   quantize      0.9 1.1E-1 -> 0.90
+-- negatives
+dsqua181   quantize      -0 1.1E+0 -> -0.0
+dsqua182   quantize      -1 -1E+0 -> -1
+dsqua183   quantize      -0.1 11E+0 -> -0  Inexact Rounded
+dsqua185   quantize      -0.1 111E+0 -> -0  Inexact Rounded
+dsqua186   quantize      -0.1 71E+0 -> -0  Inexact Rounded
+dsqua187   quantize      -0.1 -91E+0 -> -0  Inexact Rounded
+dsqua188   quantize      -0.1 -0.1E+0 -> -0.1
+dsqua189   quantize      -0.1 -1E-1 -> -0.1
+dsqua190   quantize      -0.9 0E+0 -> -1  Inexact Rounded
+dsqua191   quantize      -0.9 -0E+0 -> -1  Inexact Rounded
+dsqua192   quantize      -0.9 -10E+0 -> -1  Inexact Rounded
+dsqua193   quantize      -0.9 100E+0 -> -1  Inexact Rounded
+dsqua194   quantize      -0.9 999E+0 -> -1  Inexact Rounded
+
+-- +ve exponents ..
+dsqua201   quantize      -1 1E+0 -> -1
+dsqua202   quantize      -1 1E+0 -> -1
+dsqua203   quantize      -1 1E+0 -> -1
+dsqua204   quantize      0 1E+0 -> 0
+dsqua205   quantize      0 1E+0 -> 0
+dsqua206   quantize      0 1E+0 -> 0
+dsqua207   quantize      +1 1E+0 -> 1
+dsqua208   quantize      +1 1E+0 -> 1
+dsqua209   quantize      +1 1E+0 -> 1
+
+dsqua220   quantize      1.04 1E+1 -> 0E+1  Inexact Rounded
+dsqua221   quantize      1.04 1E+0 -> 1  Inexact Rounded
+dsqua222   quantize      1.04 1E+0 -> 1  Inexact Rounded
+dsqua223   quantize      1.04 1E+0 -> 1  Inexact Rounded
+dsqua224   quantize      1.05 1E+1 -> 0E+1  Inexact Rounded
+dsqua225   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua226   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua227   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua228   quantize      1.05 1E+1 -> 0E+1  Inexact Rounded
+dsqua229   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua230   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua231   quantize      1.05 1E+0 -> 1  Inexact Rounded
+dsqua232   quantize      1.06 1E+1 -> 0E+1  Inexact Rounded
+dsqua233   quantize      1.06 1E+0 -> 1  Inexact Rounded
+dsqua234   quantize      1.06 1E+0 -> 1  Inexact Rounded
+dsqua235   quantize      1.06 1E+0 -> 1  Inexact Rounded
+
+dsqua240   quantize      -10 1E+0 -> -10
+dsqua241   quantize      +1 1E+0 -> 1
+dsqua242   quantize      +10 1E+0 -> 10
+dsqua243   quantize      1E+0 1E+0 -> 1
+dsqua244   quantize      1E+0 1E+0 -> 1
+dsqua245   quantize      1E+1 1E+0 -> 10
+dsqua246   quantize      1E+1 1E+0 -> 10
+dsqua247   quantize      1E+1 1E+0 -> 10
+dsqua248   quantize      1E+2 1E+0 -> 100
+dsqua249   quantize      1E+2 1E+0 -> 100
+dsqua250   quantize      1E+2 1E+0 -> 100
+dsqua251   quantize      1E+2 1E+0 -> 100
+-- next one tries to add 9 zeros
+dsqua252   quantize      1E+4 1E+0 -> 10000
+dsqua253   quantize      1E-4 1E+0 -> 0  Inexact Rounded
+dsqua254   quantize      1E+0 1E+0 -> 1
+dsqua255   quantize      0E-4 1E+0 -> 0
+dsqua256   quantize      -0E-4 1E+0 -> -0
+dsqua257   quantize      -0E+0 1E+0 -> -0
+dsqua258   quantize      -0 1E+0 -> -0
+dsqua259   quantize      -0E+0 1E+0 -> -0
+
+dsqua260   quantize      -10 1E+0 -> -10
+dsqua261   quantize      +1 1E+0 -> 1
+dsqua262   quantize      +10 1E+0 -> 10
+dsqua263   quantize      1E+0 1E+0 -> 1
+dsqua264   quantize      1E+0 1E+0 -> 1
+dsqua265   quantize      1E+1 1E+0 -> 10
+dsqua266   quantize      1E+1 1E+0 -> 10
+dsqua267   quantize      1E+1 1E+0 -> 10
+dsqua268   quantize      1E+2 1E+0 -> 100
+dsqua269   quantize      1E+2 1E+0 -> 100
+dsqua270   quantize      1E+2 1E+0 -> 100
+dsqua271   quantize      1E+2 1E+0 -> 100
+dsqua272   quantize      1E+2 1E+0 -> 100
+dsqua273   quantize      1E-2 1E+0 -> 0  Inexact Rounded
+dsqua274   quantize      1E+0 1E+0 -> 1
+dsqua275   quantize      0E-2 1E+0 -> 0
+
+dsqua280   quantize      -10 1E+1 -> -1E+1  Rounded
+dsqua281   quantize      +1 1E+1 -> 0E+1  Inexact Rounded
+dsqua282   quantize      +10 1E+1 -> 1E+1  Rounded
+dsqua283   quantize      1E+0 1E+1 -> 0E+1  Inexact Rounded
+dsqua284   quantize      1E+0 1E+1 -> 0E+1  Inexact Rounded
+dsqua285   quantize      1E+1 1E+1 -> 1E+1
+dsqua286   quantize      1E+1 1E+1 -> 1E+1
+dsqua287   quantize      1E+1 1E+1 -> 1E+1
+dsqua288   quantize      1E+2 1E+1 -> 1.0E+2
+dsqua289   quantize      1E+2 1E+1 -> 1.0E+2
+dsqua290   quantize      1E+2 1E+1 -> 1.0E+2
+dsqua291   quantize      1E+2 1E+1 -> 1.0E+2
+dsqua292   quantize      1E+2 1E+1 -> 1.0E+2
+dsqua293   quantize      1E-2 1E+1 -> 0E+1  Inexact Rounded
+dsqua294   quantize      1E+0 1E+1 -> 0E+1  Inexact Rounded
+dsqua295   quantize      0E-2 1E+1 -> 0E+1
+
+-- round up from below [sign wrong in JIT compiler once]
+dsqua300   quantize      0.0078 1E-1 -> 0.0  Inexact Rounded
+dsqua301   quantize      0.0078 1E-1 -> 0.0  Inexact Rounded
+dsqua302   quantize      0.0078 1E-1 -> 0.0  Inexact Rounded
+dsqua303   quantize      0.0078 1E+0 -> 0  Inexact Rounded
+dsqua304   quantize      0.0078 1E+0 -> 0  Inexact Rounded
+dsqua305   quantize      0.0078 1E+0 -> 0  Inexact Rounded
+dsqua306   quantize      0.0078 1E+0 -> 0  Inexact Rounded
+dsqua307   quantize      0.0078 1E+0 -> 0  Inexact Rounded
+
+dsqua310   quantize      -0.0078 1E-1 -> -0.0  Inexact Rounded
+dsqua311   quantize      -0.0078 1E-1 -> -0.0  Inexact Rounded
+dsqua312   quantize      -0.0078 1E-1 -> -0.0  Inexact Rounded
+dsqua313   quantize      -0.0078 1E+0 -> -0  Inexact Rounded
+dsqua314   quantize      -0.0078 1E+0 -> -0  Inexact Rounded
+dsqua315   quantize      -0.0078 1E+0 -> -0  Inexact Rounded
+dsqua316   quantize      -0.0078 1E+0 -> -0  Inexact Rounded
+dsqua317   quantize      -0.0078 1E+0 -> -0  Inexact Rounded
+
+dsqua320   quantize      0.078 1E-1 -> 0.1  Inexact Rounded
+dsqua321   quantize      0.078 1E-1 -> 0.1  Inexact Rounded
+dsqua322   quantize      0.078 1E-1 -> 0.1  Inexact Rounded
+dsqua323   quantize      0.078 1E+0 -> 0  Inexact Rounded
+dsqua324   quantize      0.078 1E+0 -> 0  Inexact Rounded
+dsqua325   quantize      0.078 1E+0 -> 0  Inexact Rounded
+dsqua326   quantize      0.078 1E+0 -> 0  Inexact Rounded
+dsqua327   quantize      0.078 1E+0 -> 0  Inexact Rounded
+
+dsqua330   quantize      -0.078 1E-1 -> -0.1  Inexact Rounded
+dsqua331   quantize      -0.078 1E-1 -> -0.1  Inexact Rounded
+dsqua332   quantize      -0.078 1E-1 -> -0.1  Inexact Rounded
+dsqua333   quantize      -0.078 1E+0 -> -0  Inexact Rounded
+dsqua334   quantize      -0.078 1E+0 -> -0  Inexact Rounded
+dsqua335   quantize      -0.078 1E+0 -> -0  Inexact Rounded
+dsqua336   quantize      -0.078 1E+0 -> -0  Inexact Rounded
+dsqua337   quantize      -0.078 1E+0 -> -0  Inexact Rounded
+
+dsqua340   quantize      0.78 1E-1 -> 0.8  Inexact Rounded
+dsqua341   quantize      0.78 1E-1 -> 0.8  Inexact Rounded
+dsqua342   quantize      0.78 1E-1 -> 0.8  Inexact Rounded
+dsqua343   quantize      0.78 1E+0 -> 1  Inexact Rounded
+dsqua344   quantize      0.78 1E+0 -> 1  Inexact Rounded
+dsqua345   quantize      0.78 1E+0 -> 1  Inexact Rounded
+dsqua346   quantize      0.78 1E+0 -> 1  Inexact Rounded
+dsqua347   quantize      0.78 1E+0 -> 1  Inexact Rounded
+
+dsqua350   quantize      -0.78 1E-1 -> -0.8  Inexact Rounded
+dsqua351   quantize      -0.78 1E-1 -> -0.8  Inexact Rounded
+dsqua352   quantize      -0.78 1E-1 -> -0.8  Inexact Rounded
+dsqua353   quantize      -0.78 1E+0 -> -1  Inexact Rounded
+dsqua354   quantize      -0.78 1E+0 -> -1  Inexact Rounded
+dsqua355   quantize      -0.78 1E+0 -> -1  Inexact Rounded
+dsqua356   quantize      -0.78 1E+0 -> -1  Inexact Rounded
+dsqua357   quantize      -0.78 1E+0 -> -1  Inexact Rounded
+
+dsqua360   quantize      7.8 1E-1 -> 7.8
+dsqua361   quantize      7.8 1E-1 -> 7.8
+dsqua362   quantize      7.8 1E-1 -> 7.8
+dsqua363   quantize      7.8 1E+0 -> 8  Inexact Rounded
+dsqua364   quantize      7.8 1E+0 -> 8  Inexact Rounded
+dsqua365   quantize      7.8 1E+0 -> 8  Inexact Rounded
+dsqua366   quantize      7.8 1E+0 -> 8  Inexact Rounded
+dsqua367   quantize      7.8 1E+0 -> 8  Inexact Rounded
+dsqua368   quantize      7.8 1E+1 -> 1E+1  Inexact Rounded
+
+dsqua370   quantize      -7.8 1E-1 -> -7.8
+dsqua371   quantize      -7.8 1E-1 -> -7.8
+dsqua372   quantize      -7.8 1E-1 -> -7.8
+dsqua373   quantize      -7.8 1E+0 -> -8  Inexact Rounded
+dsqua374   quantize      -7.8 1E+0 -> -8  Inexact Rounded
+dsqua375   quantize      -7.8 1E+0 -> -8  Inexact Rounded
+dsqua376   quantize      -7.8 1E+0 -> -8  Inexact Rounded
+dsqua377   quantize      -7.8 1E+0 -> -8  Inexact Rounded
+dsqua378   quantize      -7.8 1E+1 -> -1E+1  Inexact Rounded
+
+-- some individuals
+dsqua380   quantize      1234566 1E+0 -> 1234566
+dsqua381   quantize      1234566 1E+0 -> 1234566
+dsqua382   quantize      1234566 1E+0 -> 1234566
+dsqua383   quantize      1234566 1E+0 -> 1234566
+dsqua384   quantize      -1234566 1E+0 -> -1234566
+dsqua385   quantize      -1234566 1E+0 -> -1234566
+dsqua386   quantize      -1234566 1E+0 -> -1234566
+dsqua387   quantize      -1234566 1E+0 -> -1234566
+
+rounding:    down
+dsqua389   quantize      1234566 1E+0 -> 1234566
+-- ? should that one instead have been:
+-- ddqua389 quantize   123456735236450.6 1e-2 -> NaN Invalid_operation
+rounding:    half_up
+
+-- and a few more from e-mail discussions
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua391   quantize      1234567 1E-1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua392   quantize      1234567 1E-1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua393   quantize      1234567 1E-1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua394   quantize      1234567 1E-1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua395   quantize      1234567 1E-1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua396   quantize      1234567 1E-1 -> NaN  Invalid_operation
+
+-- some 9999 round-up cases
+dsqua400   quantize      9.999 1E-1 -> 10.0  Inexact Rounded
+dsqua401   quantize      9.999 1E-1 -> 10.0  Inexact Rounded
+dsqua402   quantize      9.999 1E-1 -> 10.0  Inexact Rounded
+dsqua403   quantize      9.999 1E+0 -> 10  Inexact Rounded
+dsqua404   quantize      9.999 1E+0 -> 10  Inexact Rounded
+dsqua405   quantize      9.999 1E+0 -> 10  Inexact Rounded
+dsqua406   quantize      9.999 1E+0 -> 10  Inexact Rounded
+dsqua407   quantize      9.999 1E+0 -> 10  Inexact Rounded
+
+dsqua410   quantize      0.999 1E-1 -> 1.0  Inexact Rounded
+dsqua411   quantize      0.999 1E-1 -> 1.0  Inexact Rounded
+dsqua412   quantize      0.999 1E-1 -> 1.0  Inexact Rounded
+dsqua413   quantize      0.999 1E+0 -> 1  Inexact Rounded
+dsqua414   quantize      0.999 1E+0 -> 1  Inexact Rounded
+dsqua415   quantize      0.999 1E+0 -> 1  Inexact Rounded
+dsqua416   quantize      0.999 1E+0 -> 1  Inexact Rounded
+
+dsqua420   quantize      0.0999 1E-1 -> 0.1  Inexact Rounded
+dsqua421   quantize      0.0999 1E-1 -> 0.1  Inexact Rounded
+dsqua422   quantize      0.0999 1E-1 -> 0.1  Inexact Rounded
+dsqua423   quantize      0.0999 1E+0 -> 0  Inexact Rounded
+dsqua424   quantize      0.0999 1E+0 -> 0  Inexact Rounded
+dsqua425   quantize      0.0999 1E+0 -> 0  Inexact Rounded
+dsqua426   quantize      0.0999 1E+0 -> 0  Inexact Rounded
+
+dsqua430   quantize      0.00999 1E-1 -> 0.0  Inexact Rounded
+dsqua431   quantize      0.00999 1E-1 -> 0.0  Inexact Rounded
+dsqua432   quantize      0.00999 1E-1 -> 0.0  Inexact Rounded
+dsqua433   quantize      0.00999 1E+0 -> 0  Inexact Rounded
+dsqua434   quantize      0.00999 1E+0 -> 0  Inexact Rounded
+dsqua435   quantize      0.00999 1E+0 -> 0  Inexact Rounded
+dsqua436   quantize      0.00999 1E+0 -> 0  Inexact Rounded
+
+dsqua440   quantize      0.000999 1E-1 -> 0.0  Inexact Rounded
+dsqua441   quantize      0.000999 1E-1 -> 0.0  Inexact Rounded
+dsqua442   quantize      0.000999 1E-1 -> 0.0  Inexact Rounded
+dsqua443   quantize      0.000999 1E+0 -> 0  Inexact Rounded
+dsqua444   quantize      0.000999 1E+0 -> 0  Inexact Rounded
+dsqua445   quantize      0.000999 1E+0 -> 0  Inexact Rounded
+dsqua446   quantize      0.000999 1E+0 -> 0  Inexact Rounded
+
+dsqua1001  quantize      0.000 0.001 -> 0.000
+dsqua1002  quantize      0.001 0.001 -> 0.001
+dsqua1003  quantize      0.0012 0.001 -> 0.001  Inexact Rounded
+dsqua1004  quantize      0.0018 0.001 -> 0.002  Inexact Rounded
+dsqua1005  quantize      0.501 0.001 -> 0.501
+dsqua1006  quantize      0.5012 0.001 -> 0.501  Inexact Rounded
+dsqua1007  quantize      0.5018 0.001 -> 0.502  Inexact Rounded
+dsqua1008  quantize      0.999 0.001 -> 0.999
+
+dsqua481   quantize      1234560 1E+1 -> 1.23456E+6  Rounded
+dsqua482   quantize      1234560 1E+0 -> 1234560
+dsqua483   quantize      1234560 1E+0 -> 1234560
+dsqua484   quantize      1234561 1E+0 -> 1234561
+dsqua485   quantize      1234561 1E+0 -> 1234561
+dsqua486   quantize      1234566 1E+0 -> 1234566
+-- a potential double-round
+dsqua487   quantize      1234.983 1E-1 -> 1235.0  Inexact Rounded
+dsqua488   quantize      1234.987 1E-1 -> 1235.0  Inexact Rounded
+
+dsqua491   quantize      1234560 1E+1 -> 1.23456E+6  Rounded
+dsqua492   quantize      1234560 1E+0 -> 1234560
+dsqua493   quantize      1234560 1E+0 -> 1234560
+dsqua494   quantize      1234561 1E+0 -> 1234561
+dsqua495   quantize      1234561 1E+0 -> 1234561
+dsqua496   quantize      1234566 1E+0 -> 1234566
+dsqua497   quantize      1234.983 1E-1 -> 1235.0  Inexact Rounded
+dsqua498   quantize      1234.987 1E-1 -> 1235.0  Inexact Rounded
+
+-- Zeros
+dsqua500   quantize      0 1E+0 -> 0
+dsqua501   quantize      0 1E+0 -> 0
+dsqua502   quantize      0 1E+0 -> 0
+dsqua503   quantize      0.0 1E+0 -> 0
+dsqua504   quantize      0.0 1E+0 -> 0
+dsqua505   quantize      0.0 1E+0 -> 0
+dsqua506   quantize      0E+0 1E+0 -> 0
+dsqua507   quantize      0E+0 1E+0 -> 0
+dsqua508   quantize      0E+0 1E+0 -> 0
+dsqua509   quantize      -0 1E+0 -> -0
+dsqua510   quantize      -0 1E+0 -> -0
+dsqua511   quantize      -0 1E+0 -> -0
+dsqua512   quantize      -0.0 1E+0 -> -0
+dsqua513   quantize      -0.0 1E+0 -> -0
+dsqua514   quantize      -0.0 1E+0 -> -0
+dsqua515   quantize      -0E+0 1E+0 -> -0
+dsqua516   quantize      -0E+0 1E+0 -> -0
+dsqua517   quantize      -0E+0 1E+0 -> -0
+
+-- Suspicious RHS values
+dsqua520   quantize      1.234 1E+90 -> 0E+90  Inexact Rounded
+dsqua521   quantize      123.456 1E+90 -> 0E+90  Inexact Rounded
+dsqua522   quantize      1.234 1E+90 -> 0E+90  Inexact Rounded
+dsqua523   quantize      123.456 1E+90 -> 0E+90  Inexact Rounded
+-- next four are "won't fit" overfl
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua526   quantize      1.234 1E-75 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua527   quantize      123.456 1E-75 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua528   quantize      1.234 1E-75 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua529   quantize      123.456 1E-75 -> NaN  Invalid_operation
+
+dsqua532   quantize      1.234E+75 1E+75 -> 1E+75  Inexact Rounded
+dsqua533   quantize      1.234E+74 1E+75 -> 0E+75  Inexact Rounded
+dsqua534   quantize      1.234 1E+75 -> 0E+75  Inexact Rounded
+dsqua537   quantize      0 1E-75 -> 0E-75
+-- next two are "won't fit" overflows
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua538   quantize      1.234 1E-75 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua539   quantize      1.234 1E-75 -> NaN  Invalid_operation
+-- [more below]
+
+-- Specials
+dsqua580   quantize      Inf -Inf -> Infinity
+dsqua581   quantize      Inf 1E-75 -> NaN  Invalid_operation
+dsqua582   quantize      Inf 1E+0 -> NaN  Invalid_operation
+dsqua583   quantize      Inf 1E+0 -> NaN  Invalid_operation
+dsqua584   quantize      Inf 1E+0 -> NaN  Invalid_operation
+dsqua585   quantize      Inf 1E+75 -> NaN  Invalid_operation
+dsqua586   quantize      Inf Inf -> Infinity
+dsqua587   quantize      -1000 Inf -> NaN  Invalid_operation
+dsqua588   quantize      -Inf Inf -> -Infinity
+dsqua589   quantize      -1 Inf -> NaN  Invalid_operation
+dsqua590   quantize      0 Inf -> NaN  Invalid_operation
+dsqua591   quantize      1 Inf -> NaN  Invalid_operation
+dsqua592   quantize      1000 Inf -> NaN  Invalid_operation
+dsqua593   quantize      Inf Inf -> Infinity
+dsqua594   quantize      Inf 1E+0 -> NaN  Invalid_operation
+dsqua595   quantize      -0 Inf -> NaN  Invalid_operation
+
+dsqua600   quantize      -Inf -Inf -> -Infinity
+dsqua601   quantize      -Inf 1E-75 -> NaN  Invalid_operation
+dsqua602   quantize      -Inf 1E+0 -> NaN  Invalid_operation
+dsqua603   quantize      -Inf 1E+0 -> NaN  Invalid_operation
+dsqua604   quantize      -Inf 1E+0 -> NaN  Invalid_operation
+dsqua605   quantize      -Inf 1E+75 -> NaN  Invalid_operation
+dsqua606   quantize      -Inf Inf -> -Infinity
+dsqua607   quantize      -1000 Inf -> NaN  Invalid_operation
+dsqua608   quantize      -Inf -Inf -> -Infinity
+dsqua609   quantize      -1 -Inf -> NaN  Invalid_operation
+dsqua610   quantize      0 -Inf -> NaN  Invalid_operation
+dsqua611   quantize      1 -Inf -> NaN  Invalid_operation
+dsqua612   quantize      1000 -Inf -> NaN  Invalid_operation
+dsqua613   quantize      Inf -Inf -> Infinity
+dsqua614   quantize      -Inf 1E+0 -> NaN  Invalid_operation
+dsqua615   quantize      -0 -Inf -> NaN  Invalid_operation
+
+dsqua621   quantize      NaN -Inf -> NaN
+dsqua622   quantize      NaN 1E-75 -> NaN
+dsqua623   quantize      NaN 1E+0 -> NaN
+dsqua624   quantize      NaN 1E+0 -> NaN
+dsqua625   quantize      NaN 1E+0 -> NaN
+dsqua626   quantize      NaN 1E+75 -> NaN
+dsqua627   quantize      NaN Inf -> NaN
+dsqua628   quantize      NaN NaN -> NaN
+dsqua629   quantize      -Inf NaN -> NaN
+dsqua630   quantize      -1000 NaN -> NaN
+dsqua631   quantize      -1 NaN -> NaN
+dsqua632   quantize      0 NaN -> NaN
+dsqua633   quantize      1 NaN -> NaN
+dsqua634   quantize      1000 NaN -> NaN
+dsqua635   quantize      Inf NaN -> NaN
+dsqua636   quantize      NaN 1E+0 -> NaN
+dsqua637   quantize      -0 NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua641   quantize      sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua642   quantize      sNaN 1E-75 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua643   quantize      sNaN 1E+0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua644   quantize      sNaN 1E+0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua645   quantize      sNaN 1E+0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua646   quantize      sNaN 1E+75 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua647   quantize      sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua648   quantize      sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua649   quantize      NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua650   quantize      -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua651   quantize      -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua652   quantize      -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua653   quantize      0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua654   quantize      1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua655   quantize      1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua656   quantize      Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua657   quantize      NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua658   quantize      sNaN 1E+0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua659   quantize      -0 sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua661   quantize      NaN9 -Inf -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua662   quantize      NaN8 919 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua663   quantize      NaN71 Inf -> NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua664   quantize      NaN6 NaN5 -> NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua665   quantize      -Inf NaN4 -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua666   quantize      -919 NaN31 -> NaN31
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua667   quantize      Inf NaN2 -> NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua671   quantize      sNaN99 -Inf -> NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua672   quantize      sNaN98 -11 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua673   quantize      sNaN97 NaN -> NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua674   quantize      sNaN16 sNaN94 -> NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua675   quantize      NaN95 sNaN93 -> NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua676   quantize      -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua677   quantize      088 sNaN91 -> NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua678   quantize      Inf sNaN90 -> NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua679   quantize      NaN sNaN88 -> NaN88  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua681   quantize      -NaN9 -Inf -> -NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua682   quantize      -NaN8 919 -> -NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua683   quantize      -NaN71 Inf -> -NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua684   quantize      -NaN6 -NaN5 -> -NaN6
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua685   quantize      -Inf -NaN4 -> -NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua686   quantize      -919 -NaN31 -> -NaN31
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua687   quantize      Inf -NaN2 -> -NaN2
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua691   quantize      -sNaN99 -Inf -> -NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua692   quantize      -sNaN98 -11 -> -NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua693   quantize      -sNaN97 NaN -> -NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua694   quantize      -sNaN16 sNaN94 -> -NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua695   quantize      -NaN95 -sNaN93 -> -NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua696   quantize      -Inf -sNaN92 -> -NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua697   quantize      088 -sNaN91 -> -NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua698   quantize      Inf -sNaN90 -> -NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsqua699   quantize      NaN -sNaN88 -> -NaN88  Invalid_operation
+
+-- subnormals and underflow
+dsqua710   quantize      1.00E-96 1E-96 -> 1E-96  Rounded Subnormal
+dsqua711   quantize      0.1E-96 2E-96 -> 0E-96  Inexact Rounded
+dsqua712   quantize      0.10E-96 3E-96 -> 0E-96  Inexact Rounded
+dsqua713   quantize      0.100E-96 4E-96 -> 0E-96  Inexact Rounded
+dsqua714   quantize      0.01E-96 5E-96 -> 0E-96  Inexact Rounded
+-- next is rounded to Emin
+dsqua715   quantize      0.999E-96 1E-96 -> 1E-96  Inexact Rounded Subnormal
+dsqua716   quantize      0.099E-96 10E-96 -> 0E-96  Inexact Rounded
+
+dsqua717   quantize      0.009E-96 1E-96 -> 0E-96  Inexact Rounded
+dsqua718   quantize      0.001E-96 1E-96 -> 0E-96  Inexact Rounded
+dsqua719   quantize      0.0009E-96 1E-96 -> 0E-96  Inexact Rounded
+dsqua720   quantize      0.0001E-96 1E-96 -> 0E-96  Inexact Rounded
+
+dsqua730   quantize      -1.00E-96 1E-96 -> -1E-96  Rounded Subnormal
+dsqua731   quantize      -0.1E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua732   quantize      -0.10E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua733   quantize      -0.100E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua734   quantize      -0.01E-96 1E-96 -> -0E-96  Inexact Rounded
+-- next is rounded to Emin
+dsqua735   quantize      -0.999E-96 90E-96 -> -1E-96  Inexact Rounded Subnormal
+dsqua736   quantize      -0.099E-96 -1E-96 -> -0E-96  Inexact Rounded
+dsqua737   quantize      -0.009E-96 -1E-96 -> -0E-96  Inexact Rounded
+dsqua738   quantize      -0.001E-96 -0E-96 -> -0E-96  Inexact Rounded
+dsqua739   quantize      -0.0001E-96 0E-96 -> -0E-96  Inexact Rounded
+
+dsqua740   quantize      -1.00E-96 1E-96 -> -1E-96  Rounded Subnormal
+dsqua741   quantize      -0.1E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua742   quantize      -0.10E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua743   quantize      -0.100E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua744   quantize      -0.01E-96 1E-96 -> -0E-96  Inexact Rounded
+-- next is rounded to Emin
+dsqua745   quantize      -0.999E-96 1E-96 -> -1E-96  Inexact Rounded Subnormal
+dsqua746   quantize      -0.099E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua747   quantize      -0.009E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua748   quantize      -0.001E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua749   quantize      -0.0001E-96 1E-96 -> -0E-96  Inexact Rounded
+
+dsqua750   quantize      -1.00E-96 1E-96 -> -1E-96  Rounded Subnormal
+dsqua751   quantize      -0.1E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua752   quantize      -0.10E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua753   quantize      -0.100E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua754   quantize      -0.01E-96 1E-96 -> -0E-96  Inexact Rounded
+-- next is rounded to Emin
+dsqua755   quantize      -0.999E-96 1E-96 -> -1E-96  Inexact Rounded Subnormal
+dsqua756   quantize      -0.099E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua757   quantize      -0.009E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua758   quantize      -0.001E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua759   quantize      -0.0001E-96 1E-96 -> -0E-96  Inexact Rounded
+
+dsqua760   quantize      -1.00E-96 1E-96 -> -1E-96  Rounded Subnormal
+dsqua761   quantize      -0.1E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua762   quantize      -0.10E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua763   quantize      -0.100E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua764   quantize      -0.01E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua765   quantize      -0.999E-96 1E-96 -> -1E-96  Inexact Rounded Subnormal
+dsqua766   quantize      -0.099E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua767   quantize      -0.009E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua768   quantize      -0.001E-96 1E-96 -> -0E-96  Inexact Rounded
+dsqua769   quantize      -0.0001E-96 1E-96 -> -0E-96  Inexact Rounded
+
+-- More from Fung Lee
+dsqua1021  quantize      8.666660E+96 1.000000E+96 -> 8.666660E+96
+dsqua1022  quantize      -8.666660E+96 1.000000E+96 -> -8.666660E+96
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsqua1027  quantize      8.666660E+81 1E+8 -> NaN  Invalid_operation
+dsqua1029  quantize      8.666666E+1 1E+1 -> 9E+1  Inexact Rounded
+
+
+--ddqua1030 quantize 8.666666666666000E+384 1E+384   -> 9.000000000000000E+384 Rounded Inexact
+--ddqua1031 quantize 8.666666666666000E+384 1E+384   -> 8.666666666666000E+384 Rounded
+--ddqua1032 quantize 8.666666666666000E+384 1E+383   -> 8.666666666666000E+384 Rounded
+--ddqua1033 quantize 8.666666666666000E+384 1E+382   -> 8.666666666666000E+384 Rounded
+--ddqua1034 quantize 8.666666666666000E+384 1E+381   -> 8.666666666666000E+384 Rounded
+--ddqua1035 quantize 8.666666666666000E+384 1E+380   -> 8.666666666666000E+384 Rounded
+
+-- Int and uInt32 edge values for testing conversions
+dsqua1040  quantize      -2147486 0 -> -2147486
+dsqua1041  quantize      -2147487 0 -> -2147487
+dsqua1042  quantize      -2147488 0 -> -2147488
+dsqua1043  quantize      -2147489 0 -> -2147489
+dsqua1044  quantize      2147486 0 -> 2147486
+dsqua1045  quantize      2147487 0 -> 2147487
+dsqua1046  quantize      2147488 0 -> 2147488
+dsqua1047  quantize      2147489 0 -> 2147489
+dsqua1048  quantize      4294964 0 -> 4294964
+dsqua1049  quantize      4294965 0 -> 4294965
+dsqua1050  quantize      4294966 0 -> 4294966
+dsqua1051  quantize      4294967 0 -> 4294967
+
+-- Rounding swathe
+rounding:    half_even
+dsqua1100  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1101  quantize      1.2301 1.00 -> 1.23  Inexact Rounded
+dsqua1102  quantize      1.2310 1.00 -> 1.23  Inexact Rounded
+dsqua1103  quantize      1.2350 1.00 -> 1.24  Inexact Rounded
+dsqua1104  quantize      1.2351 1.00 -> 1.24  Inexact Rounded
+dsqua1105  quantize      1.2450 1.00 -> 1.24  Inexact Rounded
+dsqua1106  quantize      1.2451 1.00 -> 1.25  Inexact Rounded
+dsqua1107  quantize      1.2360 1.00 -> 1.24  Inexact Rounded
+dsqua1108  quantize      1.2370 1.00 -> 1.24  Inexact Rounded
+dsqua1109  quantize      1.2399 1.00 -> 1.24  Inexact Rounded
+
+rounding:    half_up
+dsqua1200  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1201  quantize      1.2301 1.00 -> 1.23  Inexact Rounded
+dsqua1202  quantize      1.2310 1.00 -> 1.23  Inexact Rounded
+dsqua1203  quantize      1.2350 1.00 -> 1.24  Inexact Rounded
+dsqua1204  quantize      1.2351 1.00 -> 1.24  Inexact Rounded
+dsqua1205  quantize      1.2450 1.00 -> 1.25  Inexact Rounded
+dsqua1206  quantize      1.2451 1.00 -> 1.25  Inexact Rounded
+dsqua1207  quantize      1.2360 1.00 -> 1.24  Inexact Rounded
+dsqua1208  quantize      1.2370 1.00 -> 1.24  Inexact Rounded
+dsqua1209  quantize      1.2399 1.00 -> 1.24  Inexact Rounded
+
+rounding:    half_down
+dsqua1300  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1301  quantize      1.2301 1.00 -> 1.23  Inexact Rounded
+dsqua1302  quantize      1.2310 1.00 -> 1.23  Inexact Rounded
+dsqua1303  quantize      1.2350 1.00 -> 1.23  Inexact Rounded
+dsqua1304  quantize      1.2351 1.00 -> 1.24  Inexact Rounded
+dsqua1305  quantize      1.2450 1.00 -> 1.24  Inexact Rounded
+dsqua1306  quantize      1.2451 1.00 -> 1.25  Inexact Rounded
+dsqua1307  quantize      1.2360 1.00 -> 1.24  Inexact Rounded
+dsqua1308  quantize      1.2370 1.00 -> 1.24  Inexact Rounded
+dsqua1309  quantize      1.2399 1.00 -> 1.24  Inexact Rounded
+
+rounding:    up
+dsqua1400  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1401  quantize      1.2301 1.00 -> 1.24  Inexact Rounded
+dsqua1402  quantize      1.2310 1.00 -> 1.24  Inexact Rounded
+dsqua1403  quantize      1.2350 1.00 -> 1.24  Inexact Rounded
+dsqua1404  quantize      1.2351 1.00 -> 1.24  Inexact Rounded
+dsqua1405  quantize      1.2450 1.00 -> 1.25  Inexact Rounded
+dsqua1406  quantize      1.2451 1.00 -> 1.25  Inexact Rounded
+dsqua1407  quantize      1.2360 1.00 -> 1.24  Inexact Rounded
+dsqua1408  quantize      1.2370 1.00 -> 1.24  Inexact Rounded
+dsqua1409  quantize      1.2399 1.00 -> 1.24  Inexact Rounded
+dsqua1411  quantize      -1.2399 1.00 -> -1.24  Inexact Rounded
+
+rounding:    down
+dsqua1500  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1501  quantize      1.2301 1.00 -> 1.23  Inexact Rounded
+dsqua1502  quantize      1.2310 1.00 -> 1.23  Inexact Rounded
+dsqua1503  quantize      1.2350 1.00 -> 1.23  Inexact Rounded
+dsqua1504  quantize      1.2351 1.00 -> 1.23  Inexact Rounded
+dsqua1505  quantize      1.2450 1.00 -> 1.24  Inexact Rounded
+dsqua1506  quantize      1.2451 1.00 -> 1.24  Inexact Rounded
+dsqua1507  quantize      1.2360 1.00 -> 1.23  Inexact Rounded
+dsqua1508  quantize      1.2370 1.00 -> 1.23  Inexact Rounded
+dsqua1509  quantize      1.2399 1.00 -> 1.23  Inexact Rounded
+dsqua1511  quantize      -1.2399 1.00 -> -1.23  Inexact Rounded
+
+rounding:    ceiling
+dsqua1600  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1601  quantize      1.2301 1.00 -> 1.24  Inexact Rounded
+dsqua1602  quantize      1.2310 1.00 -> 1.24  Inexact Rounded
+dsqua1603  quantize      1.2350 1.00 -> 1.24  Inexact Rounded
+dsqua1604  quantize      1.2351 1.00 -> 1.24  Inexact Rounded
+dsqua1605  quantize      1.2450 1.00 -> 1.25  Inexact Rounded
+dsqua1606  quantize      1.2451 1.00 -> 1.25  Inexact Rounded
+dsqua1607  quantize      1.2360 1.00 -> 1.24  Inexact Rounded
+dsqua1608  quantize      1.2370 1.00 -> 1.24  Inexact Rounded
+dsqua1609  quantize      1.2399 1.00 -> 1.24  Inexact Rounded
+dsqua1611  quantize      -1.2399 1.00 -> -1.23  Inexact Rounded
+
+rounding:    floor
+dsqua1700  quantize      1.2300 1.00 -> 1.23  Rounded
+dsqua1701  quantize      1.2301 1.00 -> 1.23  Inexact Rounded
+dsqua1702  quantize      1.2310 1.00 -> 1.23  Inexact Rounded
+dsqua1703  quantize      1.2350 1.00 -> 1.23  Inexact Rounded
+dsqua1704  quantize      1.2351 1.00 -> 1.23  Inexact Rounded
+dsqua1705  quantize      1.2450 1.00 -> 1.24  Inexact Rounded
+dsqua1706  quantize      1.2451 1.00 -> 1.24  Inexact Rounded
+dsqua1707  quantize      1.2360 1.00 -> 1.23  Inexact Rounded
+dsqua1708  quantize      1.2370 1.00 -> 1.23  Inexact Rounded
+dsqua1709  quantize      1.2399 1.00 -> 1.23  Inexact Rounded
+dsqua1711  quantize      -1.2399 1.00 -> -1.24  Inexact Rounded
+
+rounding:    05up
+dsqua1800  quantize      1.2000 1.00 -> 1.20  Rounded
+dsqua1801  quantize      1.2001 1.00 -> 1.21  Inexact Rounded
+dsqua1802  quantize      1.2010 1.00 -> 1.21  Inexact Rounded
+dsqua1803  quantize      1.2050 1.00 -> 1.21  Inexact Rounded
+dsqua1804  quantize      1.2051 1.00 -> 1.21  Inexact Rounded
+dsqua1807  quantize      1.2060 1.00 -> 1.21  Inexact Rounded
+dsqua1808  quantize      1.2070 1.00 -> 1.21  Inexact Rounded
+dsqua1809  quantize      1.2099 1.00 -> 1.21  Inexact Rounded
+dsqua1811  quantize      -1.2099 1.00 -> -1.21  Inexact Rounded
+
+dsqua1900  quantize      1.2100 1.00 -> 1.21  Rounded
+dsqua1901  quantize      1.2101 1.00 -> 1.21  Inexact Rounded
+dsqua1902  quantize      1.2110 1.00 -> 1.21  Inexact Rounded
+dsqua1903  quantize      1.2150 1.00 -> 1.21  Inexact Rounded
+dsqua1904  quantize      1.2151 1.00 -> 1.21  Inexact Rounded
+dsqua1907  quantize      1.2160 1.00 -> 1.21  Inexact Rounded
+dsqua1908  quantize      1.2170 1.00 -> 1.21  Inexact Rounded
+dsqua1909  quantize      1.2199 1.00 -> 1.21  Inexact Rounded
+dsqua1911  quantize      -1.2199 1.00 -> -1.21  Inexact Rounded
+
+dsqua2000  quantize      1.2400 1.00 -> 1.24  Rounded
+dsqua2001  quantize      1.2401 1.00 -> 1.24  Inexact Rounded
+dsqua2002  quantize      1.2410 1.00 -> 1.24  Inexact Rounded
+dsqua2003  quantize      1.2450 1.00 -> 1.24  Inexact Rounded
+dsqua2004  quantize      1.2451 1.00 -> 1.24  Inexact Rounded
+dsqua2007  quantize      1.2460 1.00 -> 1.24  Inexact Rounded
+dsqua2008  quantize      1.2470 1.00 -> 1.24  Inexact Rounded
+dsqua2009  quantize      1.2499 1.00 -> 1.24  Inexact Rounded
+dsqua2011  quantize      -1.2499 1.00 -> -1.24  Inexact Rounded
+
+dsqua2100  quantize      1.2500 1.00 -> 1.25  Rounded
+dsqua2101  quantize      1.2501 1.00 -> 1.26  Inexact Rounded
+dsqua2102  quantize      1.2510 1.00 -> 1.26  Inexact Rounded
+dsqua2103  quantize      1.2550 1.00 -> 1.26  Inexact Rounded
+dsqua2104  quantize      1.2551 1.00 -> 1.26  Inexact Rounded
+dsqua2107  quantize      1.2560 1.00 -> 1.26  Inexact Rounded
+dsqua2108  quantize      1.2570 1.00 -> 1.26  Inexact Rounded
+dsqua2109  quantize      1.2599 1.00 -> 1.26  Inexact Rounded
+dsqua2111  quantize      -1.2599 1.00 -> -1.26  Inexact Rounded
+
+dsqua2200  quantize      1.2600 1.00 -> 1.26  Rounded
+dsqua2201  quantize      1.2601 1.00 -> 1.26  Inexact Rounded
+dsqua2202  quantize      1.2610 1.00 -> 1.26  Inexact Rounded
+dsqua2203  quantize      1.2650 1.00 -> 1.26  Inexact Rounded
+dsqua2204  quantize      1.2651 1.00 -> 1.26  Inexact Rounded
+dsqua2207  quantize      1.2660 1.00 -> 1.26  Inexact Rounded
+dsqua2208  quantize      1.2670 1.00 -> 1.26  Inexact Rounded
+dsqua2209  quantize      1.2699 1.00 -> 1.26  Inexact Rounded
+dsqua2211  quantize      -1.2699 1.00 -> -1.26  Inexact Rounded
+
+dsqua2300  quantize      1.2900 1.00 -> 1.29  Rounded
+dsqua2301  quantize      1.2901 1.00 -> 1.29  Inexact Rounded
+dsqua2302  quantize      1.2910 1.00 -> 1.29  Inexact Rounded
+dsqua2303  quantize      1.2950 1.00 -> 1.29  Inexact Rounded
+dsqua2304  quantize      1.2951 1.00 -> 1.29  Inexact Rounded
+dsqua2307  quantize      1.2960 1.00 -> 1.29  Inexact Rounded
+dsqua2308  quantize      1.2970 1.00 -> 1.29  Inexact Rounded
+dsqua2309  quantize      1.2999 1.00 -> 1.29  Inexact Rounded
+dsqua2311  quantize      -1.2999 1.00 -> -1.29  Inexact Rounded
+
+-- Null tests
+rounding:    half_even

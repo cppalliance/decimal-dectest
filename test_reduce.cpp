@@ -17,6 +17,7 @@ int main()
     test_one_arg_harness("dectest/reduce.decTest", "reduce", op);
     test_one_arg_harness("dectest/ddReduce.decTest", "reduce", op);
     test_one_arg_harness("dectest/dqReduce.decTest", "reduce", op);
+    test_one_arg_harness("dectest/dsReduce.decTest", "reduce", op);
 
     return boost::report_errors();
 }

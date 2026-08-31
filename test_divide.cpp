@@ -15,6 +15,7 @@ int main()
     test_two_arg_harness("dectest/divide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
     test_two_arg_harness("dectest/ddDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
     test_two_arg_harness("dectest/dqDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
+    test_two_arg_harness("dectest/dsDivide.decTest", "divide", [](const auto x, const auto y) { return x / y; });
 
     return boost::report_errors();
 }

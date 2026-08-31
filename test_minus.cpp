@@ -14,6 +14,7 @@ int main()
     test_one_arg_harness("dectest/minus.decTest", "minus", [](const auto x) { return -x; });
     test_one_arg_harness("dectest/ddMinus.decTest", "minus", [](const auto x) { return -x; });
     test_one_arg_harness("dectest/dqMinus.decTest", "minus", [](const auto x) { return -x; });
+    test_one_arg_harness("dectest/dsMinus.decTest", "minus", [](const auto x) { return -x; });
 
     return boost::report_errors();
 }

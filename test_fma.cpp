@@ -16,6 +16,7 @@ int main()
     test_three_arg_harness("dectest/fma.decTest", "fma", op);
     test_three_arg_harness("dectest/ddFMA.decTest", "fma", op);
     test_three_arg_harness("dectest/dqFMA.decTest", "fma", op);
+    test_three_arg_harness("dectest/dsFMA.decTest", "fma", op);
 
     return boost::report_errors();
 }

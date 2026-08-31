@@ -12,6 +12,7 @@ int main()
     test_comparetotal("dectest/comparetotal.decTest", "comparetotal");
     test_comparetotal("dectest/ddCompareTotal.decTest", "comparetotal");
     test_comparetotal("dectest/dqCompareTotal.decTest", "comparetotal");
+    test_comparetotal("dectest/dsCompareTotal.decTest", "comparetotal");
 
     return boost::report_errors();
 }

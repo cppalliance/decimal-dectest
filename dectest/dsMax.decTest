@@ -1,0 +1,351 @@
+------------------------------------------------------------------------
+-- dsMax.decTest                                                      --
+-- Generated for Boost.Decimal from ddMax.decTest                     --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddMax narrowed to that context, with                  --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- we assume that base comparison is tested in compare.decTest, so
+-- these mainly cover special cases and rounding
+rounding:    half_even
+
+-- sanity checks
+dsmax001   max           -2 -2 -> -2
+dsmax002   max           -2 -1 -> -1
+dsmax003   max           -2 0 -> 0
+dsmax004   max           -2 1 -> 1
+dsmax005   max           -2 2 -> 2
+dsmax006   max           -1 -2 -> -1
+dsmax007   max           -1 -1 -> -1
+dsmax008   max           -1 0 -> 0
+dsmax009   max           -1 1 -> 1
+dsmax010   max           -1 2 -> 2
+dsmax011   max           0 -2 -> 0
+dsmax012   max           0 -1 -> 0
+dsmax013   max           0 0 -> 0
+dsmax014   max           0 1 -> 1
+dsmax015   max           0 2 -> 2
+dsmax016   max           1 -2 -> 1
+dsmax017   max           1 -1 -> 1
+dsmax018   max           1 0 -> 1
+dsmax019   max           1 1 -> 1
+dsmax020   max           1 2 -> 2
+dsmax021   max           2 -2 -> 2
+dsmax022   max           2 -1 -> 2
+dsmax023   max           2 0 -> 2
+dsmax025   max           2 1 -> 2
+dsmax026   max           2 2 -> 2
+
+-- extended zeros
+dsmax030   max           0 0 -> 0
+dsmax031   max           0 -0 -> 0
+dsmax032   max           0 -0.0 -> 0
+dsmax033   max           0 0.0 -> 0
+dsmax034   max           -0 0 -> 0
+dsmax035   max           -0 -0 -> -0
+dsmax036   max           -0 -0.0 -> -0.0
+dsmax037   max           -0 0.0 -> 0.0
+dsmax038   max           0.0 0 -> 0
+dsmax039   max           0.0 -0 -> 0.0
+dsmax040   max           0.0 -0.0 -> 0.0
+dsmax041   max           0.0 0.0 -> 0.0
+dsmax042   max           -0.0 0 -> 0
+dsmax043   max           -0.0 -0 -> -0.0
+dsmax044   max           -0.0 -0.0 -> -0.0
+dsmax045   max           -0.0 0.0 -> 0.0
+
+dsmax050   max           -0E+0 0E+0 -> 0
+dsmax051   max           -0E+0 0E+0 -> 0
+dsmax052   max           -0E+0 0E+0 -> 0
+dsmax053   max           -0E+0 0E+0 -> 0
+dsmax054   max           0E+0 -0E+0 -> 0
+dsmax055   max           0E+0 -0E+0 -> 0
+dsmax056   max           0E+0 -0E+0 -> 0
+dsmax057   max           0E+0 -0E+0 -> 0
+
+dsmax058   max           0E+0 0E+0 -> 0
+dsmax059   max           0E+0 0E+0 -> 0
+dsmax060   max           0E+0 0E+0 -> 0
+dsmax061   max           0E+0 0E+0 -> 0
+dsmax062   max           -0E+0 -0E+0 -> -0
+dsmax063   max           -0E+0 -0E+0 -> -0
+dsmax064   max           -0E+0 -0E+0 -> -0
+dsmax065   max           -0E+0 -0E+0 -> -0
+
+-- Specials
+dsmax090   max           Inf -Inf -> Infinity
+dsmax091   max           Inf -1000 -> Infinity
+dsmax092   max           Inf -1 -> Infinity
+dsmax093   max           Inf -0 -> Infinity
+dsmax094   max           Inf 0 -> Infinity
+dsmax095   max           Inf 1 -> Infinity
+dsmax096   max           Inf 1000 -> Infinity
+dsmax097   max           Inf Inf -> Infinity
+dsmax098   max           -1000 Inf -> Infinity
+dsmax099   max           -Inf Inf -> Infinity
+dsmax100   max           -1 Inf -> Infinity
+dsmax101   max           -0 Inf -> Infinity
+dsmax102   max           0 Inf -> Infinity
+dsmax103   max           1 Inf -> Infinity
+dsmax104   max           1000 Inf -> Infinity
+dsmax105   max           Inf Inf -> Infinity
+
+dsmax120   max           -Inf -Inf -> -Infinity
+dsmax121   max           -Inf -1000 -> -1000
+dsmax122   max           -Inf -1 -> -1
+dsmax123   max           -Inf -0 -> -0
+dsmax124   max           -Inf 0 -> 0
+dsmax125   max           -Inf 1 -> 1
+dsmax126   max           -Inf 1000 -> 1000
+dsmax127   max           -Inf Inf -> Infinity
+dsmax128   max           -Inf -Inf -> -Infinity
+dsmax129   max           -1000 -Inf -> -1000
+dsmax130   max           -1 -Inf -> -1
+dsmax131   max           -0 -Inf -> -0
+dsmax132   max           0 -Inf -> 0
+dsmax133   max           1 -Inf -> 1
+dsmax134   max           1000 -Inf -> 1000
+dsmax135   max           Inf -Inf -> Infinity
+
+-- 2004.08.02 754r chooses number over NaN in mixed cases
+dsmax141   max           NaN -Inf -> -Infinity
+dsmax142   max           NaN -1000 -> -1000
+dsmax143   max           NaN -1 -> -1
+dsmax144   max           NaN -0 -> -0
+dsmax145   max           NaN 0 -> 0
+dsmax146   max           NaN 1 -> 1
+dsmax147   max           NaN 1000 -> 1000
+dsmax148   max           NaN Inf -> Infinity
+dsmax149   max           NaN NaN -> NaN
+dsmax150   max           -Inf NaN -> -Infinity
+dsmax151   max           -1000 NaN -> -1000
+dsmax152   max           -1 NaN -> -1
+dsmax153   max           -0 NaN -> -0
+dsmax154   max           0 NaN -> 0
+dsmax155   max           1 NaN -> 1
+dsmax156   max           1000 NaN -> 1000
+dsmax157   max           Inf NaN -> Infinity
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax161   max           sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax162   max           sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax163   max           sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax164   max           sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax165   max           sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax166   max           sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax167   max           sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax168   max           sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax169   max           sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax170   max           NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax171   max           -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax172   max           -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax173   max           -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax174   max           -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax175   max           0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax176   max           1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax177   max           1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax178   max           Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax179   max           NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+dsmax181   max           NaN9 -Inf -> -Infinity
+dsmax182   max           NaN8 9 -> 9
+dsmax183   max           -NaN7 Inf -> Infinity
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax184   max           -NaN1 NaN11 -> -NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax185   max           NaN2 NaN12 -> NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax186   max           -NaN13 -NaN7 -> -NaN13
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax187   max           NaN14 -NaN5 -> NaN14
+
+dsmax188   max           -Inf NaN4 -> -Infinity
+dsmax189   max           -9 -NaN3 -> -9
+dsmax190   max           Inf NaN2 -> Infinity
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax191   max           sNaN99 -Inf -> NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax192   max           sNaN98 -1 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax193   max           -sNaN97 NaN -> -NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax194   max           sNaN96 sNaN94 -> NaN96  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax195   max           NaN95 sNaN93 -> NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax196   max           -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax197   max           0 sNaN91 -> NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax198   max           Inf -sNaN90 -> -NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmax199   max           NaN sNaN89 -> NaN89  Invalid_operation
+
+-- old rounding checks
+dsmax221   max           1234560 1 -> 1234560
+dsmax222   max           1 1234560 -> 1234560
+dsmax223   max           1234560 1 -> 1234560
+dsmax224   max           1 1234560 -> 1234560
+dsmax225   max           1234560 1 -> 1234560
+dsmax226   max           1 1234560 -> 1234560
+dsmax227   max           1234561 1 -> 1234561
+dsmax228   max           1 1234561 -> 1234561
+dsmax229   max           1234561 1 -> 1234561
+dsmax230   max           1 1234561 -> 1234561
+dsmax231   max           1234566 1 -> 1234566
+dsmax232   max           1 1234566 -> 1234566
+dsmax233   max           -1234561 1 -> 1
+dsmax234   max           1 -1234561 -> 1
+dsmax235   max           -1234561 1 -> 1
+dsmax236   max           1 -1234561 -> 1
+dsmax237   max           -1234566 1 -> 1
+dsmax238   max           1 -1234566 -> 1
+
+-- from examples
+dsmax280   max           3 2 -> 3
+dsmax281   max           -10 3 -> 3
+dsmax282   max           1.0 1 -> 1
+dsmax283   max           1 1.0 -> 1
+dsmax284   max           7 NaN -> 7
+
+-- expanded list from min/max 754r purple prose
+-- [explicit tests for exponent ordering]
+dsmax401   max           Inf 1.1 -> Infinity
+dsmax402   max           1.1 1 -> 1.1
+dsmax403   max           1 1.0 -> 1
+dsmax404   max           1.0 0.1 -> 1.0
+dsmax405   max           0.1 0.10 -> 0.1
+dsmax406   max           0.10 0.100 -> 0.10
+dsmax407   max           0.10 0 -> 0.10
+dsmax408   max           0 0.0 -> 0
+dsmax409   max           0.0 -0 -> 0.0
+dsmax410   max           0.0 -0.0 -> 0.0
+dsmax411   max           0.00 -0.0 -> 0.00
+dsmax412   max           0.0 -0.00 -> 0.0
+dsmax413   max           0 -0.0 -> 0
+dsmax414   max           0 -0 -> 0
+dsmax415   max           -0.0 -0 -> -0.0
+dsmax416   max           -0 -0.100 -> -0
+dsmax417   max           -0.100 -0.10 -> -0.100
+dsmax418   max           -0.10 -0.1 -> -0.10
+dsmax419   max           -0.1 -1.0 -> -0.1
+dsmax420   max           -1.0 -1 -> -1.0
+dsmax421   max           -1 -1.1 -> -1
+dsmax423   max           -1.1 -Inf -> -1.1
+-- same with operands reversed
+dsmax431   max           1.1 Inf -> Infinity
+dsmax432   max           1 1.1 -> 1.1
+dsmax433   max           1.0 1 -> 1
+dsmax434   max           0.1 1.0 -> 1.0
+dsmax435   max           0.10 0.1 -> 0.1
+dsmax436   max           0.100 0.10 -> 0.10
+dsmax437   max           0 0.10 -> 0.10
+dsmax438   max           0.0 0 -> 0
+dsmax439   max           -0 0.0 -> 0.0
+dsmax440   max           -0.0 0.0 -> 0.0
+dsmax441   max           -0.0 0.00 -> 0.00
+dsmax442   max           -0.00 0.0 -> 0.0
+dsmax443   max           -0.0 0 -> 0
+dsmax444   max           -0 0 -> 0
+dsmax445   max           -0 -0.0 -> -0.0
+dsmax446   max           -0.100 -0 -> -0
+dsmax447   max           -0.10 -0.100 -> -0.100
+dsmax448   max           -0.1 -0.10 -> -0.10
+dsmax449   max           -1.0 -0.1 -> -0.1
+dsmax450   max           -1 -1.0 -> -1.0
+dsmax451   max           -1.1 -1 -> -1
+dsmax453   max           -Inf -1.1 -> -1.1
+-- largies
+dsmax460   max           1000 1E+1 -> 1000
+dsmax461   max           1E+1 1000 -> 1000
+dsmax462   max           1000 -1E+1 -> 1000
+dsmax463   max           1E+1 -1000 -> 1E+1
+dsmax464   max           -1000 1E+1 -> 1E+1
+dsmax465   max           -1E+1 1000 -> 1000
+dsmax466   max           -1000 -1E+1 -> -1E+1
+dsmax467   max           -1E+1 -1000 -> -1E+1
+
+-- misalignment traps for little-endian
+dsmax471   max           1.0 0.1 -> 1.0
+dsmax472   max           0.1 1.0 -> 1.0
+dsmax473   max           10.0 0.1 -> 10.0
+dsmax474   max           0.1 10.0 -> 10.0
+dsmax475   max           100 1.0 -> 100
+dsmax476   max           1.0 100 -> 100
+dsmax477   max           1000 10.0 -> 1000
+dsmax478   max           10.0 1000 -> 1000
+dsmax479   max           10000 100.0 -> 10000
+dsmax480   max           100.0 10000 -> 10000
+dsmax481   max           100000 1000.0 -> 100000
+dsmax482   max           1000.0 100000 -> 100000
+dsmax483   max           1000000 10000.0 -> 1000000
+dsmax484   max           10000.0 1000000 -> 1000000
+
+-- subnormals
+dsmax510   max           1.00E-96 0 -> 1.00E-96  Subnormal
+dsmax511   max           0.1E-96 0 -> 1E-97  Subnormal
+dsmax512   max           0.10E-96 0 -> 1.0E-97  Subnormal
+dsmax513   max           0.100E-96 0 -> 1.00E-97  Subnormal
+dsmax514   max           0.01E-96 0 -> 1E-98  Subnormal
+dsmax515   max           0.999E-96 0 -> 9.99E-97  Subnormal
+dsmax516   max           0.099E-96 0 -> 9.9E-98  Subnormal
+dsmax517   max           0.009E-96 0 -> 9E-99  Subnormal
+dsmax518   max           0.001E-96 0 -> 1E-99  Subnormal
+dsmax519   max           0.0009E-96 0 -> 9E-100  Subnormal
+dsmax520   max           0.0001E-96 0 -> 1E-100  Subnormal
+
+dsmax530   max           -1.00E-96 0 -> 0
+dsmax531   max           -0.1E-96 0 -> 0
+dsmax532   max           -0.10E-96 0 -> 0
+dsmax533   max           -0.100E-96 0 -> 0
+dsmax534   max           -0.01E-96 0 -> 0
+dsmax535   max           -0.999E-96 0 -> 0
+dsmax536   max           -0.099E-96 0 -> 0
+dsmax537   max           -0.009E-96 0 -> 0
+dsmax538   max           -0.001E-96 0 -> 0
+dsmax539   max           -0.0009E-96 0 -> 0
+dsmax540   max           -0.0001E-96 0 -> 0
+
+-- Null tests

@@ -38,6 +38,7 @@ int main()
     test_two_arg_harness("dectest/add.decTest", "add", [](const auto x, const auto y) { return x + y; });
     test_two_arg_harness("dectest/ddAdd.decTest", "add", [](const auto x, const auto y) { return x + y; });
     test_two_arg_harness("dectest/dqAdd.decTest", "add", [](const auto x, const auto y) { return x + y; });
+    test_two_arg_harness("dectest/dsAdd.decTest", "add", [](const auto x, const auto y) { return x + y; });
 
     return boost::report_errors();
 }

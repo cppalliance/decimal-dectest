@@ -15,6 +15,7 @@ int main()
     test_one_arg_harness("dectest/plus.decTest", "plus", [](const auto x) { return +x; });
     test_one_arg_harness("dectest/ddPlus.decTest", "plus", [](const auto x) { return +x; });
     test_one_arg_harness("dectest/dqPlus.decTest", "plus", [](const auto x) { return +x; });
+    test_one_arg_harness("dectest/dsPlus.decTest", "plus", [](const auto x) { return +x; });
 
     return boost::report_errors();
 }

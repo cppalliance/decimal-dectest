@@ -1,0 +1,294 @@
+------------------------------------------------------------------------
+-- dsScaleB.decTest                                                   --
+-- Generated for Boost.Decimal from ddScaleB.decTest                  --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddScaleB narrowed to that context, with               --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+rounding:    half_even
+
+-- Max |rhs| is 2*(384+16) = 800
+
+-- Sanity checks
+dsscb001   scaleb        7.50 10 -> 7.50E+10
+dsscb002   scaleb        7.50 3 -> 7.50E+3
+dsscb003   scaleb        7.50 2 -> 750
+dsscb004   scaleb        7.50 1 -> 75.0
+dsscb005   scaleb        7.50 0 -> 7.50
+dsscb006   scaleb        7.50 -1 -> 0.750
+dsscb007   scaleb        7.50 -2 -> 0.0750
+dsscb008   scaleb        7.50 -10 -> 7.50E-10
+dsscb009   scaleb        -7.50 3 -> -7.50E+3
+dsscb010   scaleb        -7.50 2 -> -750
+dsscb011   scaleb        -7.50 1 -> -75.0
+dsscb012   scaleb        -7.50 0 -> -7.50
+dsscb013   scaleb        -7.50 -1 -> -0.750
+
+-- Infinities
+dsscb014   scaleb        Infinity 1 -> Infinity
+dsscb015   scaleb        -Infinity 2 -> -Infinity
+dsscb016   scaleb        Infinity -1 -> Infinity
+dsscb017   scaleb        -Infinity -2 -> -Infinity
+
+-- Next two are somewhat undefined in 754r; treat as non-integer
+dsscb018   scaleb        10 Infinity -> NaN  Invalid_operation
+dsscb019   scaleb        10 -Infinity -> NaN  Invalid_operation
+
+-- NaNs are undefined in 754r; assume usual processing
+-- NaNs, 0 payload
+dsscb021   scaleb        NaN 1 -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb022   scaleb        -NaN -1 -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb023   scaleb        sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb024   scaleb        -sNaN 1 -> -NaN  Invalid_operation
+dsscb025   scaleb        4 NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb026   scaleb        -Inf -NaN -> -NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb027   scaleb        4 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb028   scaleb        Inf -sNaN -> -NaN  Invalid_operation
+
+-- non-integer RHS
+dsscb030   scaleb        1.23 1 -> 12.3
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb031   scaleb        1.23 1.00 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb032   scaleb        1.23 1.1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb033   scaleb        1.23 1.01 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb034   scaleb        1.23 0.01 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb035   scaleb        1.23 0.11 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb036   scaleb        1.23 0.9999999 -> NaN  Invalid_operation
+dsscb037   scaleb        1.23 -1 -> 0.123
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb038   scaleb        1.23 -1.00 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb039   scaleb        1.23 -1.1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb040   scaleb        1.23 -1.01 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb041   scaleb        1.23 -0.01 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb042   scaleb        1.23 -0.11 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb043   scaleb        1.23 -0.9999999 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb044   scaleb        1.23 0.1 -> NaN  Invalid_operation
+dsscb045   scaleb        1.23 1E+0 -> 12.3
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb046   scaleb        1.23 1.1234E+2 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb047   scaleb        1.23 1.123E+1 -> NaN  Invalid_operation
+
+-- out-of range RHS
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb120   scaleb        1.23 799 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb121   scaleb        1.23 800 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb122   scaleb        1.23 801 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb123   scaleb        1.23 802 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb124   scaleb        1.23 -799 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb125   scaleb        1.23 -800 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb126   scaleb        1.23 -801 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb127   scaleb        1.23 -802 -> NaN  Invalid_operation
+
+-- NaNs, non-0 payload
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb861   scaleb        NaN01 -Inf -> NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb862   scaleb        -NaN02 -1000 -> -NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb863   scaleb        NaN03 1000 -> NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb864   scaleb        NaN04 Inf -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb865   scaleb        NaN05 NaN61 -> NaN5
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb866   scaleb        -Inf -NaN71 -> -NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb867   scaleb        -1000 NaN81 -> NaN81
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb868   scaleb        1000 NaN91 -> NaN91
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb869   scaleb        Inf NaN101 -> NaN101
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb871   scaleb        sNaN011 -Inf -> NaN11  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb872   scaleb        sNaN012 -1000 -> NaN12  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb873   scaleb        -sNaN013 1000 -> -NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb874   scaleb        sNaN014 NaN171 -> NaN14  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb875   scaleb        sNaN015 sNaN181 -> NaN15  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb876   scaleb        NaN016 sNaN191 -> NaN191  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb877   scaleb        -Inf sNaN201 -> NaN201  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb878   scaleb        -1000 sNaN211 -> NaN211  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb879   scaleb        1000 -sNaN221 -> -NaN221  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb880   scaleb        Inf sNaN231 -> NaN231  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsscb881   scaleb        NaN025 sNaN241 -> NaN241  Invalid_operation
+
+-- finites
+dsscb051   scaleb        7 -2 -> 0.07
+dsscb052   scaleb        -7 -2 -> -0.07
+dsscb053   scaleb        75 -2 -> 0.75
+dsscb054   scaleb        -75 -2 -> -0.75
+dsscb055   scaleb        7.50 -2 -> 0.0750
+dsscb056   scaleb        -7.50 -2 -> -0.0750
+dsscb057   scaleb        7.500 -2 -> 0.07500
+dsscb058   scaleb        -7.500 -2 -> -0.07500
+dsscb061   scaleb        7 -1 -> 0.7
+dsscb062   scaleb        -7 -1 -> -0.7
+dsscb063   scaleb        75 -1 -> 7.5
+dsscb064   scaleb        -75 -1 -> -7.5
+dsscb065   scaleb        7.50 -1 -> 0.750
+dsscb066   scaleb        -7.50 -1 -> -0.750
+dsscb067   scaleb        7.500 -1 -> 0.7500
+dsscb068   scaleb        -7.500 -1 -> -0.7500
+dsscb071   scaleb        7 0 -> 7
+dsscb072   scaleb        -7 0 -> -7
+dsscb073   scaleb        75 0 -> 75
+dsscb074   scaleb        -75 0 -> -75
+dsscb075   scaleb        7.50 0 -> 7.50
+dsscb076   scaleb        -7.50 0 -> -7.50
+dsscb077   scaleb        7.500 0 -> 7.500
+dsscb078   scaleb        -7.500 0 -> -7.500
+dsscb081   scaleb        7 1 -> 7E+1
+dsscb082   scaleb        -7 1 -> -7E+1
+dsscb083   scaleb        75 1 -> 7.5E+2
+dsscb084   scaleb        -75 1 -> -7.5E+2
+dsscb085   scaleb        7.50 1 -> 75.0
+dsscb086   scaleb        -7.50 1 -> -75.0
+dsscb087   scaleb        7.500 1 -> 75.00
+dsscb088   scaleb        -7.500 1 -> -75.00
+dsscb091   scaleb        7 2 -> 7E+2
+dsscb092   scaleb        -7 2 -> -7E+2
+dsscb093   scaleb        75 2 -> 7.5E+3
+dsscb094   scaleb        -75 2 -> -7.5E+3
+dsscb095   scaleb        7.50 2 -> 750
+dsscb096   scaleb        -7.50 2 -> -750
+dsscb097   scaleb        7.500 2 -> 750.0
+dsscb098   scaleb        -7.500 2 -> -750.0
+
+-- zeros
+dsscb111   scaleb        0 1 -> 0E+1
+dsscb112   scaleb        -0 2 -> -0E+2
+dsscb113   scaleb        0E+1 3 -> 0E+4
+dsscb114   scaleb        -0E+1 4 -> -0E+5
+dsscb115   scaleb        0.0000 5 -> 0E+1
+dsscb116   scaleb        -0.0000 6 -> -0E+2
+dsscb117   scaleb        0E-35 7 -> 0E-28
+dsscb118   scaleb        -0E-35 8 -> -0E-27
+
+-- Nmax, Nmin, Ntiny
+# BOOST_DECIMAL_DIVERGENCE: Boost.Decimal models no IEEE 754 status flags, so a result the context would reject as Invalid_operation overflows to infinity or underflows to zero instead
+#dsscb132   scaleb        9.999999E+96 +384 -> NaN  Invalid_operation
+dsscb133   scaleb        9.999999E+96 +10 -> Infinity  Overflow Inexact Rounded
+dsscb134   scaleb        9.999999E+96 +1 -> Infinity  Overflow Inexact Rounded
+dsscb135   scaleb        9.999999E+96 0 -> 9.999999E+96
+dsscb136   scaleb        9.999999E+96 -1 -> 9.999999E+95
+dsscb137   scaleb        1E-96 +1 -> 1E-95
+dsscb138   scaleb        1E-96 -0 -> 1E-96  Subnormal
+dsscb139   scaleb        1E-96 -1 -> 1E-97  Subnormal
+dsscb140   scaleb        1.000000E-96 +1 -> 1.000000E-95
+dsscb141   scaleb        1.000000E-96 0 -> 1.00000E-96  Rounded Subnormal
+dsscb142   scaleb        1.000000E-96 -1 -> 1.0000E-97  Rounded Subnormal
+dsscb143   scaleb        1E-100 +1 -> 1E-99  Subnormal
+dsscb144   scaleb        1E-100 -0 -> 1E-100  Subnormal
+dsscb145   scaleb        1E-100 -1 -> 1E-101  Subnormal
+
+dsscb150   scaleb        -1E-100 +1 -> -1E-99  Subnormal
+dsscb151   scaleb        -1E-100 -0 -> -1E-100  Subnormal
+dsscb152   scaleb        -1E-100 -1 -> -1E-101  Subnormal
+dsscb153   scaleb        -1.000000E-96 +1 -> -1.000000E-95
+dsscb154   scaleb        -1.000000E-96 +0 -> -1.00000E-96  Rounded Subnormal
+dsscb155   scaleb        -1.000000E-96 -1 -> -1.0000E-97  Rounded Subnormal
+dsscb156   scaleb        -1E-96 +1 -> -1E-95
+dsscb157   scaleb        -1E-96 -0 -> -1E-96  Subnormal
+dsscb158   scaleb        -1E-96 -1 -> -1E-97  Subnormal
+dsscb159   scaleb        -9.999999E+96 +1 -> -Infinity  Overflow Inexact Rounded
+dsscb160   scaleb        -9.999999E+96 +0 -> -9.999999E+96
+dsscb161   scaleb        -9.999999E+96 -1 -> -9.999999E+95
+dsscb162   scaleb        -9E+96 +1 -> -Infinity  Overflow Inexact Rounded
+dsscb163   scaleb        -1E+96 +1 -> -Infinity  Overflow Inexact Rounded
+
+-- some Origami
+-- (these check that overflow is being done correctly)
+dsscb171   scaleb        1000E+91 +1 -> 1.00000E+95  Clamped
+dsscb172   scaleb        1000E+92 +1 -> 1.000000E+96  Clamped
+dsscb173   scaleb        1000E+92 +1 -> 1.000000E+96  Clamped
+dsscb174   scaleb        1000E+92 +1 -> 1.000000E+96  Clamped
+dsscb175   scaleb        1000E+92 +1 -> 1.000000E+96  Clamped
+dsscb176   scaleb        1000E+92 +1 -> 1.000000E+96  Clamped
+dsscb177   scaleb        1000E+93 +1 -> Infinity  Overflow Inexact Rounded
+dsscb178   scaleb        1000E+93 +1 -> Infinity  Overflow Inexact Rounded
+dsscb179   scaleb        1000E+93 +1 -> Infinity  Overflow Inexact Rounded
+dsscb180   scaleb        1000E+94 +1 -> Infinity  Overflow Inexact Rounded
+dsscb181   scaleb        1000E+94 +1 -> Infinity  Overflow Inexact Rounded
+dsscb182   scaleb        1000E+94 +1 -> Infinity  Overflow Inexact Rounded
+dsscb183   scaleb        1000E+94 +1 -> Infinity  Overflow Inexact Rounded
+dsscb184   scaleb        1000E+94 +1 -> Infinity  Overflow Inexact Rounded
+dsscb185   scaleb        1000E+95 +1 -> Infinity  Overflow Inexact Rounded
+dsscb186   scaleb        1000E+95 +1 -> Infinity  Overflow Inexact Rounded
+dsscb187   scaleb        1000E+95 +1 -> Infinity  Overflow Inexact Rounded
+
+-- and a few more subnormal truncations
+-- (these check that underflow is being done correctly)
+dsscb201   scaleb        1.000000E-96 0 -> 1.00000E-96  Rounded Subnormal
+dsscb202   scaleb        1.000000E-96 -1 -> 1.0000E-97  Rounded Subnormal
+dsscb203   scaleb        1.000000E-96 -2 -> 1.000E-98  Rounded Subnormal
+dsscb204   scaleb        1.000000E-96 -3 -> 1.00E-99  Rounded Subnormal
+dsscb205   scaleb        1.000000E-96 -4 -> 1.0E-100  Rounded Subnormal
+dsscb206   scaleb        1.000000E-96 -5 -> 1E-101  Rounded Subnormal
+dsscb207   scaleb        1.000000E-96 -6 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb208   scaleb        1.000000E-96 -7 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb209   scaleb        1.000000E-96 -8 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb210   scaleb        1.000000E-96 -9 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb211   scaleb        1.000000E-96 -10 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb212   scaleb        1.000000E-96 -11 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb213   scaleb        1.000000E-96 -12 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb214   scaleb        1.000000E-96 -13 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb215   scaleb        1.000000E-96 -14 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb216   scaleb        1.000000E-96 -15 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb217   scaleb        1.000000E-96 -16 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped
+dsscb218   scaleb        1.000000E-96 -17 -> 0E-101  Underflow Inexact Rounded Subnormal Clamped

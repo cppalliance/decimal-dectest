@@ -1,0 +1,341 @@
+------------------------------------------------------------------------
+-- dsMin.decTest                                                      --
+-- Generated for Boost.Decimal from ddMin.decTest                     --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddMin narrowed to that context, with                  --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- we assume that base comparison is tested in compare.decTest, so
+-- these mainly cover special cases and rounding
+rounding:    half_even
+
+-- sanity checks
+dsmin001   min           -2 -2 -> -2
+dsmin002   min           -2 -1 -> -2
+dsmin003   min           -2 0 -> -2
+dsmin004   min           -2 1 -> -2
+dsmin005   min           -2 2 -> -2
+dsmin006   min           -1 -2 -> -2
+dsmin007   min           -1 -1 -> -1
+dsmin008   min           -1 0 -> -1
+dsmin009   min           -1 1 -> -1
+dsmin010   min           -1 2 -> -1
+dsmin011   min           0 -2 -> -2
+dsmin012   min           0 -1 -> -1
+dsmin013   min           0 0 -> 0
+dsmin014   min           0 1 -> 0
+dsmin015   min           0 2 -> 0
+dsmin016   min           1 -2 -> -2
+dsmin017   min           1 -1 -> -1
+dsmin018   min           1 0 -> 0
+dsmin019   min           1 1 -> 1
+dsmin020   min           1 2 -> 1
+dsmin021   min           2 -2 -> -2
+dsmin022   min           2 -1 -> -1
+dsmin023   min           2 0 -> 0
+dsmin025   min           2 1 -> 1
+dsmin026   min           2 2 -> 2
+
+-- extended zeros
+dsmin030   min           0 0 -> 0
+dsmin031   min           0 -0 -> -0
+dsmin032   min           0 -0.0 -> -0.0
+dsmin033   min           0 0.0 -> 0.0
+dsmin034   min           -0 0 -> -0
+dsmin035   min           -0 -0 -> -0
+dsmin036   min           -0 -0.0 -> -0
+dsmin037   min           -0 0.0 -> -0
+dsmin038   min           0.0 0 -> 0.0
+dsmin039   min           0.0 -0 -> -0
+dsmin040   min           0.0 -0.0 -> -0.0
+dsmin041   min           0.0 0.0 -> 0.0
+dsmin042   min           -0.0 0 -> -0.0
+dsmin043   min           -0.0 -0 -> -0
+dsmin044   min           -0.0 -0.0 -> -0.0
+dsmin045   min           -0.0 0.0 -> -0.0
+
+dsmin046   min           0E+0 -0E+0 -> -0
+dsmin047   min           -0E+0 0E+0 -> -0
+dsmin048   min           0E+0 0E+0 -> 0
+dsmin049   min           0E+0 0E+0 -> 0
+dsmin050   min           -0E+1 -0E+0 -> -0E+1
+dsmin051   min           -0E+0 -0E+1 -> -0E+1
+
+-- Specials
+dsmin090   min           Inf -Inf -> -Infinity
+dsmin091   min           Inf -1000 -> -1000
+dsmin092   min           Inf -1 -> -1
+dsmin093   min           Inf -0 -> -0
+dsmin094   min           Inf 0 -> 0
+dsmin095   min           Inf 1 -> 1
+dsmin096   min           Inf 1000 -> 1000
+dsmin097   min           Inf Inf -> Infinity
+dsmin098   min           -1000 Inf -> -1000
+dsmin099   min           -Inf Inf -> -Infinity
+dsmin100   min           -1 Inf -> -1
+dsmin101   min           -0 Inf -> -0
+dsmin102   min           0 Inf -> 0
+dsmin103   min           1 Inf -> 1
+dsmin104   min           1000 Inf -> 1000
+dsmin105   min           Inf Inf -> Infinity
+
+dsmin120   min           -Inf -Inf -> -Infinity
+dsmin121   min           -Inf -1000 -> -Infinity
+dsmin122   min           -Inf -1 -> -Infinity
+dsmin123   min           -Inf -0 -> -Infinity
+dsmin124   min           -Inf 0 -> -Infinity
+dsmin125   min           -Inf 1 -> -Infinity
+dsmin126   min           -Inf 1000 -> -Infinity
+dsmin127   min           -Inf Inf -> -Infinity
+dsmin128   min           -Inf -Inf -> -Infinity
+dsmin129   min           -1000 -Inf -> -Infinity
+dsmin130   min           -1 -Inf -> -Infinity
+dsmin131   min           -0 -Inf -> -Infinity
+dsmin132   min           0 -Inf -> -Infinity
+dsmin133   min           1 -Inf -> -Infinity
+dsmin134   min           1000 -Inf -> -Infinity
+dsmin135   min           Inf -Inf -> -Infinity
+
+-- 2004.08.02 754r chooses number over NaN in mixed cases
+dsmin141   min           NaN -Inf -> -Infinity
+dsmin142   min           NaN -1000 -> -1000
+dsmin143   min           NaN -1 -> -1
+dsmin144   min           NaN -0 -> -0
+dsmin145   min           NaN 0 -> 0
+dsmin146   min           NaN 1 -> 1
+dsmin147   min           NaN 1000 -> 1000
+dsmin148   min           NaN Inf -> Infinity
+dsmin149   min           NaN NaN -> NaN
+dsmin150   min           -Inf NaN -> -Infinity
+dsmin151   min           -1000 NaN -> -1000
+dsmin152   min           -1 -NaN -> -1
+dsmin153   min           -0 NaN -> -0
+dsmin154   min           0 -NaN -> 0
+dsmin155   min           1 NaN -> 1
+dsmin156   min           1000 NaN -> 1000
+dsmin157   min           Inf NaN -> Infinity
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin161   min           sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin162   min           sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin163   min           sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin164   min           sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin165   min           -sNaN 0 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin166   min           -sNaN 1 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin167   min           sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin168   min           sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin169   min           sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin170   min           NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin171   min           -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin172   min           -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin173   min           -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin174   min           -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin175   min           0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin176   min           1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin177   min           1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin178   min           Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin179   min           NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+dsmin181   min           NaN9 -Inf -> -Infinity
+dsmin182   min           -NaN8 9990 -> 9990
+dsmin183   min           NaN71 Inf -> Infinity
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin184   min           NaN1 NaN54 -> NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin185   min           NaN22 -NaN53 -> NaN22
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin186   min           -NaN3 NaN6 -> -NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin187   min           -NaN44 NaN7 -> -NaN44
+
+dsmin188   min           -Inf NaN41 -> -Infinity
+dsmin189   min           -9999 -NaN33 -> -9999
+dsmin190   min           Inf NaN2 -> Infinity
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin191   min           sNaN99 -Inf -> NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin192   min           sNaN98 -11 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin193   min           -sNaN97 NaN8 -> -NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin194   min           sNaN69 sNaN94 -> NaN69  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin195   min           NaN95 sNaN93 -> NaN93  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin196   min           -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin197   min           088 sNaN91 -> NaN91  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin198   min           Inf -sNaN90 -> -NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dsmin199   min           NaN sNaN86 -> NaN86  Invalid_operation
+
+-- old rounding checks
+dsmin221   min           -1234560 1 -> -1234560
+dsmin222   min           1 -1234560 -> -1234560
+dsmin223   min           -1234560 1 -> -1234560
+dsmin224   min           1 -1234560 -> -1234560
+dsmin225   min           -1234560 1 -> -1234560
+dsmin226   min           1 -1234560 -> -1234560
+dsmin227   min           -1234561 1 -> -1234561
+dsmin228   min           1 -1234561 -> -1234561
+dsmin229   min           -1234561 1 -> -1234561
+dsmin230   min           1 -1234561 -> -1234561
+dsmin231   min           -1234566 1 -> -1234566
+dsmin232   min           1 -1234566 -> -1234566
+dsmin233   min           1234561 1 -> 1
+dsmin234   min           1 1234561 -> 1
+dsmin235   min           1234561 1 -> 1
+dsmin236   min           1 1234561 -> 1
+dsmin237   min           1234566 1 -> 1
+dsmin238   min           1 1234566 -> 1
+
+-- from examples
+dsmin280   min           3 2 -> 2
+dsmin281   min           -10 3 -> -10
+dsmin282   min           1.0 1 -> 1.0
+dsmin283   min           1 1.0 -> 1.0
+dsmin284   min           7 NaN -> 7
+
+-- expanded list from min/max 754r purple prose
+-- [explicit tests for exponent ordering]
+dsmin401   min           Inf 1.1 -> 1.1
+dsmin402   min           1.1 1 -> 1
+dsmin403   min           1 1.0 -> 1.0
+dsmin404   min           1.0 0.1 -> 0.1
+dsmin405   min           0.1 0.10 -> 0.10
+dsmin406   min           0.10 0.100 -> 0.100
+dsmin407   min           0.10 0 -> 0
+dsmin408   min           0 0.0 -> 0.0
+dsmin409   min           0.0 -0 -> -0
+dsmin410   min           0.0 -0.0 -> -0.0
+dsmin411   min           0.00 -0.0 -> -0.0
+dsmin412   min           0.0 -0.00 -> -0.00
+dsmin413   min           0 -0.0 -> -0.0
+dsmin414   min           0 -0 -> -0
+dsmin415   min           -0.0 -0 -> -0
+dsmin416   min           -0 -0.100 -> -0.100
+dsmin417   min           -0.100 -0.10 -> -0.10
+dsmin418   min           -0.10 -0.1 -> -0.1
+dsmin419   min           -0.1 -1.0 -> -1.0
+dsmin420   min           -1.0 -1 -> -1
+dsmin421   min           -1 -1.1 -> -1.1
+dsmin423   min           -1.1 -Inf -> -Infinity
+-- same with operands reversed
+dsmin431   min           1.1 Inf -> 1.1
+dsmin432   min           1 1.1 -> 1
+dsmin433   min           1.0 1 -> 1.0
+dsmin434   min           0.1 1.0 -> 0.1
+dsmin435   min           0.10 0.1 -> 0.10
+dsmin436   min           0.100 0.10 -> 0.100
+dsmin437   min           0 0.10 -> 0
+dsmin438   min           0.0 0 -> 0.0
+dsmin439   min           -0 0.0 -> -0
+dsmin440   min           -0.0 0.0 -> -0.0
+dsmin441   min           -0.0 0.00 -> -0.0
+dsmin442   min           -0.00 0.0 -> -0.00
+dsmin443   min           -0.0 0 -> -0.0
+dsmin444   min           -0 0 -> -0
+dsmin445   min           -0 -0.0 -> -0
+dsmin446   min           -0.100 -0 -> -0.100
+dsmin447   min           -0.10 -0.100 -> -0.10
+dsmin448   min           -0.1 -0.10 -> -0.1
+dsmin449   min           -1.0 -0.1 -> -1.0
+dsmin450   min           -1 -1.0 -> -1
+dsmin451   min           -1.1 -1 -> -1.1
+dsmin453   min           -Inf -1.1 -> -Infinity
+-- largies
+dsmin460   min           1000 1E+1 -> 1E+1
+dsmin461   min           1E+1 1000 -> 1E+1
+dsmin462   min           1000 -1E+1 -> -1E+1
+dsmin463   min           1E+1 -384 -> -384
+dsmin464   min           -384 1E+1 -> -384
+dsmin465   min           -1E+1 1000 -> -1E+1
+dsmin466   min           -384 -1E+1 -> -384
+dsmin467   min           -1E+1 -384 -> -384
+
+-- misalignment traps for little-endian
+dsmin471   min           1.0 0.1 -> 0.1
+dsmin472   min           0.1 1.0 -> 0.1
+dsmin473   min           10.0 0.1 -> 0.1
+dsmin474   min           0.1 10.0 -> 0.1
+dsmin475   min           100 1.0 -> 1.0
+dsmin476   min           1.0 100 -> 1.0
+dsmin477   min           1000 10.0 -> 10.0
+dsmin478   min           10.0 1000 -> 10.0
+dsmin479   min           10000 100.0 -> 100.0
+dsmin480   min           100.0 10000 -> 100.0
+dsmin481   min           100000 1000.0 -> 1000.0
+dsmin482   min           1000.0 100000 -> 1000.0
+dsmin483   min           1000000 10000.0 -> 10000.0
+dsmin484   min           10000.0 1000000 -> 10000.0
+
+-- subnormals
+dsmin510   min           1.00E-96 0 -> 0
+dsmin511   min           0.1E-96 0 -> 0
+dsmin512   min           0.10E-96 0 -> 0
+dsmin513   min           0.100E-96 0 -> 0
+dsmin514   min           0.01E-96 0 -> 0
+dsmin515   min           0.999E-96 0 -> 0
+dsmin516   min           0.099E-96 0 -> 0
+dsmin517   min           0.009E-96 0 -> 0
+dsmin518   min           0.001E-96 0 -> 0
+dsmin519   min           0.0009E-96 0 -> 0
+dsmin520   min           0.0001E-96 0 -> 0
+
+dsmin530   min           -1.00E-96 0 -> -1.00E-96  Subnormal
+dsmin531   min           -0.1E-96 0 -> -1E-97  Subnormal
+dsmin532   min           -0.10E-96 0 -> -1.0E-97  Subnormal
+dsmin533   min           -0.100E-96 0 -> -1.00E-97  Subnormal
+dsmin534   min           -0.01E-96 0 -> -1E-98  Subnormal
+dsmin535   min           -0.999E-96 0 -> -9.99E-97  Subnormal
+dsmin536   min           -0.099E-96 0 -> -9.9E-98  Subnormal
+dsmin537   min           -0.009E-96 0 -> -9E-99  Subnormal
+dsmin538   min           -0.001E-96 0 -> -1E-99  Subnormal
+dsmin539   min           -0.0009E-96 0 -> -9E-100  Subnormal
+dsmin540   min           -0.0001E-96 0 -> -1E-100  Subnormal
+
+
+-- Null tests

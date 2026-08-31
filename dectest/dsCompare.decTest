@@ -1,0 +1,785 @@
+------------------------------------------------------------------------
+-- dsCompare.decTest                                                  --
+-- Generated for Boost.Decimal from ddCompare.decTest                 --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddCompare narrowed to that context, with              --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- Note that we cannot assume add/subtract tests cover paths adequately,
+-- here, because the code might be quite different (comparison cannot
+-- overflow or underflow, so actual subtractions are not necessary).
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- sanity checks
+dscom001   compare       -2 -2 -> 0
+dscom002   compare       -2 -1 -> -1
+dscom003   compare       -2 0 -> -1
+dscom004   compare       -2 1 -> -1
+dscom005   compare       -2 2 -> -1
+dscom006   compare       -1 -2 -> 1
+dscom007   compare       -1 -1 -> 0
+dscom008   compare       -1 0 -> -1
+dscom009   compare       -1 1 -> -1
+dscom010   compare       -1 2 -> -1
+dscom011   compare       0 -2 -> 1
+dscom012   compare       0 -1 -> 1
+dscom013   compare       0 0 -> 0
+dscom014   compare       0 1 -> -1
+dscom015   compare       0 2 -> -1
+dscom016   compare       1 -2 -> 1
+dscom017   compare       1 -1 -> 1
+dscom018   compare       1 0 -> 1
+dscom019   compare       1 1 -> 0
+dscom020   compare       1 2 -> -1
+dscom021   compare       2 -2 -> 1
+dscom022   compare       2 -1 -> 1
+dscom023   compare       2 0 -> 1
+dscom025   compare       2 1 -> 1
+dscom026   compare       2 2 -> 0
+
+dscom031   compare       -20 -20 -> 0
+dscom032   compare       -20 -10 -> -1
+dscom033   compare       -20 00 -> -1
+dscom034   compare       -20 10 -> -1
+dscom035   compare       -20 20 -> -1
+dscom036   compare       -10 -20 -> 1
+dscom037   compare       -10 -10 -> 0
+dscom038   compare       -10 00 -> -1
+dscom039   compare       -10 10 -> -1
+dscom040   compare       -10 20 -> -1
+dscom041   compare       00 -20 -> 1
+dscom042   compare       00 -10 -> 1
+dscom043   compare       00 00 -> 0
+dscom044   compare       00 10 -> -1
+dscom045   compare       00 20 -> -1
+dscom046   compare       10 -20 -> 1
+dscom047   compare       10 -10 -> 1
+dscom048   compare       10 00 -> 1
+dscom049   compare       10 10 -> 0
+dscom050   compare       10 20 -> -1
+dscom051   compare       20 -20 -> 1
+dscom052   compare       20 -10 -> 1
+dscom053   compare       20 00 -> 1
+dscom055   compare       20 10 -> 1
+dscom056   compare       20 20 -> 0
+
+dscom061   compare       -2.0 -2.0 -> 0
+dscom062   compare       -2.0 -1.0 -> -1
+dscom063   compare       -2.0 0.0 -> -1
+dscom064   compare       -2.0 1.0 -> -1
+dscom065   compare       -2.0 2.0 -> -1
+dscom066   compare       -1.0 -2.0 -> 1
+dscom067   compare       -1.0 -1.0 -> 0
+dscom068   compare       -1.0 0.0 -> -1
+dscom069   compare       -1.0 1.0 -> -1
+dscom070   compare       -1.0 2.0 -> -1
+dscom071   compare       0.0 -2.0 -> 1
+dscom072   compare       0.0 -1.0 -> 1
+dscom073   compare       0.0 0.0 -> 0
+dscom074   compare       0.0 1.0 -> -1
+dscom075   compare       0.0 2.0 -> -1
+dscom076   compare       1.0 -2.0 -> 1
+dscom077   compare       1.0 -1.0 -> 1
+dscom078   compare       1.0 0.0 -> 1
+dscom079   compare       1.0 1.0 -> 0
+dscom080   compare       1.0 2.0 -> -1
+dscom081   compare       2.0 -2.0 -> 1
+dscom082   compare       2.0 -1.0 -> 1
+dscom083   compare       2.0 0.0 -> 1
+dscom085   compare       2.0 1.0 -> 1
+dscom086   compare       2.0 2.0 -> 0
+dscom087   compare       1.0 0.1 -> 1
+dscom088   compare       0.1 1.0 -> -1
+
+-- now some cases which might overflow if subtract were used
+dscom095   compare       9.999999E+96 9.999999E+96 -> 0
+dscom096   compare       -9.999999E+96 9.999999E+96 -> -1
+dscom097   compare       9.999999E+96 -9.999999E+96 -> 1
+dscom098   compare       -9.999999E+96 -9.999999E+96 -> 0
+
+-- some differing length/exponent cases
+dscom100   compare       7.0 7.0 -> 0
+dscom101   compare       7.0 7 -> 0
+dscom102   compare       7 7.0 -> 0
+dscom103   compare       7E+0 7.0 -> 0
+dscom104   compare       70E+0 7.0 -> 1
+dscom105   compare       0.7E+0 7 -> -1
+dscom106   compare       70E+0 7 -> 1
+dscom107   compare       7.0 7E+0 -> 0
+dscom108   compare       7.0 70E+0 -> -1
+dscom109   compare       7 0.7E+0 -> 1
+dscom110   compare       7 70E+0 -> -1
+
+dscom120   compare       8.0 7.0 -> 1
+dscom121   compare       8.0 7 -> 1
+dscom122   compare       8 7.0 -> 1
+dscom123   compare       8E+0 7.0 -> 1
+dscom124   compare       80E+0 7.0 -> 1
+dscom125   compare       0.8E+0 7 -> -1
+dscom126   compare       80E+0 7 -> 1
+dscom127   compare       8.0 7E+0 -> 1
+dscom128   compare       8.0 70E+0 -> -1
+dscom129   compare       8 0.7E+0 -> 1
+dscom130   compare       8 70E+0 -> -1
+
+dscom140   compare       8.0 9.0 -> -1
+dscom141   compare       8.0 9 -> -1
+dscom142   compare       8 9.0 -> -1
+dscom143   compare       8E+0 9.0 -> -1
+dscom144   compare       80E+0 9.0 -> 1
+dscom145   compare       0.8E+0 9 -> -1
+dscom146   compare       80E+0 9 -> 1
+dscom147   compare       8.0 9E+0 -> -1
+dscom148   compare       8.0 90E+0 -> -1
+dscom149   compare       8 0.9E+0 -> 1
+dscom150   compare       8 90E+0 -> -1
+
+-- and again, with sign changes -+ ..
+dscom200   compare       -7.0 7.0 -> -1
+dscom201   compare       -7.0 7 -> -1
+dscom202   compare       -7 7.0 -> -1
+dscom203   compare       -7E+0 7.0 -> -1
+dscom204   compare       -70E+0 7.0 -> -1
+dscom205   compare       -0.7E+0 7 -> -1
+dscom206   compare       -70E+0 7 -> -1
+dscom207   compare       -7.0 7E+0 -> -1
+dscom208   compare       -7.0 70E+0 -> -1
+dscom209   compare       -7 0.7E+0 -> -1
+dscom210   compare       -7 70E+0 -> -1
+
+dscom220   compare       -8.0 7.0 -> -1
+dscom221   compare       -8.0 7 -> -1
+dscom222   compare       -8 7.0 -> -1
+dscom223   compare       -8E+0 7.0 -> -1
+dscom224   compare       -80E+0 7.0 -> -1
+dscom225   compare       -0.8E+0 7 -> -1
+dscom226   compare       -80E+0 7 -> -1
+dscom227   compare       -8.0 7E+0 -> -1
+dscom228   compare       -8.0 70E+0 -> -1
+dscom229   compare       -8 0.7E+0 -> -1
+dscom230   compare       -8 70E+0 -> -1
+
+dscom240   compare       -8.0 9.0 -> -1
+dscom241   compare       -8.0 9 -> -1
+dscom242   compare       -8 9.0 -> -1
+dscom243   compare       -8E+0 9.0 -> -1
+dscom244   compare       -80E+0 9.0 -> -1
+dscom245   compare       -0.8E+0 9 -> -1
+dscom246   compare       -80E+0 9 -> -1
+dscom247   compare       -8.0 9E+0 -> -1
+dscom248   compare       -8.0 90E+0 -> -1
+dscom249   compare       -8 0.9E+0 -> -1
+dscom250   compare       -8 90E+0 -> -1
+
+-- and again, with sign changes +- ..
+dscom300   compare       7.0 -7.0 -> 1
+dscom301   compare       7.0 -7 -> 1
+dscom302   compare       7 -7.0 -> 1
+dscom303   compare       7E+0 -7.0 -> 1
+dscom304   compare       70E+0 -7.0 -> 1
+dscom305   compare       0.7E+0 -7 -> 1
+dscom306   compare       70E+0 -7 -> 1
+dscom307   compare       7.0 -7E+0 -> 1
+dscom308   compare       7.0 -70E+0 -> 1
+dscom309   compare       7 -0.7E+0 -> 1
+dscom310   compare       7 -70E+0 -> 1
+
+dscom320   compare       8.0 -7.0 -> 1
+dscom321   compare       8.0 -7 -> 1
+dscom322   compare       8 -7.0 -> 1
+dscom323   compare       8E+0 -7.0 -> 1
+dscom324   compare       80E+0 -7.0 -> 1
+dscom325   compare       0.8E+0 -7 -> 1
+dscom326   compare       80E+0 -7 -> 1
+dscom327   compare       8.0 -7E+0 -> 1
+dscom328   compare       8.0 -70E+0 -> 1
+dscom329   compare       8 -0.7E+0 -> 1
+dscom330   compare       8 -70E+0 -> 1
+
+dscom340   compare       8.0 -9.0 -> 1
+dscom341   compare       8.0 -9 -> 1
+dscom342   compare       8 -9.0 -> 1
+dscom343   compare       8E+0 -9.0 -> 1
+dscom344   compare       80E+0 -9.0 -> 1
+dscom345   compare       0.8E+0 -9 -> 1
+dscom346   compare       80E+0 -9 -> 1
+dscom347   compare       8.0 -9E+0 -> 1
+dscom348   compare       8.0 -90E+0 -> 1
+dscom349   compare       8 -0.9E+0 -> 1
+dscom350   compare       8 -90E+0 -> 1
+
+-- and again, with sign changes -- ..
+dscom400   compare       -7.0 -7.0 -> 0
+dscom401   compare       -7.0 -7 -> 0
+dscom402   compare       -7 -7.0 -> 0
+dscom403   compare       -7E+0 -7.0 -> 0
+dscom404   compare       -70E+0 -7.0 -> -1
+dscom405   compare       -0.7E+0 -7 -> 1
+dscom406   compare       -70E+0 -7 -> -1
+dscom407   compare       -7.0 -7E+0 -> 0
+dscom408   compare       -7.0 -70E+0 -> 1
+dscom409   compare       -7 -0.7E+0 -> -1
+dscom410   compare       -7 -70E+0 -> 1
+
+dscom420   compare       -8.0 -7.0 -> -1
+dscom421   compare       -8.0 -7 -> -1
+dscom422   compare       -8 -7.0 -> -1
+dscom423   compare       -8E+0 -7.0 -> -1
+dscom424   compare       -80E+0 -7.0 -> -1
+dscom425   compare       -0.8E+0 -7 -> 1
+dscom426   compare       -80E+0 -7 -> -1
+dscom427   compare       -8.0 -7E+0 -> -1
+dscom428   compare       -8.0 -70E+0 -> 1
+dscom429   compare       -8 -0.7E+0 -> -1
+dscom430   compare       -8 -70E+0 -> 1
+
+dscom440   compare       -8.0 -9.0 -> 1
+dscom441   compare       -8.0 -9 -> 1
+dscom442   compare       -8 -9.0 -> 1
+dscom443   compare       -8E+0 -9.0 -> 1
+dscom444   compare       -80E+0 -9.0 -> -1
+dscom445   compare       -0.8E+0 -9 -> 1
+dscom446   compare       -80E+0 -9 -> -1
+dscom447   compare       -8.0 -9E+0 -> 1
+dscom448   compare       -8.0 -90E+0 -> 1
+dscom449   compare       -8 -0.9E+0 -> -1
+dscom450   compare       -8 -90E+0 -> 1
+
+-- misalignment traps for little-endian
+dscom451   compare       1.0 0.1 -> 1
+dscom452   compare       0.1 1.0 -> -1
+dscom453   compare       10.0 0.1 -> 1
+dscom454   compare       0.1 10.0 -> -1
+dscom455   compare       100 1.0 -> 1
+dscom456   compare       1.0 100 -> -1
+dscom457   compare       1000 10.0 -> 1
+dscom458   compare       10.0 1000 -> -1
+dscom459   compare       10000 100.0 -> 1
+dscom460   compare       100.0 10000 -> -1
+dscom461   compare       100000 1000.0 -> 1
+dscom462   compare       1000.0 100000 -> -1
+dscom463   compare       1000000 10000.0 -> 1
+dscom464   compare       10000.0 1000000 -> -1
+
+-- testcases that subtract to lots of zeros at boundaries [pgr]
+dscom473   compare       123.4560E-22 123.456E-22 -> 0
+dscom474   compare       123.4560E+22 123.456E+22 -> 0
+dscom475   compare       123.4560E-22 123.456E-22 -> 0
+dscom476   compare       123.4560E+22 123.456E+22 -> 0
+dscom477   compare       123.4560E-22 123.456E-22 -> 0
+dscom478   compare       123.4560E+22 123.456E+22 -> 0
+dscom479   compare       123.4560E-22 123.456E-22 -> 0
+dscom480   compare       123.4560E+22 123.456E+22 -> 0
+dscom481   compare       123.4560E-22 123.456E-22 -> 0
+dscom482   compare       123.4560E+22 123.456E+22 -> 0
+dscom483   compare       123.456E-22 123.456E-22 -> 0
+dscom487   compare       123.456E+22 123.4560E+22 -> 0
+dscom488   compare       123.456E-22 123.4560E-22 -> 0
+dscom489   compare       123.456E+22 123.4560E+22 -> 0
+dscom490   compare       123.456E-22 123.4560E-22 -> 0
+dscom491   compare       123.456E+22 123.4560E+22 -> 0
+dscom492   compare       123.456E-22 123.4560E-22 -> 0
+dscom493   compare       123.456E+22 123.4560E+22 -> 0
+dscom494   compare       123.456E-22 123.4560E-22 -> 0
+dscom495   compare       123.456E+22 123.4560E+22 -> 0
+dscom496   compare       123.456E-22 123.4560E-22 -> 0
+dscom497   compare       123.456E+22 123.456E+22 -> 0
+
+-- wide-ranging, around precision; signs equal
+dscom500   compare       1 1E-4 -> 1
+dscom501   compare       1 1E-4 -> 1
+dscom502   compare       1 1E-3 -> 1
+dscom503   compare       1 1E-3 -> 1
+dscom504   compare       1 1E-3 -> 1
+dscom505   compare       1 1E-2 -> 1
+dscom506   compare       1 1E-2 -> 1
+dscom507   compare       1 1E-2 -> 1
+dscom508   compare       1 1E-2 -> 1
+dscom509   compare       1 1E-2 -> 1
+dscom510   compare       1 1E-1 -> 1
+dscom511   compare       1 1E-1 -> 1
+dscom512   compare       1 1E-1 -> 1
+dscom513   compare       1 1E+0 -> 0
+dscom514   compare       1 1E+0 -> 0
+dscom515   compare       1 1E+0 -> 0
+dscom516   compare       1 1E+0 -> 0
+dscom517   compare       1 1E+0 -> 0
+dscom518   compare       1 1E+1 -> -1
+dscom519   compare       1 1E+1 -> -1
+dscom521   compare       1 1E+1 -> -1
+dscom522   compare       1 1E+2 -> -1
+dscom523   compare       1 1E+2 -> -1
+dscom524   compare       1 1E+2 -> -1
+dscom525   compare       1 1E+2 -> -1
+dscom526   compare       1 1E+2 -> -1
+dscom527   compare       1 1E+3 -> -1
+dscom528   compare       1 1E+3 -> -1
+dscom529   compare       1 1E+3 -> -1
+dscom530   compare       1 1E+4 -> -1
+dscom531   compare       1 1E+4 -> -1
+-- LR swap
+dscom540   compare       1E-4 1 -> -1
+dscom541   compare       1E-4 1 -> -1
+dscom542   compare       1E-3 1 -> -1
+dscom543   compare       1E-3 1 -> -1
+dscom544   compare       1E-3 1 -> -1
+dscom545   compare       1E-2 1 -> -1
+dscom546   compare       1E-2 1 -> -1
+dscom547   compare       1E-2 1 -> -1
+dscom548   compare       1E-2 1 -> -1
+dscom549   compare       1E-2 1 -> -1
+dscom550   compare       1E-1 1 -> -1
+dscom551   compare       1E-1 1 -> -1
+dscom552   compare       1E-1 1 -> -1
+dscom553   compare       1E+0 1 -> 0
+dscom554   compare       1E+0 1 -> 0
+dscom555   compare       1E+0 1 -> 0
+dscom556   compare       1E+0 1 -> 0
+dscom557   compare       1E+0 1 -> 0
+dscom558   compare       1E+1 1 -> 1
+dscom559   compare       1E+1 1 -> 1
+dscom561   compare       1E+1 1 -> 1
+dscom562   compare       1E+2 1 -> 1
+dscom563   compare       1E+2 1 -> 1
+dscom564   compare       1E+2 1 -> 1
+dscom565   compare       1E+2 1 -> 1
+dscom566   compare       1E+2 1 -> 1
+dscom567   compare       1E+3 1 -> 1
+dscom568   compare       1E+3 1 -> 1
+dscom569   compare       1E+3 1 -> 1
+dscom570   compare       1E+4 1 -> 1
+dscom571   compare       1E+4 1 -> 1
+-- similar with a useful coefficient, one side only
+dscom580   compare       0.0000009876541 1E-4 -> -1
+dscom581   compare       0.0000009876541 1E-4 -> -1
+dscom582   compare       0.0000009876541 1E-3 -> -1
+dscom583   compare       0.0000009876541 1E-3 -> -1
+dscom584   compare       0.0000009876541 1E-3 -> -1
+dscom585   compare       0.0000009876541 1E-2 -> -1
+dscom586   compare       0.0000009876541 1E-2 -> -1
+dscom587   compare       0.0000009876541 1E-2 -> -1
+dscom588   compare       0.0000009876541 1E-2 -> -1
+dscom589   compare       0.0000009876541 1E-2 -> -1
+dscom590   compare       0.0000009876541 1E-1 -> -1
+dscom591   compare       0.0000009876541 1E-1 -> -1
+dscom592   compare       0.0000009876541 1E-1 -> -1
+dscom593   compare       0.0000009876541 1E+0 -> -1
+dscom594   compare       0.0000009876541 1E+0 -> -1
+dscom595   compare       0.0000009876541 1E+0 -> -1
+dscom596   compare       0.0000009876541 1E+0 -> -1
+dscom597   compare       0.0000009876541 1E+0 -> -1
+dscom598   compare       0.0000009876541 1E+1 -> -1
+dscom599   compare       0.0000009876541 1E+1 -> -1
+
+-- check some unit-y traps
+dscom600   compare       12 12.2345 -> -1
+dscom601   compare       12.0 12.2345 -> -1
+dscom602   compare       12.00 12.2345 -> -1
+dscom603   compare       12.000 12.2345 -> -1
+dscom604   compare       12.0000 12.2345 -> -1
+dscom605   compare       12.00000 12.2345 -> -1
+dscom606   compare       12.00000 12.2345 -> -1
+dscom607   compare       12.00000 12.2345 -> -1
+dscom608   compare       12.00000 12.2345 -> -1
+dscom609   compare       12.00000 12.2345 -> -1
+dscom610   compare       12.1234 12 -> 1
+dscom611   compare       12.1234 12.0 -> 1
+dscom612   compare       12.1234 12.00 -> 1
+dscom613   compare       12.1234 12.000 -> 1
+dscom614   compare       12.1234 12.0000 -> 1
+dscom615   compare       12.1234 12.00000 -> 1
+dscom616   compare       12.1234 12.00000 -> 1
+dscom617   compare       12.1234 12.00000 -> 1
+dscom618   compare       12.1234 12.00000 -> 1
+dscom619   compare       12.1234 12.00000 -> 1
+dscom620   compare       -12 -12.2345 -> 1
+dscom621   compare       -12.0 -12.2345 -> 1
+dscom622   compare       -12.00 -12.2345 -> 1
+dscom623   compare       -12.000 -12.2345 -> 1
+dscom624   compare       -12.0000 -12.2345 -> 1
+dscom625   compare       -12.00000 -12.2345 -> 1
+dscom626   compare       -12.00000 -12.2345 -> 1
+dscom627   compare       -12.00000 -12.2345 -> 1
+dscom628   compare       -12.00000 -12.2345 -> 1
+dscom629   compare       -12.00000 -12.2345 -> 1
+dscom630   compare       -12.1234 -12 -> -1
+dscom631   compare       -12.1234 -12.0 -> -1
+dscom632   compare       -12.1234 -12.00 -> -1
+dscom633   compare       -12.1234 -12.000 -> -1
+dscom634   compare       -12.1234 -12.0000 -> -1
+dscom635   compare       -12.1234 -12.00000 -> -1
+dscom636   compare       -12.1234 -12.00000 -> -1
+dscom637   compare       -12.1234 -12.00000 -> -1
+dscom638   compare       -12.1234 -12.00000 -> -1
+dscom639   compare       -12.1234 -12.00000 -> -1
+
+-- extended zeros
+dscom640   compare       0 0 -> 0
+dscom641   compare       0 -0 -> 0
+dscom642   compare       0 -0.0 -> 0
+dscom643   compare       0 0.0 -> 0
+dscom644   compare       -0 0 -> 0
+dscom645   compare       -0 -0 -> 0
+dscom646   compare       -0 -0.0 -> 0
+dscom647   compare       -0 0.0 -> 0
+dscom648   compare       0.0 0 -> 0
+dscom649   compare       0.0 -0 -> 0
+dscom650   compare       0.0 -0.0 -> 0
+dscom651   compare       0.0 0.0 -> 0
+dscom652   compare       -0.0 0 -> 0
+dscom653   compare       -0.0 -0 -> 0
+dscom654   compare       -0.0 -0.0 -> 0
+dscom655   compare       -0.0 0.0 -> 0
+
+dscom656   compare       -0E+0 0.0 -> 0
+dscom657   compare       -0E+0 0.0 -> 0
+dscom658   compare       0E+0 0.0 -> 0
+dscom659   compare       0E+0 0.0 -> 0
+dscom660   compare       -0E+0 0 -> 0
+dscom661   compare       -0E+0 0 -> 0
+dscom662   compare       0E+0 0 -> 0
+dscom663   compare       0E+0 0 -> 0
+dscom664   compare       -0E+0 -0E+0 -> 0
+dscom665   compare       -0E+0 -0E+0 -> 0
+dscom666   compare       0E+0 -0E+0 -> 0
+dscom667   compare       0E+0 -0E+0 -> 0
+dscom668   compare       -0E+0 -0E+0 -> 0
+dscom669   compare       -0E+0 -0E+0 -> 0
+dscom670   compare       0E+0 -0E+0 -> 0
+dscom671   compare       0E+0 -0E+0 -> 0
+dscom672   compare       -0E+0 0E+0 -> 0
+dscom673   compare       -0E+0 0E+0 -> 0
+dscom674   compare       0E+0 0E+0 -> 0
+dscom675   compare       0E+0 0E+0 -> 0
+dscom676   compare       -0E+0 0E+0 -> 0
+dscom677   compare       -0E+0 0E+0 -> 0
+dscom678   compare       0E+0 0E+0 -> 0
+dscom679   compare       0E+0 0E+0 -> 0
+
+-- trailing zeros; unit-y
+dscom680   compare       12 12 -> 0
+dscom681   compare       12 12.0 -> 0
+dscom682   compare       12 12.00 -> 0
+dscom683   compare       12 12.000 -> 0
+dscom684   compare       12 12.0000 -> 0
+dscom685   compare       12 12.00000 -> 0
+dscom686   compare       12 12.00000 -> 0
+dscom687   compare       12 12.00000 -> 0
+dscom688   compare       12 12.00000 -> 0
+dscom689   compare       12 12.00000 -> 0
+dscom690   compare       12 12 -> 0
+dscom691   compare       12.0 12 -> 0
+dscom692   compare       12.00 12 -> 0
+dscom693   compare       12.000 12 -> 0
+dscom694   compare       12.0000 12 -> 0
+dscom695   compare       12.00000 12 -> 0
+dscom696   compare       12.00000 12 -> 0
+dscom697   compare       12.00000 12 -> 0
+dscom698   compare       12.00000 12 -> 0
+dscom699   compare       12.00000 12 -> 0
+
+-- first, second, & last digit
+dscom700   compare       1234566 1234565 -> 1
+dscom701   compare       1234566 1234566 -> 0
+dscom702   compare       1234566 1234567 -> -1
+dscom703   compare       1234566 02345676 -> -1
+dscom704   compare       1234566 1234566 -> 0
+dscom705   compare       1234566 2234566 -> -1
+dscom706   compare       1134566 1034566 -> 1
+dscom707   compare       1134566 1134566 -> 0
+dscom708   compare       1134566 1234566 -> -1
+
+-- miscellaneous
+dscom721   compare       1234560 1 -> 1
+dscom722   compare       1 1234560 -> -1
+dscom723   compare       1234560 1 -> 1
+dscom724   compare       1 1234560 -> -1
+dscom725   compare       1234560 1 -> 1
+dscom726   compare       1 1234560 -> -1
+dscom727   compare       1234561 1 -> 1
+dscom728   compare       1 1234561 -> -1
+dscom729   compare       1234561 1 -> 1
+dscom730   compare       1 1234561 -> -1
+dscom731   compare       1234566 1 -> 1
+dscom732   compare       1 1234566 -> -1
+
+-- residue cases at lower precision
+dscom740   compare       1 0.9999999 -> 1
+dscom741   compare       1 0.999999 -> 1
+dscom742   compare       1 0.99999 -> 1
+dscom743   compare       1 1.0000 -> 0
+dscom744   compare       1 1.00001 -> -1
+dscom745   compare       1 1.000001 -> -1
+dscom746   compare       1 1.000001 -> -1
+dscom750   compare       0.9999999 1 -> -1
+dscom751   compare       0.999999 1 -> -1
+dscom752   compare       0.99999 1 -> -1
+dscom753   compare       1.0000 1 -> 0
+dscom754   compare       1.00001 1 -> 1
+dscom755   compare       1.000001 1 -> 1
+dscom756   compare       1.000001 1 -> 1
+
+-- Specials
+dscom780   compare       Inf -Inf -> 1
+dscom781   compare       Inf -1000 -> 1
+dscom782   compare       Inf -1 -> 1
+dscom783   compare       Inf -0 -> 1
+dscom784   compare       Inf 0 -> 1
+dscom785   compare       Inf 1 -> 1
+dscom786   compare       Inf 1000 -> 1
+dscom787   compare       Inf Inf -> 0
+dscom788   compare       -1000 Inf -> -1
+dscom789   compare       -Inf Inf -> -1
+dscom790   compare       -1 Inf -> -1
+dscom791   compare       -0 Inf -> -1
+dscom792   compare       0 Inf -> -1
+dscom793   compare       1 Inf -> -1
+dscom794   compare       1000 Inf -> -1
+dscom795   compare       Inf Inf -> 0
+
+dscom800   compare       -Inf -Inf -> 0
+dscom801   compare       -Inf -1000 -> -1
+dscom802   compare       -Inf -1 -> -1
+dscom803   compare       -Inf -0 -> -1
+dscom804   compare       -Inf 0 -> -1
+dscom805   compare       -Inf 1 -> -1
+dscom806   compare       -Inf 1000 -> -1
+dscom807   compare       -Inf Inf -> -1
+dscom808   compare       -Inf -Inf -> 0
+dscom809   compare       -1000 -Inf -> 1
+dscom810   compare       -1 -Inf -> 1
+dscom811   compare       -0 -Inf -> 1
+dscom812   compare       0 -Inf -> 1
+dscom813   compare       1 -Inf -> 1
+dscom814   compare       1000 -Inf -> 1
+dscom815   compare       Inf -Inf -> 1
+
+dscom821   compare       NaN -Inf -> NaN
+dscom822   compare       NaN -1000 -> NaN
+dscom823   compare       NaN -1 -> NaN
+dscom824   compare       NaN -0 -> NaN
+dscom825   compare       NaN 0 -> NaN
+dscom826   compare       NaN 1 -> NaN
+dscom827   compare       NaN 1000 -> NaN
+dscom828   compare       NaN Inf -> NaN
+dscom829   compare       NaN NaN -> NaN
+dscom830   compare       -Inf NaN -> NaN
+dscom831   compare       -1000 NaN -> NaN
+dscom832   compare       -1 NaN -> NaN
+dscom833   compare       -0 NaN -> NaN
+dscom834   compare       0 NaN -> NaN
+dscom835   compare       1 NaN -> NaN
+dscom836   compare       1000 NaN -> NaN
+dscom837   compare       Inf NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom838   compare       -NaN -NaN -> -NaN
+dscom839   compare       +NaN -NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom840   compare       -NaN +NaN -> -NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom841   compare       sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom842   compare       sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom843   compare       sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom844   compare       sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom845   compare       sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom846   compare       sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom847   compare       sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom848   compare       sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom849   compare       sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom850   compare       NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom851   compare       -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom852   compare       -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom853   compare       -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom854   compare       -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom855   compare       0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom856   compare       1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom857   compare       1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom858   compare       Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom859   compare       NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom860   compare       NaN9 -Inf -> NaN9
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom861   compare       NaN8 999 -> NaN8
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom862   compare       NaN77 Inf -> NaN77
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom863   compare       -NaN67 NaN5 -> -NaN67
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom864   compare       -Inf -NaN4 -> -NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom865   compare       -999 -NaN33 -> -NaN33
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom866   compare       Inf NaN2 -> NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom867   compare       -NaN41 -NaN42 -> -NaN41
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom868   compare       +NaN41 -NaN42 -> NaN41
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom869   compare       -NaN41 +NaN42 -> -NaN41
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom870   compare       +NaN41 +NaN42 -> NaN41
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom871   compare       -sNaN99 -Inf -> -NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom872   compare       sNaN98 -11 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom873   compare       sNaN97 NaN -> NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom874   compare       sNaN16 sNaN94 -> NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom875   compare       NaN85 sNaN83 -> NaN83  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom876   compare       -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom877   compare       088 sNaN81 -> NaN81  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom878   compare       Inf sNaN90 -> NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscom879   compare       NaN -sNaN89 -> -NaN89  Invalid_operation
+
+-- wide range
+dscom880   compare       +1.234565E+0 9E+96 -> -1
+dscom881   compare       9E+96 +1.234565E+0 -> 1
+dscom882   compare       +0.100 9E-96 -> 1
+dscom883   compare       9E-96 +0.100 -> -1
+dscom885   compare       -1.234565E+0 9E+96 -> -1
+dscom886   compare       9E+96 -1.234565E+0 -> 1
+dscom887   compare       -0.100 9E-96 -> -1
+dscom888   compare       9E-96 -0.100 -> 1
+
+-- spread zeros
+dscom900   compare       0E-96 0 -> 0
+dscom901   compare       0E-96 -0 -> 0
+dscom902   compare       -0E-96 0 -> 0
+dscom903   compare       -0E-96 -0 -> 0
+dscom904   compare       0E-96 0E+96 -> 0
+dscom905   compare       0E-96 -0E+96 -> 0
+dscom906   compare       -0E-96 0E+96 -> 0
+dscom907   compare       -0E-96 -0E+96 -> 0
+dscom908   compare       0 0E+96 -> 0
+dscom909   compare       0 -0E+96 -> 0
+dscom910   compare       -0 0E+96 -> 0
+dscom911   compare       -0 -0E+96 -> 0
+dscom930   compare       0E+96 0 -> 0
+dscom931   compare       0E+96 -0 -> 0
+dscom932   compare       -0E+96 0 -> 0
+dscom933   compare       -0E+96 -0 -> 0
+dscom934   compare       0E+96 0E-96 -> 0
+dscom935   compare       0E+96 -0E-96 -> 0
+dscom936   compare       -0E+96 0E-96 -> 0
+dscom937   compare       -0E+96 -0E-96 -> 0
+dscom938   compare       0 0E-96 -> 0
+dscom939   compare       0 -0E-96 -> 0
+dscom940   compare       -0 0E-96 -> 0
+dscom941   compare       -0 -0E-96 -> 0
+
+-- signs
+dscom961   compare       1E+19 1E+3 -> 1
+dscom962   compare       1E+19 -1E+3 -> 1
+dscom963   compare       -1E+19 1E+3 -> -1
+dscom964   compare       -1E+19 -1E+3 -> -1
+dscom965   compare       1E-19 1E-3 -> -1
+dscom966   compare       1E-19 -1E-3 -> 1
+dscom967   compare       -1E-19 1E-3 -> -1
+dscom968   compare       -1E-19 -1E-3 -> 1
+
+-- full alignment range, both ways
+dscomp1001 compare       1 1.000000 -> 0
+dscomp1002 compare       1 1.000000 -> 0
+dscomp1003 compare       1 1.000000 -> 0
+dscomp1004 compare       1 1.000000 -> 0
+dscomp1005 compare       1 1.000000 -> 0
+dscomp1006 compare       1 1.000000 -> 0
+dscomp1007 compare       1 1.000000 -> 0
+dscomp1008 compare       1 1.000000 -> 0
+dscomp1009 compare       1 1.000000 -> 0
+dscomp1010 compare       1 1.000000 -> 0
+dscomp1011 compare       1 1.00000 -> 0
+dscomp1012 compare       1 1.0000 -> 0
+dscomp1013 compare       1 1.000 -> 0
+dscomp1014 compare       1 1.00 -> 0
+dscomp1015 compare       1 1.0 -> 0
+dscomp1021 compare       1.000000 1 -> 0
+dscomp1022 compare       1.000000 1 -> 0
+dscomp1023 compare       1.000000 1 -> 0
+dscomp1024 compare       1.000000 1 -> 0
+dscomp1025 compare       1.000000 1 -> 0
+dscomp1026 compare       1.000000 1 -> 0
+dscomp1027 compare       1.000000 1 -> 0
+dscomp1028 compare       1.000000 1 -> 0
+dscomp1029 compare       1.000000 1 -> 0
+dscomp1030 compare       1.000000 1 -> 0
+dscomp1031 compare       1.00000 1 -> 0
+dscomp1032 compare       1.0000 1 -> 0
+dscomp1033 compare       1.000 1 -> 0
+dscomp1034 compare       1.00 1 -> 0
+dscomp1035 compare       1.0 1 -> 0
+
+-- check MSD always detected non-zero
+dscomp1040 compare       0 0.000000000000000 -> 0
+dscomp1041 compare       0 1.000000 -> -1
+dscomp1042 compare       0 2.000000 -> -1
+dscomp1043 compare       0 3.000000 -> -1
+dscomp1044 compare       0 4.000000 -> -1
+dscomp1045 compare       0 5.000000 -> -1
+dscomp1046 compare       0 6.000000 -> -1
+dscomp1047 compare       0 7.000000 -> -1
+dscomp1048 compare       0 8.000000 -> -1
+dscomp1049 compare       0 9.000000 -> -1
+dscomp1050 compare       0.000000000000000 0 -> 0
+dscomp1051 compare       1.000000 0 -> 1
+dscomp1052 compare       2.000000 0 -> 1
+dscomp1053 compare       3.000000 0 -> 1
+dscomp1054 compare       4.000000 0 -> 1
+dscomp1055 compare       5.000000 0 -> 1
+dscomp1056 compare       6.000000 0 -> 1
+dscomp1057 compare       7.000000 0 -> 1
+dscomp1058 compare       8.000000 0 -> 1
+dscomp1059 compare       9.000000 0 -> 1
+
+-- Null tests

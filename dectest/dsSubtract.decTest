@@ -1,0 +1,671 @@
+------------------------------------------------------------------------
+-- dsSubtract.decTest                                                 --
+-- Generated for Boost.Decimal from ddSubtract.decTest                --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddSubtract narrowed to that context, with             --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- This set of tests are for decDoubles only; all arguments are
+-- representable in a decDouble
+rounding:    half_even
+
+-- [first group are 'quick confidence check']
+dssub001   subtract      0 0 -> 0
+dssub002   subtract      1 1 -> 0
+dssub003   subtract      1 2 -> -1
+dssub004   subtract      2 1 -> 1
+dssub005   subtract      2 2 -> 0
+dssub006   subtract      3 2 -> 1
+dssub007   subtract      2 3 -> -1
+
+dssub011   subtract      -0 0 -> -0
+dssub012   subtract      -1 1 -> -2
+dssub013   subtract      -1 2 -> -3
+dssub014   subtract      -2 1 -> -3
+dssub015   subtract      -2 2 -> -4
+dssub016   subtract      -3 2 -> -5
+dssub017   subtract      -2 3 -> -5
+
+dssub021   subtract      0 -0 -> 0
+dssub022   subtract      1 -1 -> 2
+dssub023   subtract      1 -2 -> 3
+dssub024   subtract      2 -1 -> 3
+dssub025   subtract      2 -2 -> 4
+dssub026   subtract      3 -2 -> 5
+dssub027   subtract      2 -3 -> 5
+
+dssub030   subtract      11 1 -> 10
+dssub031   subtract      10 1 -> 9
+dssub032   subtract      9 1 -> 8
+dssub033   subtract      1 1 -> 0
+dssub034   subtract      0 1 -> -1
+dssub035   subtract      -1 1 -> -2
+dssub036   subtract      -9 1 -> -10
+dssub037   subtract      -10 1 -> -11
+dssub038   subtract      -11 1 -> -12
+
+dssub040   subtract      5.75 3.3 -> 2.45
+dssub041   subtract      5 -3 -> 8
+dssub042   subtract      -5 -3 -> -2
+dssub043   subtract      -7 2.5 -> -9.5
+dssub044   subtract      0.7 0.3 -> 0.4
+dssub045   subtract      1.3 0.3 -> 1.0
+dssub046   subtract      1.25 1.25 -> 0.00
+
+dssub050   subtract      1.234569 1.000000 -> 0.234569
+dssub051   subtract      1.234569 1.000009 -> 0.234560
+
+dssub060   subtract      70 10000E+4 -> -9.999993E+7  Rounded
+dssub061   subtract      700 10000E+4 -> -9.999930E+7  Rounded
+dssub062   subtract      7000 10000E+4 -> -9.999300E+7  Rounded
+dssub063   subtract      70000 10000E+4 -> -9.993000E+7  Rounded
+dssub064   subtract      700000 10000E+4 -> -9.930000E+7  Rounded
+-- symmetry:
+dssub065   subtract      10000E+4 70 -> 9.999993E+7  Rounded
+dssub066   subtract      10000E+4 700 -> 9.999930E+7  Rounded
+dssub067   subtract      10000E+4 7000 -> 9.999300E+7  Rounded
+dssub068   subtract      10000E+4 70000 -> 9.993000E+7  Rounded
+dssub069   subtract      10000E+4 700000 -> 9.930000E+7  Rounded
+
+-- some of the next group are really constructor tests
+dssub090   subtract      00.0 0.0 -> 0.0
+dssub091   subtract      00.0 0.00 -> 0.00
+dssub092   subtract      0.00 00.0 -> 0.00
+dssub093   subtract      00.0 0.00 -> 0.00
+dssub094   subtract      0.00 00.0 -> 0.00
+dssub095   subtract      3 0.3 -> 2.7
+dssub096   subtract      3 0.3 -> 2.7
+dssub097   subtract      3.0 0.3 -> 2.7
+dssub098   subtract      3.00 0.3 -> 2.70
+dssub099   subtract      3 3 -> 0
+dssub100   subtract      3 +3 -> 0
+dssub101   subtract      3 -3 -> 6
+dssub102   subtract      3 0.3 -> 2.7
+dssub103   subtract      3 0.3 -> 2.7
+dssub104   subtract      3.0 0.3 -> 2.7
+dssub105   subtract      3.00 0.3 -> 2.70
+dssub106   subtract      3 3.0 -> 0.0
+dssub107   subtract      3 +3.0 -> 0.0
+dssub108   subtract      3 -3.0 -> 6.0
+
+-- the above all from add; massaged and extended.  Now some new ones...
+-- [particularly important for comparisons]
+-- NB: -xE-8 below were non-exponents pre-ANSI X3-274, and -1E-7 or 0E-7
+-- with input rounding.
+dssub120   subtract      10.23454 10.23459 -> -0.00005
+dssub121   subtract      10.23455 10.23459 -> -0.00004
+dssub122   subtract      10.23456 10.23459 -> -0.00003
+dssub123   subtract      10.23457 10.23459 -> -0.00002
+dssub124   subtract      10.23458 10.23459 -> -0.00001
+dssub125   subtract      10.23459 10.23459 -> 0.00000
+dssub126   subtract      10.23450 10.23459 -> -0.00009
+dssub127   subtract      10.23451 10.23459 -> -0.00008
+dssub128   subtract      10.23452 10.23459 -> -0.00007
+dssub129   subtract      10.23453 10.23459 -> -0.00006
+dssub130   subtract      10.23454 10.23459 -> -0.00005
+dssub131   subtract      10.23451 10.23456 -> -0.00005
+dssub132   subtract      10.23452 10.23456 -> -0.00004
+dssub133   subtract      10.23453 10.23456 -> -0.00003
+dssub134   subtract      10.23454 10.23456 -> -0.00002
+dssub135   subtract      10.23455 10.23456 -> -0.00001
+dssub136   subtract      10.23456 10.23456 -> 0.00000
+dssub137   subtract      10.23457 10.23456 -> 0.00001
+dssub138   subtract      10.23458 10.23456 -> 0.00002
+dssub139   subtract      10.23459 10.23456 -> 0.00003
+dssub140   subtract      10.23450 10.23456 -> -0.00006
+dssub141   subtract      10.23451 10.23456 -> -0.00005
+dssub142   subtract      1 0.9999999 -> 1E-7
+dssub143   subtract      0.9999999 1 -> -1E-7
+dssub144   subtract      -10.23450 -10.23456 -> 0.00006
+dssub145   subtract      -10.23450 -10.23456 -> 0.00006
+dssub146   subtract      -10.23451 -10.23456 -> 0.00005
+
+-- additional scaled arithmetic tests [0.97 problem]
+dssub160   subtract      0 0.1 -> -0.1
+dssub161   subtract      00 0.97983 -> -0.97983
+dssub162   subtract      0 0.9 -> -0.9
+dssub163   subtract      0 0.102 -> -0.102
+dssub164   subtract      0 0.4 -> -0.4
+dssub165   subtract      0 0.307 -> -0.307
+dssub166   subtract      0 0.43822 -> -0.43822
+dssub167   subtract      0 0.911 -> -0.911
+dssub168   subtract      0.0 0.02 -> -0.02
+dssub169   subtract      00 0.392 -> -0.392
+dssub170   subtract      0 0.26 -> -0.26
+dssub171   subtract      0 0.51 -> -0.51
+dssub172   subtract      0 0.2234 -> -0.2234
+dssub173   subtract      0 0.2 -> -0.2
+dssub174   subtract      0.0 0.0008 -> -0.0008
+-- 0. on left
+dssub180   subtract      0.0 -0.1 -> 0.1
+dssub181   subtract      0.00 -0.97983 -> 0.97983
+dssub182   subtract      0.0 -0.9 -> 0.9
+dssub183   subtract      0.0 -0.102 -> 0.102
+dssub184   subtract      0.0 -0.4 -> 0.4
+dssub185   subtract      0.0 -0.307 -> 0.307
+dssub186   subtract      0.0 -0.43822 -> 0.43822
+dssub187   subtract      0.0 -0.911 -> 0.911
+dssub188   subtract      0.0 -0.02 -> 0.02
+dssub189   subtract      0.00 -0.392 -> 0.392
+dssub190   subtract      0.0 -0.26 -> 0.26
+dssub191   subtract      0.0 -0.51 -> 0.51
+dssub192   subtract      0.0 -0.2234 -> 0.2234
+dssub193   subtract      0.0 -0.2 -> 0.2
+dssub194   subtract      0.0 -0.0008 -> 0.0008
+-- negatives of same
+dssub200   subtract      0 -0.1 -> 0.1
+dssub201   subtract      00 -0.97983 -> 0.97983
+dssub202   subtract      0 -0.9 -> 0.9
+dssub203   subtract      0 -0.102 -> 0.102
+dssub204   subtract      0 -0.4 -> 0.4
+dssub205   subtract      0 -0.307 -> 0.307
+dssub206   subtract      0 -0.43822 -> 0.43822
+dssub207   subtract      0 -0.911 -> 0.911
+dssub208   subtract      0.0 -0.02 -> 0.02
+dssub209   subtract      00 -0.392 -> 0.392
+dssub210   subtract      0 -0.26 -> 0.26
+dssub211   subtract      0 -0.51 -> 0.51
+dssub212   subtract      0 -0.2234 -> 0.2234
+dssub213   subtract      0 -0.2 -> 0.2
+dssub214   subtract      0.0 -0.0008 -> 0.0008
+
+-- more fixed, LHS swaps [really the same as testcases under add]
+dssub220   subtract      -56267E-3 0 -> -56.267
+dssub221   subtract      -56267E-3 0 -> -56.267
+dssub222   subtract      -56267E-2 0 -> -562.67
+dssub223   subtract      -56267E-2 0 -> -562.67
+dssub224   subtract      -56267E-2 0 -> -562.67
+dssub225   subtract      -56267E-2 0 -> -562.67
+dssub226   subtract      -56267E-2 0 -> -562.67
+dssub227   subtract      -56267E-1 0 -> -5626.7
+dssub228   subtract      -56267E+0 0 -> -56267
+dssub229   subtract      -56267E+0 0 -> -56267
+dssub230   subtract      -56267E+0 0 -> -56267
+-- symmetry ...
+dssub240   subtract      0 -56267E-3 -> 56.267
+dssub241   subtract      0 -56267E-3 -> 56.267
+dssub242   subtract      0 -56267E-2 -> 562.67
+dssub243   subtract      0 -56267E-2 -> 562.67
+dssub244   subtract      0 -56267E-2 -> 562.67
+dssub245   subtract      0 -56267E-2 -> 562.67
+dssub246   subtract      0 -56267E-2 -> 562.67
+dssub247   subtract      0 -56267E-1 -> 5626.7
+dssub248   subtract      0 -56267E+0 -> 56267
+dssub249   subtract      0 -56267E+0 -> 56267
+dssub250   subtract      0 -56267E+0 -> 56267
+
+-- now some more from the 'new' add
+dssub301   subtract      1.234569 1.000000 -> 0.234569
+dssub302   subtract      1.234569 1.000001 -> 0.234568
+
+-- some carrying effects
+dssub321   subtract      0.9998 0.0000 -> 0.9998
+dssub322   subtract      0.9998 0.0001 -> 0.9997
+dssub323   subtract      0.9998 0.0002 -> 0.9996
+dssub324   subtract      0.9998 0.0003 -> 0.9995
+dssub325   subtract      0.9998 -0.0000 -> 0.9998
+dssub326   subtract      0.9998 -0.0001 -> 0.9999
+dssub327   subtract      0.9998 -0.0002 -> 1.0000
+dssub328   subtract      0.9998 -0.0003 -> 1.0001
+
+-- internal boundaries
+dssub346   subtract      10000E+2 7 -> 999993
+dssub347   subtract      10000E+2 70 -> 999930
+dssub348   subtract      10000E+2 700 -> 999300
+dssub349   subtract      10000E+2 7000 -> 993000
+dssub350   subtract      10000E+2 70000 -> 930000
+dssub351   subtract      10000E+2 700000 -> 300000
+dssub352   subtract      7 10000E+2 -> -999993
+dssub353   subtract      70 10000E+2 -> -999930
+dssub354   subtract      700 10000E+2 -> -999300
+dssub355   subtract      7000 10000E+2 -> -993000
+dssub356   subtract      70000 10000E+2 -> -930000
+dssub357   subtract      700000 10000E+2 -> -300000
+
+-- zero preservation
+dssub361   subtract      1 0.0001 -> 0.9999
+dssub362   subtract      1 0.00001 -> 0.99999
+dssub363   subtract      1 0.000001 -> 0.999999
+dssub364   subtract      1 0.0000000000000001 -> 1.000000  Inexact Rounded
+dssub365   subtract      1 0.00000000000000001 -> 1.000000  Inexact Rounded
+dssub366   subtract      1 0.000000000000000001 -> 1.000000  Inexact Rounded
+
+-- some funny zeros [in case of bad signum]
+dssub370   subtract      1 0 -> 1
+dssub371   subtract      1 0 -> 1
+dssub372   subtract      1 0.0 -> 1.0
+dssub373   subtract      1 0.0 -> 1.0
+dssub374   subtract      0 1 -> -1
+dssub375   subtract      0 1 -> -1
+dssub376   subtract      0.0 1 -> -1.0
+dssub377   subtract      0.0 1 -> -1.0
+
+-- leading 0 digit before round
+dssub910   subtract      -1035192 -5189793 -> 4154601
+dssub911   subtract      159579.4 89827.59 -> 69751.81
+
+dssub920   subtract      333.0006 33.00006 -> 300.0005  Inexact Rounded
+dssub921   subtract      333.0006 33.00005 -> 300.0006  Inexact Rounded
+dssub922   subtract      133.0006 33.00005 -> 100.0006  Inexact Rounded
+dssub923   subtract      133.0006 33.00004 -> 100.0006  Inexact Rounded
+dssub924   subtract      133.0006 33.00000 -> 100.0006  Rounded
+dssub925   subtract      133.0006 43.00000 -> 90.00060
+dssub926   subtract      133.0006 43.00001 -> 90.00059
+dssub927   subtract      133.0006 43.00006 -> 90.00054
+dssub928   subtract      101.0006 91.00006 -> 10.00054
+dssub929   subtract      101.0006 99.00006 -> 2.00054
+
+-- more LHS swaps [were fixed]
+dssub390   subtract      -56267E-2 0 -> -562.67
+dssub391   subtract      -56267E-2 0 -> -562.67
+dssub392   subtract      -56267E-1 0 -> -5626.7
+dssub393   subtract      -56267E-1 0 -> -5626.7
+dssub394   subtract      -56267E-1 0 -> -5626.7
+dssub395   subtract      -56267E+0 0 -> -56267
+dssub396   subtract      -56267E+0 0 -> -56267
+dssub397   subtract      -56267E+0 0 -> -56267
+dssub398   subtract      -5E-2 0 -> -0.05
+dssub399   subtract      -5E-2 0 -> -0.05
+dssub400   subtract      -5E-2 0 -> -0.05
+dssub401   subtract      -5E-1 0 -> -0.5
+dssub402   subtract      -5E-1 0 -> -0.5
+dssub403   subtract      -5E+0 0 -> -5
+dssub404   subtract      -5E+0 0 -> -5
+dssub405   subtract      -5E+0 0 -> -5
+dssub406   subtract      -5E+1 0 -> -50
+dssub407   subtract      -5E+4 0 -> -50000
+dssub408   subtract      -5E+4 0 -> -50000
+dssub409   subtract      -5E+4 0 -> -50000
+dssub410   subtract      -5E+4 0 -> -50000
+dssub411   subtract      -5E+25 0 -> -5.000000E+25  Rounded
+
+-- more RHS swaps [were fixed]
+dssub420   subtract      0 -56267E-2 -> 562.67
+dssub421   subtract      0 -56267E-2 -> 562.67
+dssub422   subtract      0 -56267E-1 -> 5626.7
+dssub423   subtract      0 -56267E-1 -> 5626.7
+dssub424   subtract      0 -56267E-1 -> 5626.7
+dssub425   subtract      0 -56267E+0 -> 56267
+dssub426   subtract      0 -56267E+0 -> 56267
+dssub427   subtract      0 -56267E+0 -> 56267
+dssub428   subtract      0 -5E-2 -> 0.05
+dssub429   subtract      0 -5E-2 -> 0.05
+dssub430   subtract      0 -5E-2 -> 0.05
+dssub431   subtract      0 -5E-1 -> 0.5
+dssub432   subtract      0 -5E-1 -> 0.5
+dssub433   subtract      0 -5E+0 -> 5
+dssub434   subtract      0 -5E+0 -> 5
+dssub435   subtract      0 -5E+0 -> 5
+dssub436   subtract      0 -5E+1 -> 50
+dssub437   subtract      0 -5E+4 -> 50000
+dssub438   subtract      0 -5E+4 -> 50000
+dssub439   subtract      0 -5E+4 -> 50000
+dssub440   subtract      0 -5E+4 -> 50000
+dssub441   subtract      0 -5E+25 -> 5.000000E+25  Rounded
+
+
+-- try borderline precision, with carries, etc.
+dssub461   subtract      1E+4 1 -> 9999
+dssub462   subtract      1E+3 -1.111 -> 1001.111
+dssub463   subtract      1.111 -1E+3 -> 1001.111
+dssub464   subtract      -1 -1E+4 -> 9999
+dssub465   subtract      7E+4 1 -> 69999
+dssub466   subtract      7E+3 -1.111 -> 7001.111
+dssub467   subtract      1.111 -7E+3 -> 7001.111
+dssub468   subtract      -1 -7E+4 -> 69999
+
+--                  1234567890123456       1234567890123456      1 23456789012345
+dssub470   subtract      0.4444444 -0.5555553 -> 0.9999997
+dssub471   subtract      0.4444444 -0.5555552 -> 0.9999996
+dssub472   subtract      0.4444444 -0.5555551 -> 0.9999995
+dssub473   subtract      0.4444444 -0.5555550 -> 0.9999994
+dssub474   subtract      0.4444444 -0.5555559 -> 1.000000  Inexact Rounded
+dssub475   subtract      0.4444444 -0.5555558 -> 1.000000  Inexact Rounded
+dssub476   subtract      0.4444444 -0.5555557 -> 1.000000  Inexact Rounded
+dssub477   subtract      0.4444444 -0.5555556 -> 1.000000  Rounded
+dssub478   subtract      0.4444444 -0.5555555 -> 0.9999999
+dssub479   subtract      0.4444444 -0.5555554 -> 0.9999998
+dssub480   subtract      0.4444444 -0.5555553 -> 0.9999997
+dssub481   subtract      0.4444444 -0.5555552 -> 0.9999996
+dssub482   subtract      0.4444444 -0.5555551 -> 0.9999995
+dssub483   subtract      0.4444444 -0.5555550 -> 0.9999994
+
+-- and some more, including residue effects and different roundings
+rounding:    half_up
+dssub500   subtract      1231239 0 -> 1231239
+dssub501   subtract      1231239 0.000000001 -> 1231239  Inexact Rounded
+dssub502   subtract      1231239 0.000001 -> 1231239  Inexact Rounded
+dssub503   subtract      1231239 0.1 -> 1231239  Inexact Rounded
+dssub504   subtract      1231239 0.4 -> 1231239  Inexact Rounded
+dssub505   subtract      1231239 0.49 -> 1231239  Inexact Rounded
+dssub506   subtract      1231239 0.499999 -> 1231239  Inexact Rounded
+dssub507   subtract      1231239 0.4999999 -> 1231239  Inexact Rounded
+dssub508   subtract      1231239 0.5 -> 1231239  Inexact Rounded
+dssub509   subtract      1231239 0.5000001 -> 1231238  Inexact Rounded
+dssub510   subtract      1231239 0.500001 -> 1231238  Inexact Rounded
+dssub511   subtract      1231239 0.51 -> 1231238  Inexact Rounded
+dssub512   subtract      1231239 0.6 -> 1231238  Inexact Rounded
+dssub513   subtract      1231239 0.9 -> 1231238  Inexact Rounded
+dssub514   subtract      1231239 0.99999 -> 1231238  Inexact Rounded
+dssub515   subtract      1231239 0.9999999 -> 1231238  Inexact Rounded
+dssub516   subtract      1231239 1 -> 1231238
+dssub517   subtract      1231239 1.000001 -> 1231238  Inexact Rounded
+dssub518   subtract      1231239 1.00001 -> 1231238  Inexact Rounded
+dssub519   subtract      1231239 1.1 -> 1231238  Inexact Rounded
+
+rounding:    half_even
+dssub520   subtract      1231239 0 -> 1231239
+dssub521   subtract      1231239 0.000000001 -> 1231239  Inexact Rounded
+dssub522   subtract      1231239 0.000001 -> 1231239  Inexact Rounded
+dssub523   subtract      1231239 0.1 -> 1231239  Inexact Rounded
+dssub524   subtract      1231239 0.4 -> 1231239  Inexact Rounded
+dssub525   subtract      1231239 0.49 -> 1231239  Inexact Rounded
+dssub526   subtract      1231239 0.499999 -> 1231239  Inexact Rounded
+dssub527   subtract      1231239 0.4999999 -> 1231239  Inexact Rounded
+dssub528   subtract      1231239 0.5 -> 1231238  Inexact Rounded
+dssub529   subtract      1231239 0.5000001 -> 1231238  Inexact Rounded
+dssub530   subtract      1231239 0.500001 -> 1231238  Inexact Rounded
+dssub531   subtract      1231239 0.51 -> 1231238  Inexact Rounded
+dssub532   subtract      1231239 0.6 -> 1231238  Inexact Rounded
+dssub533   subtract      1231239 0.9 -> 1231238  Inexact Rounded
+dssub534   subtract      1231239 0.99999 -> 1231238  Inexact Rounded
+dssub535   subtract      1231239 0.9999999 -> 1231238  Inexact Rounded
+dssub536   subtract      1231239 1 -> 1231238
+dssub537   subtract      1231239 1.000001 -> 1231238  Inexact Rounded
+dssub538   subtract      1231239 1.00001 -> 1231238  Inexact Rounded
+dssub539   subtract      1231239 1.1 -> 1231238  Inexact Rounded
+-- critical few with even bottom digit...
+dssub540   subtract      1231238 0.4999999 -> 1231238  Inexact Rounded
+dssub541   subtract      1231238 0.5 -> 1231238  Inexact Rounded
+dssub542   subtract      1231238 0.5000001 -> 1231237  Inexact Rounded
+
+rounding:    down
+dssub550   subtract      1231239 0 -> 1231239
+dssub551   subtract      1231239 0.000000001 -> 1231238  Inexact Rounded
+dssub552   subtract      1231239 0.000001 -> 1231238  Inexact Rounded
+dssub553   subtract      1231239 0.1 -> 1231238  Inexact Rounded
+dssub554   subtract      1231239 0.4 -> 1231238  Inexact Rounded
+dssub555   subtract      1231239 0.49 -> 1231238  Inexact Rounded
+dssub556   subtract      1231239 0.499999 -> 1231238  Inexact Rounded
+dssub557   subtract      1231239 0.4999999 -> 1231238  Inexact Rounded
+dssub558   subtract      1231239 0.5 -> 1231238  Inexact Rounded
+dssub559   subtract      1231239 0.5000001 -> 1231238  Inexact Rounded
+dssub560   subtract      1231239 0.500001 -> 1231238  Inexact Rounded
+dssub561   subtract      1231239 0.51 -> 1231238  Inexact Rounded
+dssub562   subtract      1231239 0.6 -> 1231238  Inexact Rounded
+dssub563   subtract      1231239 0.9 -> 1231238  Inexact Rounded
+dssub564   subtract      1231239 0.99999 -> 1231238  Inexact Rounded
+dssub565   subtract      1231239 0.9999999 -> 1231238  Inexact Rounded
+dssub566   subtract      1231239 1 -> 1231238
+dssub567   subtract      1231239 1.000001 -> 1231237  Inexact Rounded
+dssub568   subtract      1231239 1.00001 -> 1231237  Inexact Rounded
+dssub569   subtract      1231239 1.1 -> 1231237  Inexact Rounded
+
+-- symmetry...
+rounding:    half_up
+dssub600   subtract      0 1231239 -> -1231239
+dssub601   subtract      0.000000001 1231239 -> -1231239  Inexact Rounded
+dssub602   subtract      0.000001 1231239 -> -1231239  Inexact Rounded
+dssub603   subtract      0.1 1231239 -> -1231239  Inexact Rounded
+dssub604   subtract      0.4 1231239 -> -1231239  Inexact Rounded
+dssub605   subtract      0.49 1231239 -> -1231239  Inexact Rounded
+dssub606   subtract      0.499999 1231239 -> -1231239  Inexact Rounded
+dssub607   subtract      0.4999999 1231239 -> -1231239  Inexact Rounded
+dssub608   subtract      0.5 1231239 -> -1231239  Inexact Rounded
+dssub609   subtract      0.5000001 1231239 -> -1231238  Inexact Rounded
+dssub610   subtract      0.500001 1231239 -> -1231238  Inexact Rounded
+dssub611   subtract      0.51 1231239 -> -1231238  Inexact Rounded
+dssub612   subtract      0.6 1231239 -> -1231238  Inexact Rounded
+dssub613   subtract      0.9 1231239 -> -1231238  Inexact Rounded
+dssub614   subtract      0.99999 1231239 -> -1231238  Inexact Rounded
+dssub615   subtract      0.9999999 1231239 -> -1231238  Inexact Rounded
+dssub616   subtract      1 1231239 -> -1231238
+dssub617   subtract      1.000001 1231239 -> -1231238  Inexact Rounded
+dssub618   subtract      1.00001 1231239 -> -1231238  Inexact Rounded
+dssub619   subtract      1.1 1231239 -> -1231238  Inexact Rounded
+
+rounding:    half_even
+dssub620   subtract      0 1231239 -> -1231239
+dssub621   subtract      0.000000001 1231239 -> -1231239  Inexact Rounded
+dssub622   subtract      0.000001 1231239 -> -1231239  Inexact Rounded
+dssub623   subtract      0.1 1231239 -> -1231239  Inexact Rounded
+dssub624   subtract      0.4 1231239 -> -1231239  Inexact Rounded
+dssub625   subtract      0.49 1231239 -> -1231239  Inexact Rounded
+dssub626   subtract      0.499999 1231239 -> -1231239  Inexact Rounded
+dssub627   subtract      0.4999999 1231239 -> -1231239  Inexact Rounded
+dssub628   subtract      0.5 1231239 -> -1231238  Inexact Rounded
+dssub629   subtract      0.5000001 1231239 -> -1231238  Inexact Rounded
+dssub630   subtract      0.500001 1231239 -> -1231238  Inexact Rounded
+dssub631   subtract      0.51 1231239 -> -1231238  Inexact Rounded
+dssub632   subtract      0.6 1231239 -> -1231238  Inexact Rounded
+dssub633   subtract      0.9 1231239 -> -1231238  Inexact Rounded
+dssub634   subtract      0.99999 1231239 -> -1231238  Inexact Rounded
+dssub635   subtract      0.9999999 1231239 -> -1231238  Inexact Rounded
+dssub636   subtract      1 1231239 -> -1231238
+dssub637   subtract      1.000001 1231239 -> -1231238  Inexact Rounded
+dssub638   subtract      1.00001 1231239 -> -1231238  Inexact Rounded
+dssub639   subtract      1.1 1231239 -> -1231238  Inexact Rounded
+-- critical few with even bottom digit...
+dssub640   subtract      0.4999999 1231238 -> -1231238  Inexact Rounded
+dssub641   subtract      0.5 1231238 -> -1231238  Inexact Rounded
+dssub642   subtract      0.5000001 1231238 -> -1231237  Inexact Rounded
+
+rounding:    down
+dssub650   subtract      0 1231239 -> -1231239
+dssub651   subtract      0.000000001 1231239 -> -1231238  Inexact Rounded
+dssub652   subtract      0.000001 1231239 -> -1231238  Inexact Rounded
+dssub653   subtract      0.1 1231239 -> -1231238  Inexact Rounded
+dssub654   subtract      0.4 1231239 -> -1231238  Inexact Rounded
+dssub655   subtract      0.49 1231239 -> -1231238  Inexact Rounded
+dssub656   subtract      0.499999 1231239 -> -1231238  Inexact Rounded
+dssub657   subtract      0.4999999 1231239 -> -1231238  Inexact Rounded
+dssub658   subtract      0.5 1231239 -> -1231238  Inexact Rounded
+dssub659   subtract      0.5000001 1231239 -> -1231238  Inexact Rounded
+dssub660   subtract      0.500001 1231239 -> -1231238  Inexact Rounded
+dssub661   subtract      0.51 1231239 -> -1231238  Inexact Rounded
+dssub662   subtract      0.6 1231239 -> -1231238  Inexact Rounded
+dssub663   subtract      0.9 1231239 -> -1231238  Inexact Rounded
+dssub664   subtract      0.99999 1231239 -> -1231238  Inexact Rounded
+dssub665   subtract      0.9999999 1231239 -> -1231238  Inexact Rounded
+dssub666   subtract      1 1231239 -> -1231238
+dssub667   subtract      1.000001 1231239 -> -1231237  Inexact Rounded
+dssub668   subtract      1.00001 1231239 -> -1231237  Inexact Rounded
+dssub669   subtract      1.1 1231239 -> -1231237  Inexact Rounded
+
+
+-- lots of leading zeros in intermediate result, and showing effects of
+-- input rounding would have affected the following
+rounding:    half_up
+dssub670   subtract      1234569 1234561 -> 8
+dssub671   subtract      1234569 1234569 -> 0
+dssub672   subtract      1234569 1234561 -> 8
+dssub673   subtract      1234569 1234565 -> 4
+dssub674   subtract      1234569 1234569 -> 0
+
+rounding:    half_even
+dssub680   subtract      1234569 1234561 -> 8
+dssub681   subtract      1234569 1234569 -> 0
+dssub682   subtract      1234569 1234561 -> 8
+dssub683   subtract      1234569 1234565 -> 4
+dssub684   subtract      1234569 1234569 -> 0
+
+dssub685   subtract      1234568 1234561 -> 7
+dssub686   subtract      1234568 1234569 -> -1
+dssub687   subtract      1234568 1234561 -> 7
+dssub688   subtract      1234568 1234565 -> 3
+dssub689   subtract      1234568 1234569 -> -1
+
+rounding:    down
+dssub690   subtract      1234569 1234561 -> 8
+dssub691   subtract      1234569 1234569 -> 0
+dssub692   subtract      1234569 1234561 -> 8
+dssub693   subtract      1234569 1234565 -> 4
+dssub694   subtract      1234569 1234569 -> 0
+
+-- Specials
+dssub780   subtract      -Inf Inf -> -Infinity
+dssub781   subtract      -Inf 1000 -> -Infinity
+dssub782   subtract      -Inf 1 -> -Infinity
+dssub783   subtract      -Inf -0 -> -Infinity
+dssub784   subtract      -Inf -1 -> -Infinity
+dssub785   subtract      -Inf -1000 -> -Infinity
+dssub787   subtract      -1000 Inf -> -Infinity
+dssub788   subtract      -Inf Inf -> -Infinity
+dssub789   subtract      -1 Inf -> -Infinity
+dssub790   subtract      0 Inf -> -Infinity
+dssub791   subtract      1 Inf -> -Infinity
+dssub792   subtract      1000 Inf -> -Infinity
+
+dssub800   subtract      Inf Inf -> NaN  Invalid_operation
+dssub801   subtract      Inf 1000 -> Infinity
+dssub802   subtract      Inf 1 -> Infinity
+dssub803   subtract      Inf 0 -> Infinity
+dssub804   subtract      Inf -0 -> Infinity
+dssub805   subtract      Inf -1 -> Infinity
+dssub806   subtract      Inf -1000 -> Infinity
+dssub807   subtract      Inf -Inf -> Infinity
+dssub808   subtract      -1000 -Inf -> Infinity
+dssub809   subtract      -Inf -Inf -> NaN  Invalid_operation
+dssub810   subtract      -1 -Inf -> Infinity
+dssub811   subtract      -0 -Inf -> Infinity
+dssub812   subtract      0 -Inf -> Infinity
+dssub813   subtract      1 -Inf -> Infinity
+dssub814   subtract      1000 -Inf -> Infinity
+dssub815   subtract      Inf -Inf -> Infinity
+
+dssub821   subtract      NaN Inf -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub822   subtract      -NaN 1000 -> -NaN
+dssub823   subtract      NaN 1 -> NaN
+dssub824   subtract      NaN 0 -> NaN
+dssub825   subtract      NaN -0 -> NaN
+dssub826   subtract      NaN -1 -> NaN
+dssub827   subtract      NaN -1000 -> NaN
+dssub828   subtract      NaN -Inf -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub829   subtract      -NaN NaN -> -NaN
+dssub830   subtract      -Inf NaN -> NaN
+dssub831   subtract      -1000 NaN -> NaN
+dssub832   subtract      -1 NaN -> NaN
+dssub833   subtract      -0 NaN -> NaN
+dssub834   subtract      0 NaN -> NaN
+dssub835   subtract      1 NaN -> NaN
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub836   subtract      1000 -NaN -> -NaN
+dssub837   subtract      Inf NaN -> NaN
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub841   subtract      sNaN Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub842   subtract      -sNaN 1000 -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub843   subtract      sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub844   subtract      sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub845   subtract      sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub846   subtract      sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub847   subtract      sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub848   subtract      sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub849   subtract      sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub850   subtract      NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub851   subtract      -Inf -sNaN -> -NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub852   subtract      -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub853   subtract      -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub854   subtract      -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub855   subtract      0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub856   subtract      1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub857   subtract      1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub858   subtract      Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub859   subtract      NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub861   subtract      NaN01 -Inf -> NaN1
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub862   subtract      -NaN02 -1000 -> -NaN2
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub863   subtract      NaN03 1000 -> NaN3
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub864   subtract      NaN04 Inf -> NaN4
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub865   subtract      NaN05 NaN61 -> NaN5
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub866   subtract      -Inf -NaN71 -> -NaN71
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub867   subtract      -1000 NaN81 -> NaN81
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub868   subtract      1000 NaN91 -> NaN91
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub869   subtract      Inf NaN101 -> NaN101
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub871   subtract      sNaN011 -Inf -> NaN11  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub872   subtract      sNaN012 -1000 -> NaN12  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub873   subtract      -sNaN013 1000 -> -NaN13  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub874   subtract      sNaN014 NaN171 -> NaN14  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub875   subtract      sNaN015 sNaN181 -> NaN15  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub876   subtract      NaN016 sNaN191 -> NaN191  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub877   subtract      -Inf sNaN201 -> NaN201  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub878   subtract      -1000 sNaN211 -> NaN211  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub879   subtract      1000 -sNaN221 -> -NaN221  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub880   subtract      Inf sNaN231 -> NaN231  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dssub881   subtract      NaN025 sNaN241 -> NaN241  Invalid_operation
+
+-- edge case spills
+dssub901   subtract      2E-1 1.002 -> -0.802
+dssub902   subtract      2.0E-1 1.002 -> -0.802
+dssub903   subtract      2.00E-1 1.0020 -> -0.8020
+dssub904   subtract      2.000E-1 1.00200 -> -0.80200
+dssub905   subtract      2.0000E-1 1.002000 -> -0.802000
+dssub906   subtract      2.00000E-1 1.002000 -> -0.802000
+dssub907   subtract      2.000000E-1 1.002000 -> -0.8020000
+dssub908   subtract      2.000000E-1 1.002000 -> -0.8020000
+
+-- subnormals and overflows covered under Add
+
+-- Null tests

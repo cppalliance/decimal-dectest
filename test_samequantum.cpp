@@ -12,6 +12,7 @@ int main()
     test_predicate_harness("dectest/samequantum.decTest", "samequantum");
     test_predicate_harness("dectest/ddSameQuantum.decTest", "samequantum");
     test_predicate_harness("dectest/dqSameQuantum.decTest", "samequantum");
+    test_predicate_harness("dectest/dsSameQuantum.decTest", "samequantum");
 
     return boost::report_errors();
 }

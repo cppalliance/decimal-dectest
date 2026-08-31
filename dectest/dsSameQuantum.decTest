@@ -1,0 +1,390 @@
+------------------------------------------------------------------------
+-- dsSameQuantum.decTest                                              --
+-- Generated for Boost.Decimal from ddSameQuantum.decTest             --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddSameQuantum narrowed to that context, with          --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+dssamq001  samequantum   0 0 -> 1
+dssamq002  samequantum   0 1 -> 1
+dssamq003  samequantum   1 0 -> 1
+dssamq004  samequantum   1 1 -> 1
+
+dssamq011  samequantum   10 1E+0 -> 1
+dssamq012  samequantum   10E+0 10E+0 -> 1
+dssamq013  samequantum   100 10E+0 -> 1
+dssamq014  samequantum   100 1E+0 -> 1
+dssamq015  samequantum   0.1 1E+0 -> 0
+dssamq016  samequantum   0.1 1E+0 -> 0
+dssamq017  samequantum   0.1 1E+0 -> 0
+dssamq018  samequantum   999 999 -> 1
+dssamq019  samequantum   999E+0 99.9 -> 0
+dssamq020  samequantum   111E+0 22.2 -> 0
+dssamq021  samequantum   111E+0 1234.2 -> 0
+
+-- zeros
+dssamq030  samequantum   0.0 1.1 -> 1
+dssamq031  samequantum   0.0 1.11 -> 0
+dssamq032  samequantum   0.0 0 -> 0
+dssamq033  samequantum   0.0 0.0 -> 1
+dssamq034  samequantum   0.0 0.00 -> 0
+dssamq035  samequantum   0E+0 0E+0 -> 1
+dssamq036  samequantum   0E+0 0E+0 -> 1
+dssamq037  samequantum   0E+0 0E+0 -> 1
+dssamq038  samequantum   0E-4 0E-4 -> 1
+dssamq039  samequantum   0E-4 0E-4 -> 1
+dssamq040  samequantum   0E-4 0E-4 -> 1
+dssamq041  samequantum   0E-4 0.0E-4 -> 0
+dssamq042  samequantum   0E-4 0.0E-4 -> 0
+dssamq043  samequantum   0E-4 0.0E-4 -> 0
+dssamq044  samequantum   -0E-4 0.0E-4 -> 0
+dssamq045  samequantum   0E-4 -0.0E-4 -> 0
+dssamq046  samequantum   0E-4 -0.0E-4 -> 0
+dssamq047  samequantum   -0E-4 0.0E-4 -> 0
+dssamq048  samequantum   -0E-4 -0.0E-4 -> 0
+dssamq049  samequantum   -0E-4 -0.0E-4 -> 0
+
+-- Nmax, Nmin, Ntiny
+dssamq051  samequantum   9.999999E+96 9.999999E+96 -> 1
+dssamq052  samequantum   1E-96 1E-96 -> 1
+dssamq053  samequantum   1.000000E-96 1.000000E-96 -> 1
+dssamq054  samequantum   1E-100 1E-100 -> 1
+dssamq055  samequantum   9.999999E+96 9.999999E+96 -> 1
+dssamq056  samequantum   1E-96 1E-96 -> 1
+dssamq057  samequantum   1.000000E-96 1.000000E-96 -> 1
+dssamq058  samequantum   1E-100 1E-100 -> 1
+
+dssamq061  samequantum   -1E-100 -1E-100 -> 1
+dssamq062  samequantum   -1.000000E-96 -1.000000E-96 -> 1
+dssamq063  samequantum   -1E-96 -1E-96 -> 1
+dssamq064  samequantum   -9.999999E+96 -9.999999E+96 -> 1
+dssamq065  samequantum   -1E-100 -1E-100 -> 1
+dssamq066  samequantum   -1.000000E-96 -1.000000E-96 -> 1
+dssamq067  samequantum   -1E-96 -1E-96 -> 1
+dssamq068  samequantum   -9.999999E+96 -9.999999E+96 -> 1
+
+dssamq071  samequantum   -4E-100 -1E-100 -> 1
+dssamq072  samequantum   -4.000000E-96 -1.000040E-96 -> 1
+dssamq073  samequantum   -4E-96 -1E-96 -> 1
+dssamq074  samequantum   -4.999999E+96 -9.999999E+96 -> 1
+dssamq075  samequantum   -4E-100 -1E-100 -> 1
+dssamq076  samequantum   -4.000000E-96 -1.004000E-96 -> 1
+dssamq077  samequantum   -4E-96 -1E-96 -> 1
+dssamq078  samequantum   -4.999999E+96 -9.949999E+96 -> 1
+
+dssamq081  samequantum   -4E-99 -1E-100 -> 0
+dssamq082  samequantum   -4.000000E-96 -1.000040E-84 -> 0
+dssamq083  samequantum   -4E-86 -1E-96 -> 0
+dssamq084  samequantum   -4.999999E+96 -9.999499E+84 -> 0
+dssamq085  samequantum   -4E-99 -1E-100 -> 0
+dssamq086  samequantum   -4.000000E-96 -1.004000E-84 -> 0
+dssamq087  samequantum   -4E-86 -1E-96 -> 0
+dssamq088  samequantum   -4.999999E+96 -9.949999E+84 -> 0
+
+-- specials & combinations
+dssamq0110 samequantum   -Inf -Inf -> 1
+dssamq0111 samequantum   -Inf Inf -> 1
+dssamq0112 samequantum   -Inf NaN -> 0
+dssamq0113 samequantum   -Inf -7E+1 -> 0
+dssamq0114 samequantum   -Inf -7 -> 0
+dssamq0115 samequantum   -Inf -7E-1 -> 0
+dssamq0116 samequantum   -Inf -0E-1 -> 0
+dssamq0117 samequantum   -Inf -0 -> 0
+dssamq0118 samequantum   -Inf -0E+1 -> 0
+dssamq0119 samequantum   -Inf 0E-1 -> 0
+dssamq0120 samequantum   -Inf 0 -> 0
+dssamq0121 samequantum   -Inf 0E+1 -> 0
+dssamq0122 samequantum   -Inf 7E-1 -> 0
+dssamq0123 samequantum   -Inf 7 -> 0
+dssamq0124 samequantum   -Inf 7E+1 -> 0
+dssamq0125 samequantum   -Inf sNaN -> 0
+
+dssamq0210 samequantum   Inf -Inf -> 1
+dssamq0211 samequantum   Inf Inf -> 1
+dssamq0212 samequantum   Inf NaN -> 0
+dssamq0213 samequantum   Inf -7E+1 -> 0
+dssamq0214 samequantum   Inf -7 -> 0
+dssamq0215 samequantum   Inf -7E-1 -> 0
+dssamq0216 samequantum   Inf -0E-1 -> 0
+dssamq0217 samequantum   Inf -0 -> 0
+dssamq0218 samequantum   Inf -0E+1 -> 0
+dssamq0219 samequantum   Inf 0E-1 -> 0
+dssamq0220 samequantum   Inf 0 -> 0
+dssamq0221 samequantum   Inf 0E+1 -> 0
+dssamq0222 samequantum   Inf 7E-1 -> 0
+dssamq0223 samequantum   Inf 7 -> 0
+dssamq0224 samequantum   Inf 7E+1 -> 0
+dssamq0225 samequantum   Inf sNaN -> 0
+
+dssamq0310 samequantum   NaN -Inf -> 0
+dssamq0311 samequantum   NaN Inf -> 0
+dssamq0312 samequantum   NaN NaN -> 1
+dssamq0313 samequantum   NaN -7E+1 -> 0
+dssamq0314 samequantum   NaN -7 -> 0
+dssamq0315 samequantum   NaN -7E-1 -> 0
+dssamq0316 samequantum   NaN -0E-1 -> 0
+dssamq0317 samequantum   NaN -0 -> 0
+dssamq0318 samequantum   NaN -0E+1 -> 0
+dssamq0319 samequantum   NaN 0E-1 -> 0
+dssamq0320 samequantum   NaN 0 -> 0
+dssamq0321 samequantum   NaN 0E+1 -> 0
+dssamq0322 samequantum   NaN 7E-1 -> 0
+dssamq0323 samequantum   NaN 7 -> 0
+dssamq0324 samequantum   NaN 7E+1 -> 0
+dssamq0325 samequantum   NaN sNaN -> 1
+
+dssamq0410 samequantum   -7E+1 -Inf -> 0
+dssamq0411 samequantum   -7E+1 Inf -> 0
+dssamq0412 samequantum   -7E+1 NaN -> 0
+dssamq0413 samequantum   -7E+1 -7E+1 -> 1
+dssamq0414 samequantum   -7E+1 -7 -> 0
+dssamq0415 samequantum   -7E+1 -7E-1 -> 0
+dssamq0416 samequantum   -7E+1 -0E-1 -> 0
+dssamq0417 samequantum   -7E+1 -0 -> 0
+dssamq0418 samequantum   -7E+1 -0E+1 -> 1
+dssamq0419 samequantum   -7E+1 0E-1 -> 0
+dssamq0420 samequantum   -7E+1 0 -> 0
+dssamq0421 samequantum   -7E+1 0E+1 -> 1
+dssamq0422 samequantum   -7E+1 7E-1 -> 0
+dssamq0423 samequantum   -7E+1 7 -> 0
+dssamq0424 samequantum   -7E+1 7E+1 -> 1
+dssamq0425 samequantum   -7E+1 sNaN -> 0
+
+dssamq0510 samequantum   -7 -Inf -> 0
+dssamq0511 samequantum   -7 Inf -> 0
+dssamq0512 samequantum   -7 NaN -> 0
+dssamq0513 samequantum   -7 -7E+1 -> 0
+dssamq0514 samequantum   -7 -7 -> 1
+dssamq0515 samequantum   -7 -7E-1 -> 0
+dssamq0516 samequantum   -7 -0E-1 -> 0
+dssamq0517 samequantum   -7 -0 -> 1
+dssamq0518 samequantum   -7 -0E+1 -> 0
+dssamq0519 samequantum   -7 0E-1 -> 0
+dssamq0520 samequantum   -7 0 -> 1
+dssamq0521 samequantum   -7 0E+1 -> 0
+dssamq0522 samequantum   -7 7E-1 -> 0
+dssamq0523 samequantum   -7 7 -> 1
+dssamq0524 samequantum   -7 7E+1 -> 0
+dssamq0525 samequantum   -7 sNaN -> 0
+
+dssamq0610 samequantum   -7E-1 -Inf -> 0
+dssamq0611 samequantum   -7E-1 Inf -> 0
+dssamq0612 samequantum   -7E-1 NaN -> 0
+dssamq0613 samequantum   -7E-1 -7E+1 -> 0
+dssamq0614 samequantum   -7E-1 -7 -> 0
+dssamq0615 samequantum   -7E-1 -7E-1 -> 1
+dssamq0616 samequantum   -7E-1 -0E-1 -> 1
+dssamq0617 samequantum   -7E-1 -0 -> 0
+dssamq0618 samequantum   -7E-1 -0E+1 -> 0
+dssamq0619 samequantum   -7E-1 0E-1 -> 1
+dssamq0620 samequantum   -7E-1 0 -> 0
+dssamq0621 samequantum   -7E-1 0E+1 -> 0
+dssamq0622 samequantum   -7E-1 7E-1 -> 1
+dssamq0623 samequantum   -7E-1 7 -> 0
+dssamq0624 samequantum   -7E-1 7E+1 -> 0
+dssamq0625 samequantum   -7E-1 sNaN -> 0
+
+dssamq0710 samequantum   -0E-1 -Inf -> 0
+dssamq0711 samequantum   -0E-1 Inf -> 0
+dssamq0712 samequantum   -0E-1 NaN -> 0
+dssamq0713 samequantum   -0E-1 -7E+1 -> 0
+dssamq0714 samequantum   -0E-1 -7 -> 0
+dssamq0715 samequantum   -0E-1 -7E-1 -> 1
+dssamq0716 samequantum   -0E-1 -0E-1 -> 1
+dssamq0717 samequantum   -0E-1 -0 -> 0
+dssamq0718 samequantum   -0E-1 -0E+1 -> 0
+dssamq0719 samequantum   -0E-1 0E-1 -> 1
+dssamq0720 samequantum   -0E-1 0 -> 0
+dssamq0721 samequantum   -0E-1 0E+1 -> 0
+dssamq0722 samequantum   -0E-1 7E-1 -> 1
+dssamq0723 samequantum   -0E-1 7 -> 0
+dssamq0724 samequantum   -0E-1 7E+1 -> 0
+dssamq0725 samequantum   -0E-1 sNaN -> 0
+
+dssamq0810 samequantum   -0 -Inf -> 0
+dssamq0811 samequantum   -0 Inf -> 0
+dssamq0812 samequantum   -0 NaN -> 0
+dssamq0813 samequantum   -0 -7E+1 -> 0
+dssamq0814 samequantum   -0 -7 -> 1
+dssamq0815 samequantum   -0 -7E-1 -> 0
+dssamq0816 samequantum   -0 -0E-1 -> 0
+dssamq0817 samequantum   -0 -0 -> 1
+dssamq0818 samequantum   -0 -0E+1 -> 0
+dssamq0819 samequantum   -0 0E-1 -> 0
+dssamq0820 samequantum   -0 0 -> 1
+dssamq0821 samequantum   -0 0E+1 -> 0
+dssamq0822 samequantum   -0 7E-1 -> 0
+dssamq0823 samequantum   -0 7 -> 1
+dssamq0824 samequantum   -0 7E+1 -> 0
+dssamq0825 samequantum   -0 sNaN -> 0
+
+dssamq0910 samequantum   -0E+1 -Inf -> 0
+dssamq0911 samequantum   -0E+1 Inf -> 0
+dssamq0912 samequantum   -0E+1 NaN -> 0
+dssamq0913 samequantum   -0E+1 -7E+1 -> 1
+dssamq0914 samequantum   -0E+1 -7 -> 0
+dssamq0915 samequantum   -0E+1 -7E-1 -> 0
+dssamq0916 samequantum   -0E+1 -0E-1 -> 0
+dssamq0917 samequantum   -0E+1 -0 -> 0
+dssamq0918 samequantum   -0E+1 -0E+1 -> 1
+dssamq0919 samequantum   -0E+1 0E-1 -> 0
+dssamq0920 samequantum   -0E+1 0 -> 0
+dssamq0921 samequantum   -0E+1 0E+1 -> 1
+dssamq0922 samequantum   -0E+1 7E-1 -> 0
+dssamq0923 samequantum   -0E+1 7 -> 0
+dssamq0924 samequantum   -0E+1 7E+1 -> 1
+dssamq0925 samequantum   -0E+1 sNaN -> 0
+
+dssamq1110 samequantum   0E-1 -Inf -> 0
+dssamq1111 samequantum   0E-1 Inf -> 0
+dssamq1112 samequantum   0E-1 NaN -> 0
+dssamq1113 samequantum   0E-1 -7E+1 -> 0
+dssamq1114 samequantum   0E-1 -7 -> 0
+dssamq1115 samequantum   0E-1 -7E-1 -> 1
+dssamq1116 samequantum   0E-1 -0E-1 -> 1
+dssamq1117 samequantum   0E-1 -0 -> 0
+dssamq1118 samequantum   0E-1 -0E+1 -> 0
+dssamq1119 samequantum   0E-1 0E-1 -> 1
+dssamq1120 samequantum   0E-1 0 -> 0
+dssamq1121 samequantum   0E-1 0E+1 -> 0
+dssamq1122 samequantum   0E-1 7E-1 -> 1
+dssamq1123 samequantum   0E-1 7 -> 0
+dssamq1124 samequantum   0E-1 7E+1 -> 0
+dssamq1125 samequantum   0E-1 sNaN -> 0
+
+dssamq1210 samequantum   0 -Inf -> 0
+dssamq1211 samequantum   0 Inf -> 0
+dssamq1212 samequantum   0 NaN -> 0
+dssamq1213 samequantum   0 -7E+1 -> 0
+dssamq1214 samequantum   0 -7 -> 1
+dssamq1215 samequantum   0 -7E-1 -> 0
+dssamq1216 samequantum   0 -0E-1 -> 0
+dssamq1217 samequantum   0 -0 -> 1
+dssamq1218 samequantum   0 -0E+1 -> 0
+dssamq1219 samequantum   0 0E-1 -> 0
+dssamq1220 samequantum   0 0 -> 1
+dssamq1221 samequantum   0 0E+1 -> 0
+dssamq1222 samequantum   0 7E-1 -> 0
+dssamq1223 samequantum   0 7 -> 1
+dssamq1224 samequantum   0 7E+1 -> 0
+dssamq1225 samequantum   0 sNaN -> 0
+
+dssamq1310 samequantum   0E+1 -Inf -> 0
+dssamq1311 samequantum   0E+1 Inf -> 0
+dssamq1312 samequantum   0E+1 NaN -> 0
+dssamq1313 samequantum   0E+1 -7E+1 -> 1
+dssamq1314 samequantum   0E+1 -7 -> 0
+dssamq1315 samequantum   0E+1 -7E-1 -> 0
+dssamq1316 samequantum   0E+1 -0E-1 -> 0
+dssamq1317 samequantum   0E+1 -0 -> 0
+dssamq1318 samequantum   0E+1 -0E+1 -> 1
+dssamq1319 samequantum   0E+1 0E-1 -> 0
+dssamq1320 samequantum   0E+1 0 -> 0
+dssamq1321 samequantum   0E+1 0E+1 -> 1
+dssamq1322 samequantum   0E+1 7E-1 -> 0
+dssamq1323 samequantum   0E+1 7 -> 0
+dssamq1324 samequantum   0E+1 7E+1 -> 1
+dssamq1325 samequantum   0E+1 sNaN -> 0
+
+dssamq1410 samequantum   7E-1 -Inf -> 0
+dssamq1411 samequantum   7E-1 Inf -> 0
+dssamq1412 samequantum   7E-1 NaN -> 0
+dssamq1413 samequantum   7E-1 -7E+1 -> 0
+dssamq1414 samequantum   7E-1 -7 -> 0
+dssamq1415 samequantum   7E-1 -7E-1 -> 1
+dssamq1416 samequantum   7E-1 -0E-1 -> 1
+dssamq1417 samequantum   7E-1 -0 -> 0
+dssamq1418 samequantum   7E-1 -0E+1 -> 0
+dssamq1419 samequantum   7E-1 0E-1 -> 1
+dssamq1420 samequantum   7E-1 0 -> 0
+dssamq1421 samequantum   7E-1 0E+1 -> 0
+dssamq1422 samequantum   7E-1 7E-1 -> 1
+dssamq1423 samequantum   7E-1 7 -> 0
+dssamq1424 samequantum   7E-1 7E+1 -> 0
+dssamq1425 samequantum   7E-1 sNaN -> 0
+
+dssamq1510 samequantum   7 -Inf -> 0
+dssamq1511 samequantum   7 Inf -> 0
+dssamq1512 samequantum   7 NaN -> 0
+dssamq1513 samequantum   7 -7E+1 -> 0
+dssamq1514 samequantum   7 -7 -> 1
+dssamq1515 samequantum   7 -7E-1 -> 0
+dssamq1516 samequantum   7 -0E-1 -> 0
+dssamq1517 samequantum   7 -0 -> 1
+dssamq1518 samequantum   7 -0E+1 -> 0
+dssamq1519 samequantum   7 0E-1 -> 0
+dssamq1520 samequantum   7 0 -> 1
+dssamq1521 samequantum   7 0E+1 -> 0
+dssamq1522 samequantum   7 7E-1 -> 0
+dssamq1523 samequantum   7 7 -> 1
+dssamq1524 samequantum   7 7E+1 -> 0
+dssamq1525 samequantum   7 sNaN -> 0
+
+dssamq1610 samequantum   7E+1 -Inf -> 0
+dssamq1611 samequantum   7E+1 Inf -> 0
+dssamq1612 samequantum   7E+1 NaN -> 0
+dssamq1613 samequantum   7E+1 -7E+1 -> 1
+dssamq1614 samequantum   7E+1 -7 -> 0
+dssamq1615 samequantum   7E+1 -7E-1 -> 0
+dssamq1616 samequantum   7E+1 -0E-1 -> 0
+dssamq1617 samequantum   7E+1 -0 -> 0
+dssamq1618 samequantum   7E+1 -0E+1 -> 1
+dssamq1619 samequantum   7E+1 0E-1 -> 0
+dssamq1620 samequantum   7E+1 0 -> 0
+dssamq1621 samequantum   7E+1 0E+1 -> 1
+dssamq1622 samequantum   7E+1 7E-1 -> 0
+dssamq1623 samequantum   7E+1 7 -> 0
+dssamq1624 samequantum   7E+1 7E+1 -> 1
+dssamq1625 samequantum   7E+1 sNaN -> 0
+
+dssamq1710 samequantum   sNaN -Inf -> 0
+dssamq1711 samequantum   sNaN Inf -> 0
+dssamq1712 samequantum   sNaN NaN -> 1
+dssamq1713 samequantum   sNaN -7E+1 -> 0
+dssamq1714 samequantum   sNaN -7 -> 0
+dssamq1715 samequantum   sNaN -7E-1 -> 0
+dssamq1716 samequantum   sNaN -0E-1 -> 0
+dssamq1717 samequantum   sNaN -0 -> 0
+dssamq1718 samequantum   sNaN -0E+1 -> 0
+dssamq1719 samequantum   sNaN 0E-1 -> 0
+dssamq1720 samequantum   sNaN 0 -> 0
+dssamq1721 samequantum   sNaN 0E+1 -> 0
+dssamq1722 samequantum   sNaN 7E-1 -> 0
+dssamq1723 samequantum   sNaN 7 -> 0
+dssamq1724 samequantum   sNaN 7E+1 -> 0
+dssamq1725 samequantum   sNaN sNaN -> 1
+-- noisy NaNs
+dssamq1730 samequantum   sNaN3 sNaN3 -> 1
+dssamq1731 samequantum   sNaN3 sNaN4 -> 1
+dssamq1732 samequantum   NaN3 NaN3 -> 1
+dssamq1733 samequantum   NaN3 NaN4 -> 1
+dssamq1734 samequantum   sNaN3 3 -> 0
+dssamq1735 samequantum   NaN3 3 -> 0
+dssamq1736 samequantum   4 sNaN4 -> 0
+dssamq1737 samequantum   3 NaN3 -> 0
+dssamq1738 samequantum   Inf sNaN4 -> 0
+dssamq1739 samequantum   -Inf NaN3 -> 0

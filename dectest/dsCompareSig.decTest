@@ -1,0 +1,688 @@
+------------------------------------------------------------------------
+-- dsCompareSig.decTest                                               --
+-- Generated for Boost.Decimal from ddCompareSig.decTest              --
+-- The IBM suite ships no ds arithmetic files: decSingle is a         --
+-- storage-only format in decNumber, so decimal32 has never had a     --
+-- conformance test of its own rounding, overflow and subnormal       --
+-- boundaries, which sit at precision 7 / Emax 96 / Emin -95.         --
+--                                                                    --
+-- This file is ddCompareSig narrowed to that context, with           --
+-- every expected result and condition recomputed for it.             --
+--                                                                    --
+-- Generated file. Regenerate with:                                   --
+--   tools/generate_ds.py --emit                                      --
+--                                                                    --
+-- Derived from the General Decimal Arithmetic testcases,             --
+-- Copyright (c) Mike Cowlishaw 1981, 2010 and IBM Corporation        --
+-- 1981, 2008. See http://speleotrove.com/decimal                     --
+------------------------------------------------------------------------
+version: 2.62
+
+extended:    1
+clamp:       1
+precision:   7
+maxExponent: 96
+minExponent: -95
+rounding:    half_even
+
+
+-- Note that we cannot assume add/subtract tests cover paths adequately,
+-- here, because the code might be quite different (comparison cannot
+-- overflow or underflow, so actual subtractions are not necessary).
+
+-- All operands and results are decDoubles.
+rounding:    half_even
+
+-- sanity checks
+dscms001   comparesig    -2 -2 -> 0
+dscms002   comparesig    -2 -1 -> -1
+dscms003   comparesig    -2 0 -> -1
+dscms004   comparesig    -2 1 -> -1
+dscms005   comparesig    -2 2 -> -1
+dscms006   comparesig    -1 -2 -> 1
+dscms007   comparesig    -1 -1 -> 0
+dscms008   comparesig    -1 0 -> -1
+dscms009   comparesig    -1 1 -> -1
+dscms010   comparesig    -1 2 -> -1
+dscms011   comparesig    0 -2 -> 1
+dscms012   comparesig    0 -1 -> 1
+dscms013   comparesig    0 0 -> 0
+dscms014   comparesig    0 1 -> -1
+dscms015   comparesig    0 2 -> -1
+dscms016   comparesig    1 -2 -> 1
+dscms017   comparesig    1 -1 -> 1
+dscms018   comparesig    1 0 -> 1
+dscms019   comparesig    1 1 -> 0
+dscms020   comparesig    1 2 -> -1
+dscms021   comparesig    2 -2 -> 1
+dscms022   comparesig    2 -1 -> 1
+dscms023   comparesig    2 0 -> 1
+dscms025   comparesig    2 1 -> 1
+dscms026   comparesig    2 2 -> 0
+
+dscms031   comparesig    -20 -20 -> 0
+dscms032   comparesig    -20 -10 -> -1
+dscms033   comparesig    -20 00 -> -1
+dscms034   comparesig    -20 10 -> -1
+dscms035   comparesig    -20 20 -> -1
+dscms036   comparesig    -10 -20 -> 1
+dscms037   comparesig    -10 -10 -> 0
+dscms038   comparesig    -10 00 -> -1
+dscms039   comparesig    -10 10 -> -1
+dscms040   comparesig    -10 20 -> -1
+dscms041   comparesig    00 -20 -> 1
+dscms042   comparesig    00 -10 -> 1
+dscms043   comparesig    00 00 -> 0
+dscms044   comparesig    00 10 -> -1
+dscms045   comparesig    00 20 -> -1
+dscms046   comparesig    10 -20 -> 1
+dscms047   comparesig    10 -10 -> 1
+dscms048   comparesig    10 00 -> 1
+dscms049   comparesig    10 10 -> 0
+dscms050   comparesig    10 20 -> -1
+dscms051   comparesig    20 -20 -> 1
+dscms052   comparesig    20 -10 -> 1
+dscms053   comparesig    20 00 -> 1
+dscms055   comparesig    20 10 -> 1
+dscms056   comparesig    20 20 -> 0
+
+dscms061   comparesig    -2.0 -2.0 -> 0
+dscms062   comparesig    -2.0 -1.0 -> -1
+dscms063   comparesig    -2.0 0.0 -> -1
+dscms064   comparesig    -2.0 1.0 -> -1
+dscms065   comparesig    -2.0 2.0 -> -1
+dscms066   comparesig    -1.0 -2.0 -> 1
+dscms067   comparesig    -1.0 -1.0 -> 0
+dscms068   comparesig    -1.0 0.0 -> -1
+dscms069   comparesig    -1.0 1.0 -> -1
+dscms070   comparesig    -1.0 2.0 -> -1
+dscms071   comparesig    0.0 -2.0 -> 1
+dscms072   comparesig    0.0 -1.0 -> 1
+dscms073   comparesig    0.0 0.0 -> 0
+dscms074   comparesig    0.0 1.0 -> -1
+dscms075   comparesig    0.0 2.0 -> -1
+dscms076   comparesig    1.0 -2.0 -> 1
+dscms077   comparesig    1.0 -1.0 -> 1
+dscms078   comparesig    1.0 0.0 -> 1
+dscms079   comparesig    1.0 1.0 -> 0
+dscms080   comparesig    1.0 2.0 -> -1
+dscms081   comparesig    2.0 -2.0 -> 1
+dscms082   comparesig    2.0 -1.0 -> 1
+dscms083   comparesig    2.0 0.0 -> 1
+dscms085   comparesig    2.0 1.0 -> 1
+dscms086   comparesig    2.0 2.0 -> 0
+
+-- now some cases which might overflow if subtract were used
+dscms090   comparesig    9.999999E+96 9.999999E+96 -> 0
+dscms091   comparesig    -9.999999E+96 9.999999E+96 -> -1
+dscms092   comparesig    9.999999E+96 -9.999999E+96 -> 1
+dscms093   comparesig    -9.999999E+96 -9.999999E+96 -> 0
+
+-- some differing length/exponent cases
+dscms100   comparesig    7.0 7.0 -> 0
+dscms101   comparesig    7.0 7 -> 0
+dscms102   comparesig    7 7.0 -> 0
+dscms103   comparesig    7E+0 7.0 -> 0
+dscms104   comparesig    70E+0 7.0 -> 1
+dscms105   comparesig    0.7E+0 7 -> -1
+dscms106   comparesig    70E+0 7 -> 1
+dscms107   comparesig    7.0 7E+0 -> 0
+dscms108   comparesig    7.0 70E+0 -> -1
+dscms109   comparesig    7 0.7E+0 -> 1
+dscms110   comparesig    7 70E+0 -> -1
+
+dscms120   comparesig    8.0 7.0 -> 1
+dscms121   comparesig    8.0 7 -> 1
+dscms122   comparesig    8 7.0 -> 1
+dscms123   comparesig    8E+0 7.0 -> 1
+dscms124   comparesig    80E+0 7.0 -> 1
+dscms125   comparesig    0.8E+0 7 -> -1
+dscms126   comparesig    80E+0 7 -> 1
+dscms127   comparesig    8.0 7E+0 -> 1
+dscms128   comparesig    8.0 70E+0 -> -1
+dscms129   comparesig    8 0.7E+0 -> 1
+dscms130   comparesig    8 70E+0 -> -1
+
+dscms140   comparesig    8.0 9.0 -> -1
+dscms141   comparesig    8.0 9 -> -1
+dscms142   comparesig    8 9.0 -> -1
+dscms143   comparesig    8E+0 9.0 -> -1
+dscms144   comparesig    80E+0 9.0 -> 1
+dscms145   comparesig    0.8E+0 9 -> -1
+dscms146   comparesig    80E+0 9 -> 1
+dscms147   comparesig    8.0 9E+0 -> -1
+dscms148   comparesig    8.0 90E+0 -> -1
+dscms149   comparesig    8 0.9E+0 -> 1
+dscms150   comparesig    8 90E+0 -> -1
+
+-- and again, with sign changes -+ ..
+dscms200   comparesig    -7.0 7.0 -> -1
+dscms201   comparesig    -7.0 7 -> -1
+dscms202   comparesig    -7 7.0 -> -1
+dscms203   comparesig    -7E+0 7.0 -> -1
+dscms204   comparesig    -70E+0 7.0 -> -1
+dscms205   comparesig    -0.7E+0 7 -> -1
+dscms206   comparesig    -70E+0 7 -> -1
+dscms207   comparesig    -7.0 7E+0 -> -1
+dscms208   comparesig    -7.0 70E+0 -> -1
+dscms209   comparesig    -7 0.7E+0 -> -1
+dscms210   comparesig    -7 70E+0 -> -1
+
+dscms220   comparesig    -8.0 7.0 -> -1
+dscms221   comparesig    -8.0 7 -> -1
+dscms222   comparesig    -8 7.0 -> -1
+dscms223   comparesig    -8E+0 7.0 -> -1
+dscms224   comparesig    -80E+0 7.0 -> -1
+dscms225   comparesig    -0.8E+0 7 -> -1
+dscms226   comparesig    -80E+0 7 -> -1
+dscms227   comparesig    -8.0 7E+0 -> -1
+dscms228   comparesig    -8.0 70E+0 -> -1
+dscms229   comparesig    -8 0.7E+0 -> -1
+dscms230   comparesig    -8 70E+0 -> -1
+
+dscms240   comparesig    -8.0 9.0 -> -1
+dscms241   comparesig    -8.0 9 -> -1
+dscms242   comparesig    -8 9.0 -> -1
+dscms243   comparesig    -8E+0 9.0 -> -1
+dscms244   comparesig    -80E+0 9.0 -> -1
+dscms245   comparesig    -0.8E+0 9 -> -1
+dscms246   comparesig    -80E+0 9 -> -1
+dscms247   comparesig    -8.0 9E+0 -> -1
+dscms248   comparesig    -8.0 90E+0 -> -1
+dscms249   comparesig    -8 0.9E+0 -> -1
+dscms250   comparesig    -8 90E+0 -> -1
+
+-- and again, with sign changes +- ..
+dscms300   comparesig    7.0 -7.0 -> 1
+dscms301   comparesig    7.0 -7 -> 1
+dscms302   comparesig    7 -7.0 -> 1
+dscms303   comparesig    7E+0 -7.0 -> 1
+dscms304   comparesig    70E+0 -7.0 -> 1
+dscms305   comparesig    0.7E+0 -7 -> 1
+dscms306   comparesig    70E+0 -7 -> 1
+dscms307   comparesig    7.0 -7E+0 -> 1
+dscms308   comparesig    7.0 -70E+0 -> 1
+dscms309   comparesig    7 -0.7E+0 -> 1
+dscms310   comparesig    7 -70E+0 -> 1
+
+dscms320   comparesig    8.0 -7.0 -> 1
+dscms321   comparesig    8.0 -7 -> 1
+dscms322   comparesig    8 -7.0 -> 1
+dscms323   comparesig    8E+0 -7.0 -> 1
+dscms324   comparesig    80E+0 -7.0 -> 1
+dscms325   comparesig    0.8E+0 -7 -> 1
+dscms326   comparesig    80E+0 -7 -> 1
+dscms327   comparesig    8.0 -7E+0 -> 1
+dscms328   comparesig    8.0 -70E+0 -> 1
+dscms329   comparesig    8 -0.7E+0 -> 1
+dscms330   comparesig    8 -70E+0 -> 1
+
+dscms340   comparesig    8.0 -9.0 -> 1
+dscms341   comparesig    8.0 -9 -> 1
+dscms342   comparesig    8 -9.0 -> 1
+dscms343   comparesig    8E+0 -9.0 -> 1
+dscms344   comparesig    80E+0 -9.0 -> 1
+dscms345   comparesig    0.8E+0 -9 -> 1
+dscms346   comparesig    80E+0 -9 -> 1
+dscms347   comparesig    8.0 -9E+0 -> 1
+dscms348   comparesig    8.0 -90E+0 -> 1
+dscms349   comparesig    8 -0.9E+0 -> 1
+dscms350   comparesig    8 -90E+0 -> 1
+
+-- and again, with sign changes -- ..
+dscms400   comparesig    -7.0 -7.0 -> 0
+dscms401   comparesig    -7.0 -7 -> 0
+dscms402   comparesig    -7 -7.0 -> 0
+dscms403   comparesig    -7E+0 -7.0 -> 0
+dscms404   comparesig    -70E+0 -7.0 -> -1
+dscms405   comparesig    -0.7E+0 -7 -> 1
+dscms406   comparesig    -70E+0 -7 -> -1
+dscms407   comparesig    -7.0 -7E+0 -> 0
+dscms408   comparesig    -7.0 -70E+0 -> 1
+dscms409   comparesig    -7 -0.7E+0 -> -1
+dscms410   comparesig    -7 -70E+0 -> 1
+
+dscms420   comparesig    -8.0 -7.0 -> -1
+dscms421   comparesig    -8.0 -7 -> -1
+dscms422   comparesig    -8 -7.0 -> -1
+dscms423   comparesig    -8E+0 -7.0 -> -1
+dscms424   comparesig    -80E+0 -7.0 -> -1
+dscms425   comparesig    -0.8E+0 -7 -> 1
+dscms426   comparesig    -80E+0 -7 -> -1
+dscms427   comparesig    -8.0 -7E+0 -> -1
+dscms428   comparesig    -8.0 -70E+0 -> 1
+dscms429   comparesig    -8 -0.7E+0 -> -1
+dscms430   comparesig    -8 -70E+0 -> 1
+
+dscms440   comparesig    -8.0 -9.0 -> 1
+dscms441   comparesig    -8.0 -9 -> 1
+dscms442   comparesig    -8 -9.0 -> 1
+dscms443   comparesig    -8E+0 -9.0 -> 1
+dscms444   comparesig    -80E+0 -9.0 -> -1
+dscms445   comparesig    -0.8E+0 -9 -> 1
+dscms446   comparesig    -80E+0 -9 -> -1
+dscms447   comparesig    -8.0 -9E+0 -> 1
+dscms448   comparesig    -8.0 -90E+0 -> 1
+dscms449   comparesig    -8 -0.9E+0 -> -1
+dscms450   comparesig    -8 -90E+0 -> 1
+
+
+-- testcases that subtract to lots of zeros at boundaries [pgr]
+dscms473   comparesig    123.4560E-22 123.456E-22 -> 0
+dscms474   comparesig    123.4560E+22 123.456E+22 -> 0
+dscms475   comparesig    123.4560E-22 123.456E-22 -> 0
+dscms476   comparesig    123.4560E+22 123.456E+22 -> 0
+dscms477   comparesig    123.4560E-22 123.456E-22 -> 0
+dscms478   comparesig    123.4560E+22 123.456E+22 -> 0
+dscms479   comparesig    123.4560E-22 123.456E-22 -> 0
+dscms480   comparesig    123.4560E+22 123.456E+22 -> 0
+dscms481   comparesig    123.4560E-22 123.456E-22 -> 0
+dscms482   comparesig    123.4560E+22 123.456E+22 -> 0
+dscms483   comparesig    123.456E-22 123.456E-22 -> 0
+dscms487   comparesig    123.456E+22 123.4560E+22 -> 0
+dscms488   comparesig    123.456E-22 123.4560E-22 -> 0
+dscms489   comparesig    123.456E+22 123.4560E+22 -> 0
+dscms490   comparesig    123.456E-22 123.4560E-22 -> 0
+dscms491   comparesig    123.456E+22 123.4560E+22 -> 0
+dscms492   comparesig    123.456E-22 123.4560E-22 -> 0
+dscms493   comparesig    123.456E+22 123.4560E+22 -> 0
+dscms494   comparesig    123.456E-22 123.4560E-22 -> 0
+dscms495   comparesig    123.456E+22 123.4560E+22 -> 0
+dscms496   comparesig    123.456E-22 123.4560E-22 -> 0
+dscms497   comparesig    123.456E+22 123.456E+22 -> 0
+
+-- wide-ranging, around precision; signs equal
+dscms500   comparesig    1 1E-4 -> 1
+dscms501   comparesig    1 1E-4 -> 1
+dscms502   comparesig    1 1E-3 -> 1
+dscms503   comparesig    1 1E-3 -> 1
+dscms504   comparesig    1 1E-3 -> 1
+dscms505   comparesig    1 1E-2 -> 1
+dscms506   comparesig    1 1E-2 -> 1
+dscms507   comparesig    1 1E-2 -> 1
+dscms508   comparesig    1 1E-2 -> 1
+dscms509   comparesig    1 1E-2 -> 1
+dscms510   comparesig    1 1E-1 -> 1
+dscms511   comparesig    1 1E-1 -> 1
+dscms512   comparesig    1 1E-1 -> 1
+dscms513   comparesig    1 1E+0 -> 0
+dscms514   comparesig    1 1E+0 -> 0
+dscms515   comparesig    1 1E+0 -> 0
+dscms516   comparesig    1 1E+0 -> 0
+dscms517   comparesig    1 1E+0 -> 0
+dscms518   comparesig    1 1E+1 -> -1
+dscms519   comparesig    1 1E+1 -> -1
+dscms521   comparesig    1 1E+1 -> -1
+dscms522   comparesig    1 1E+2 -> -1
+dscms523   comparesig    1 1E+2 -> -1
+dscms524   comparesig    1 1E+2 -> -1
+dscms525   comparesig    1 1E+2 -> -1
+dscms526   comparesig    1 1E+2 -> -1
+dscms527   comparesig    1 1E+3 -> -1
+dscms528   comparesig    1 1E+3 -> -1
+dscms529   comparesig    1 1E+3 -> -1
+dscms530   comparesig    1 1E+4 -> -1
+dscms531   comparesig    1 1E+4 -> -1
+-- LR swap
+dscms540   comparesig    1E-4 1 -> -1
+dscms541   comparesig    1E-4 1 -> -1
+dscms542   comparesig    1E-3 1 -> -1
+dscms543   comparesig    1E-3 1 -> -1
+dscms544   comparesig    1E-3 1 -> -1
+dscms545   comparesig    1E-2 1 -> -1
+dscms546   comparesig    1E-2 1 -> -1
+dscms547   comparesig    1E-2 1 -> -1
+dscms548   comparesig    1E-2 1 -> -1
+dscms549   comparesig    1E-2 1 -> -1
+dscms550   comparesig    1E-1 1 -> -1
+dscms551   comparesig    1E-1 1 -> -1
+dscms552   comparesig    1E-1 1 -> -1
+dscms553   comparesig    1E+0 1 -> 0
+dscms554   comparesig    1E+0 1 -> 0
+dscms555   comparesig    1E+0 1 -> 0
+dscms556   comparesig    1E+0 1 -> 0
+dscms557   comparesig    1E+0 1 -> 0
+dscms558   comparesig    1E+1 1 -> 1
+dscms559   comparesig    1E+1 1 -> 1
+dscms561   comparesig    1E+1 1 -> 1
+dscms562   comparesig    1E+2 1 -> 1
+dscms563   comparesig    1E+2 1 -> 1
+dscms564   comparesig    1E+2 1 -> 1
+dscms565   comparesig    1E+2 1 -> 1
+dscms566   comparesig    1E+2 1 -> 1
+dscms567   comparesig    1E+3 1 -> 1
+dscms568   comparesig    1E+3 1 -> 1
+dscms569   comparesig    1E+3 1 -> 1
+dscms570   comparesig    1E+4 1 -> 1
+dscms571   comparesig    1E+4 1 -> 1
+-- similar with a useful coefficient, one side only
+dscms580   comparesig    0.0000009876541 1E-4 -> -1
+dscms581   comparesig    0.0000009876541 1E-4 -> -1
+dscms582   comparesig    0.0000009876541 1E-3 -> -1
+dscms583   comparesig    0.0000009876541 1E-3 -> -1
+dscms584   comparesig    0.0000009876541 1E-3 -> -1
+dscms585   comparesig    0.0000009876541 1E-2 -> -1
+dscms586   comparesig    0.0000009876541 1E-2 -> -1
+dscms587   comparesig    0.0000009876541 1E-2 -> -1
+dscms588   comparesig    0.0000009876541 1E-2 -> -1
+dscms589   comparesig    0.0000009876541 1E-2 -> -1
+dscms590   comparesig    0.0000009876541 1E-1 -> -1
+dscms591   comparesig    0.0000009876541 1E-1 -> -1
+dscms592   comparesig    0.0000009876541 1E-1 -> -1
+dscms593   comparesig    0.0000009876541 1E+0 -> -1
+dscms594   comparesig    0.0000009876541 1E+0 -> -1
+dscms595   comparesig    0.0000009876541 1E+0 -> -1
+dscms596   comparesig    0.0000009876541 1E+0 -> -1
+dscms597   comparesig    0.0000009876541 1E+0 -> -1
+dscms598   comparesig    0.0000009876541 1E+1 -> -1
+dscms599   comparesig    0.0000009876541 1E+1 -> -1
+
+-- check some unit-y traps
+dscms600   comparesig    12 12.2345 -> -1
+dscms601   comparesig    12.0 12.2345 -> -1
+dscms602   comparesig    12.00 12.2345 -> -1
+dscms603   comparesig    12.000 12.2345 -> -1
+dscms604   comparesig    12.0000 12.2345 -> -1
+dscms605   comparesig    12.00000 12.2345 -> -1
+dscms606   comparesig    12.00000 12.2345 -> -1
+dscms607   comparesig    12.00000 12.2345 -> -1
+dscms608   comparesig    12.00000 12.2345 -> -1
+dscms609   comparesig    12.00000 12.2345 -> -1
+dscms610   comparesig    12.1234 12 -> 1
+dscms611   comparesig    12.1234 12.0 -> 1
+dscms612   comparesig    12.1234 12.00 -> 1
+dscms613   comparesig    12.1234 12.000 -> 1
+dscms614   comparesig    12.1234 12.0000 -> 1
+dscms615   comparesig    12.1234 12.00000 -> 1
+dscms616   comparesig    12.1234 12.00000 -> 1
+dscms617   comparesig    12.1234 12.00000 -> 1
+dscms618   comparesig    12.1234 12.00000 -> 1
+dscms619   comparesig    12.1234 12.00000 -> 1
+dscms620   comparesig    -12 -12.2345 -> 1
+dscms621   comparesig    -12.0 -12.2345 -> 1
+dscms622   comparesig    -12.00 -12.2345 -> 1
+dscms623   comparesig    -12.000 -12.2345 -> 1
+dscms624   comparesig    -12.0000 -12.2345 -> 1
+dscms625   comparesig    -12.00000 -12.2345 -> 1
+dscms626   comparesig    -12.00000 -12.2345 -> 1
+dscms627   comparesig    -12.00000 -12.2345 -> 1
+dscms628   comparesig    -12.00000 -12.2345 -> 1
+dscms629   comparesig    -12.00000 -12.2345 -> 1
+dscms630   comparesig    -12.1234 -12 -> -1
+dscms631   comparesig    -12.1234 -12.0 -> -1
+dscms632   comparesig    -12.1234 -12.00 -> -1
+dscms633   comparesig    -12.1234 -12.000 -> -1
+dscms634   comparesig    -12.1234 -12.0000 -> -1
+dscms635   comparesig    -12.1234 -12.00000 -> -1
+dscms636   comparesig    -12.1234 -12.00000 -> -1
+dscms637   comparesig    -12.1234 -12.00000 -> -1
+dscms638   comparesig    -12.1234 -12.00000 -> -1
+dscms639   comparesig    -12.1234 -12.00000 -> -1
+
+-- extended zeros
+dscms640   comparesig    0 0 -> 0
+dscms641   comparesig    0 -0 -> 0
+dscms642   comparesig    0 -0.0 -> 0
+dscms643   comparesig    0 0.0 -> 0
+dscms644   comparesig    -0 0 -> 0
+dscms645   comparesig    -0 -0 -> 0
+dscms646   comparesig    -0 -0.0 -> 0
+dscms647   comparesig    -0 0.0 -> 0
+dscms648   comparesig    0.0 0 -> 0
+dscms649   comparesig    0.0 -0 -> 0
+dscms650   comparesig    0.0 -0.0 -> 0
+dscms651   comparesig    0.0 0.0 -> 0
+dscms652   comparesig    -0.0 0 -> 0
+dscms653   comparesig    -0.0 -0 -> 0
+dscms654   comparesig    -0.0 -0.0 -> 0
+dscms655   comparesig    -0.0 0.0 -> 0
+
+dscms656   comparesig    -0E+0 0.0 -> 0
+dscms657   comparesig    -0E+0 0.0 -> 0
+dscms658   comparesig    0E+0 0.0 -> 0
+dscms659   comparesig    0E+0 0.0 -> 0
+dscms660   comparesig    -0E+0 0 -> 0
+dscms661   comparesig    -0E+0 0 -> 0
+dscms662   comparesig    0E+0 0 -> 0
+dscms663   comparesig    0E+0 0 -> 0
+dscms664   comparesig    -0E+0 -0E+0 -> 0
+dscms665   comparesig    -0E+0 -0E+0 -> 0
+dscms666   comparesig    0E+0 -0E+0 -> 0
+dscms667   comparesig    0E+0 -0E+0 -> 0
+dscms668   comparesig    -0E+0 -0E+0 -> 0
+dscms669   comparesig    -0E+0 -0E+0 -> 0
+dscms670   comparesig    0E+0 -0E+0 -> 0
+dscms671   comparesig    0E+0 -0E+0 -> 0
+dscms672   comparesig    -0E+0 0E+0 -> 0
+dscms673   comparesig    -0E+0 0E+0 -> 0
+dscms674   comparesig    0E+0 0E+0 -> 0
+dscms675   comparesig    0E+0 0E+0 -> 0
+dscms676   comparesig    -0E+0 0E+0 -> 0
+dscms677   comparesig    -0E+0 0E+0 -> 0
+dscms678   comparesig    0E+0 0E+0 -> 0
+dscms679   comparesig    0E+0 0E+0 -> 0
+
+-- trailing zeros; unit-y
+dscms680   comparesig    12 12 -> 0
+dscms681   comparesig    12 12.0 -> 0
+dscms682   comparesig    12 12.00 -> 0
+dscms683   comparesig    12 12.000 -> 0
+dscms684   comparesig    12 12.0000 -> 0
+dscms685   comparesig    12 12.00000 -> 0
+dscms686   comparesig    12 12.00000 -> 0
+dscms687   comparesig    12 12.00000 -> 0
+dscms688   comparesig    12 12.00000 -> 0
+dscms689   comparesig    12 12.00000 -> 0
+dscms690   comparesig    12 12 -> 0
+dscms691   comparesig    12.0 12 -> 0
+dscms692   comparesig    12.00 12 -> 0
+dscms693   comparesig    12.000 12 -> 0
+dscms694   comparesig    12.0000 12 -> 0
+dscms695   comparesig    12.00000 12 -> 0
+dscms696   comparesig    12.00000 12 -> 0
+dscms697   comparesig    12.00000 12 -> 0
+dscms698   comparesig    12.00000 12 -> 0
+dscms699   comparesig    12.00000 12 -> 0
+
+-- first, second, & last digit
+dscms700   comparesig    1234566 1234565 -> 1
+dscms701   comparesig    1234566 1234566 -> 0
+dscms702   comparesig    1234566 1234567 -> -1
+dscms703   comparesig    1234566 02345676 -> -1
+dscms704   comparesig    1234566 1234566 -> 0
+dscms705   comparesig    1234566 2234566 -> -1
+dscms706   comparesig    1134566 1034566 -> 1
+dscms707   comparesig    1134566 1134566 -> 0
+dscms708   comparesig    1134566 1234566 -> -1
+
+-- miscellaneous
+dscms721   comparesig    1234560 1 -> 1
+dscms722   comparesig    1 1234560 -> -1
+dscms723   comparesig    1234560 1 -> 1
+dscms724   comparesig    1 1234560 -> -1
+dscms725   comparesig    1234560 1 -> 1
+dscms726   comparesig    1 1234560 -> -1
+dscms727   comparesig    1234561 1 -> 1
+dscms728   comparesig    1 1234561 -> -1
+dscms729   comparesig    1234561 1 -> 1
+dscms730   comparesig    1 1234561 -> -1
+dscms731   comparesig    1234566 1 -> 1
+dscms732   comparesig    1 1234566 -> -1
+
+-- residue cases at lower precision
+dscms740   comparesig    1 0.9999999 -> 1
+dscms741   comparesig    1 0.999999 -> 1
+dscms742   comparesig    1 0.99999 -> 1
+dscms743   comparesig    1 1.0000 -> 0
+dscms744   comparesig    1 1.00001 -> -1
+dscms745   comparesig    1 1.000001 -> -1
+dscms746   comparesig    1 1.000001 -> -1
+dscms750   comparesig    0.9999999 1 -> -1
+dscms751   comparesig    0.999999 1 -> -1
+dscms752   comparesig    0.99999 1 -> -1
+dscms753   comparesig    1.0000 1 -> 0
+dscms754   comparesig    1.00001 1 -> 1
+dscms755   comparesig    1.000001 1 -> 1
+dscms756   comparesig    1.000001 1 -> 1
+
+-- Specials
+dscms780   comparesig    Inf -Inf -> 1
+dscms781   comparesig    Inf -1000 -> 1
+dscms782   comparesig    Inf -1 -> 1
+dscms783   comparesig    Inf -0 -> 1
+dscms784   comparesig    Inf 0 -> 1
+dscms785   comparesig    Inf 1 -> 1
+dscms786   comparesig    Inf 1000 -> 1
+dscms787   comparesig    Inf Inf -> 0
+dscms788   comparesig    -1000 Inf -> -1
+dscms789   comparesig    -Inf Inf -> -1
+dscms790   comparesig    -1 Inf -> -1
+dscms791   comparesig    -0 Inf -> -1
+dscms792   comparesig    0 Inf -> -1
+dscms793   comparesig    1 Inf -> -1
+dscms794   comparesig    1000 Inf -> -1
+dscms795   comparesig    Inf Inf -> 0
+
+dscms800   comparesig    -Inf -Inf -> 0
+dscms801   comparesig    -Inf -1000 -> -1
+dscms802   comparesig    -Inf -1 -> -1
+dscms803   comparesig    -Inf -0 -> -1
+dscms804   comparesig    -Inf 0 -> -1
+dscms805   comparesig    -Inf 1 -> -1
+dscms806   comparesig    -Inf 1000 -> -1
+dscms807   comparesig    -Inf Inf -> -1
+dscms808   comparesig    -Inf -Inf -> 0
+dscms809   comparesig    -1000 -Inf -> 1
+dscms810   comparesig    -1 -Inf -> 1
+dscms811   comparesig    -0 -Inf -> 1
+dscms812   comparesig    0 -Inf -> 1
+dscms813   comparesig    1 -Inf -> 1
+dscms814   comparesig    1000 -Inf -> 1
+dscms815   comparesig    Inf -Inf -> 1
+
+dscms821   comparesig    NaN -Inf -> NaN  Invalid_operation
+dscms822   comparesig    NaN -1000 -> NaN  Invalid_operation
+dscms823   comparesig    NaN -1 -> NaN  Invalid_operation
+dscms824   comparesig    NaN -0 -> NaN  Invalid_operation
+dscms825   comparesig    NaN 0 -> NaN  Invalid_operation
+dscms826   comparesig    NaN 1 -> NaN  Invalid_operation
+dscms827   comparesig    NaN 1000 -> NaN  Invalid_operation
+dscms828   comparesig    NaN Inf -> NaN  Invalid_operation
+dscms829   comparesig    NaN NaN -> NaN  Invalid_operation
+dscms830   comparesig    -Inf NaN -> NaN  Invalid_operation
+dscms831   comparesig    -1000 NaN -> NaN  Invalid_operation
+dscms832   comparesig    -1 NaN -> NaN  Invalid_operation
+dscms833   comparesig    -0 NaN -> NaN  Invalid_operation
+dscms834   comparesig    0 NaN -> NaN  Invalid_operation
+dscms835   comparesig    1 NaN -> NaN  Invalid_operation
+dscms836   comparesig    1000 NaN -> NaN  Invalid_operation
+dscms837   comparesig    Inf NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms838   comparesig    -NaN -NaN -> -NaN  Invalid_operation
+dscms839   comparesig    +NaN -NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms840   comparesig    -NaN +NaN -> -NaN  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms841   comparesig    sNaN -Inf -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms842   comparesig    sNaN -1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms843   comparesig    sNaN -1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms844   comparesig    sNaN -0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms845   comparesig    sNaN 0 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms846   comparesig    sNaN 1 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms847   comparesig    sNaN 1000 -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms848   comparesig    sNaN NaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms849   comparesig    sNaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms850   comparesig    NaN sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms851   comparesig    -Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms852   comparesig    -1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms853   comparesig    -1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms854   comparesig    -0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms855   comparesig    0 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms856   comparesig    1 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms857   comparesig    1000 sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms858   comparesig    Inf sNaN -> NaN  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms859   comparesig    NaN sNaN -> NaN  Invalid_operation
+
+-- propagating NaNs
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms860   comparesig    NaN9 -Inf -> NaN9  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms861   comparesig    NaN8 999 -> NaN8  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms862   comparesig    NaN77 Inf -> NaN77  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms863   comparesig    -NaN67 NaN5 -> -NaN67  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms864   comparesig    -Inf -NaN4 -> -NaN4  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms865   comparesig    -999 -NaN33 -> -NaN33  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms866   comparesig    Inf NaN2 -> NaN2  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms867   comparesig    -NaN41 -NaN42 -> -NaN41  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms868   comparesig    +NaN41 -NaN42 -> NaN41  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms869   comparesig    -NaN41 +NaN42 -> -NaN41  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms870   comparesig    +NaN41 +NaN42 -> NaN41  Invalid_operation
+
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms871   comparesig    -sNaN99 -Inf -> -NaN99  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms872   comparesig    sNaN98 -11 -> NaN98  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms873   comparesig    sNaN97 NaN -> NaN97  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms874   comparesig    sNaN16 sNaN94 -> NaN16  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms875   comparesig    NaN85 sNaN83 -> NaN83  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms876   comparesig    -Inf sNaN92 -> NaN92  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms877   comparesig    088 sNaN81 -> NaN81  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms878   comparesig    Inf sNaN90 -> NaN90  Invalid_operation
+# BOOST_DECIMAL_DIVERGENCE: IEEE 754 does not interpret the sign of a NaN, so Boost.Decimal neither propagates it nor quiets a signalling NaN through arithmetic
+#dscms879   comparesig    NaN -sNaN89 -> -NaN89  Invalid_operation
+
+-- wide range
+dscms880   comparesig    +1.234565E+0 9E+96 -> -1
+dscms881   comparesig    9E+96 +1.234565E+0 -> 1
+dscms882   comparesig    +0.100 9E-96 -> 1
+dscms883   comparesig    9E-96 +0.100 -> -1
+dscms885   comparesig    -1.234565E+0 9E+96 -> -1
+dscms886   comparesig    9E+96 -1.234565E+0 -> 1
+dscms887   comparesig    -0.100 9E-96 -> -1
+dscms888   comparesig    9E-96 -0.100 -> 1
+
+-- signs
+dscms901   comparesig    1E+19 1E+3 -> 1
+dscms902   comparesig    1E+19 -1E+3 -> 1
+dscms903   comparesig    -1E+19 1E+3 -> -1
+dscms904   comparesig    -1E+19 -1E+3 -> -1
+dscms905   comparesig    1E-19 1E-3 -> -1
+dscms906   comparesig    1E-19 -1E-3 -> 1
+dscms907   comparesig    -1E-19 1E-3 -> -1
+dscms908   comparesig    -1E-19 -1E-3 -> 1
+
+-- Null tests

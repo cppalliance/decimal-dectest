@@ -26,14 +26,17 @@ int main()
     test_one_arg_harness<true>("dectest/nextplus.decTest", "nextplus", up);
     test_one_arg_harness<true>("dectest/ddNextPlus.decTest", "nextplus", up);
     test_one_arg_harness<true>("dectest/dqNextPlus.decTest", "nextplus", up);
+    test_one_arg_harness<true>("dectest/dsNextPlus.decTest", "nextplus", up);
 
     test_one_arg_harness<true>("dectest/nextminus.decTest", "nextminus", down);
     test_one_arg_harness<true>("dectest/ddNextMinus.decTest", "nextminus", down);
     test_one_arg_harness<true>("dectest/dqNextMinus.decTest", "nextminus", down);
+    test_one_arg_harness<true>("dectest/dsNextMinus.decTest", "nextminus", down);
 
     test_two_arg_harness<false, true>("dectest/nexttoward.decTest", "nexttoward", toward);
     test_two_arg_harness<false, true>("dectest/ddNextToward.decTest", "nexttoward", toward);
     test_two_arg_harness<false, true>("dectest/dqNextToward.decTest", "nexttoward", toward);
+    test_two_arg_harness<false, true>("dectest/dsNextToward.decTest", "nexttoward", toward);
 
     return boost::report_errors();
 }
