@@ -13,10 +13,10 @@ int main()
 
     #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
 
-    test_two_arg_harness<true>("dectest/ddSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
+    test_two_arg_harness("dectest/ddSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
 
     std::cerr << std::setprecision(34);
-    test_two_arg_harness<true>("dectest/dqSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
+    test_two_arg_harness("dectest/dqSubtract.decTest", "subtract", [](const auto x, const auto y) { return x - y; });
 
     #endif
 

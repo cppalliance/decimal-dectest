@@ -8,6 +8,7 @@
 #include <boost/decimal.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include "where_file.hpp"
+#include "dectest_parser.hpp"
 #include <vector>
 #include <sstream>
 #include <iostream>
@@ -16,6 +17,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 #include <utility>
 
@@ -44,1323 +46,569 @@ std::size_t ulp_distance(T, U) noexcept
     return std::numeric_limits<std::size_t>::max();
 }
 
-template <typename Function>
-void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
+namespace boost {
+namespace decimal {
+namespace dectest {
+
+// Bitwise equality. NaN never compares equal, so payload and sign need a raw check.
+inline bool same_bits(const boost::decimal::decimal32_t lhs, const boost::decimal::decimal32_t rhs) noexcept
+{
+    std::uint32_t lhs_bits {};
+    std::uint32_t rhs_bits {};
+    std::memcpy(&lhs_bits, &lhs, sizeof(lhs_bits));
+    std::memcpy(&rhs_bits, &rhs, sizeof(rhs_bits));
+
+    return lhs_bits == rhs_bits;
+}
+
+inline bool same_bits(const boost::decimal::decimal64_t lhs, const boost::decimal::decimal64_t rhs) noexcept
+{
+    std::uint64_t lhs_bits {};
+    std::uint64_t rhs_bits {};
+    std::memcpy(&lhs_bits, &lhs, sizeof(lhs_bits));
+    std::memcpy(&rhs_bits, &rhs, sizeof(rhs_bits));
+
+    return lhs_bits == rhs_bits;
+}
+
+#if defined(__GNUC__) && !defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wclass-memaccess"
+#  pragma GCC diagnostic ignored "-Wstringop-overread"
+#endif
+
+inline bool same_bits(const boost::decimal::decimal128_t lhs, const boost::decimal::decimal128_t rhs) noexcept
+{
+    boost::int128::uint128_t lhs_bits {};
+    boost::int128::uint128_t rhs_bits {};
+    std::memcpy(&lhs_bits, &lhs, sizeof(lhs_bits));
+    std::memcpy(&rhs_bits, &rhs, sizeof(rhs_bits));
+
+    return lhs_bits == rhs_bits;
+}
+
+#if defined(__GNUC__) && !defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
+
+// Anything else cannot be compared bitwise.
+template <typename T, typename U>
+bool same_bits(const T&, const U&) noexcept
+{
+    return false;
+}
+
+// Compare one computed result against the expected value from the test file.
+template <typename Result, typename T>
+void check_result(const std::string& id, const int precision, const Result& got, const T& expected,
+                  const std::size_t ulp_tol, const bool strict_cohort)
+{
+    if (isnan(got) && isnan(expected))
+    {
+        if (!BOOST_TEST(same_bits(got, expected)))
+        {
+            std::cerr << "Failed test: " << id << " (precision: " << precision << ")\n"
+                      << "Got: " << got << "\nExpected: " << expected << std::endl;
+        }
+    }
+    else if (ulp_tol != 0U)
+    {
+        const auto dist {ulp_distance(got, expected)};
+        if (!BOOST_TEST_LE(dist, ulp_tol))
+        {
+            std::cerr << "Failed test: " << id << " (precision: " << precision << ")\n"
+                      << "Got: " << got << "\nExpected: " << expected << std::endl;
+        }
+    }
+    else if (!BOOST_TEST_EQ(got, expected))
+    {
+        std::cerr << "Failed test: " << id << " (precision: " << precision << ")" << std::endl;
+    }
+
+    if (strict_cohort)
+    {
+        if (!BOOST_TEST(boost::decimal::samequantum(got, expected)))
+        {
+            std::cerr << "Failed cohort: " << id << " (precision: " << precision << ")\n"
+                      << "Got: " << got << "\nExpected: " << expected << std::endl;
+        }
+    }
+}
+
+// Open a test file and hand back its lines, or report a hard failure.
+inline bool open_test_file(const std::string& file_path, std::ifstream& in)
 {
     const auto full_path {boost::decimal::dectest::where_file(file_path)};
     if (full_path.empty())
     {
         std::cerr << "Failed to find file: " << file_path << std::endl;
         BOOST_TEST(false);
-        return;
+        return false;
     }
 
-    std::ifstream in(full_path.c_str());
+    in.open(full_path.c_str());
     if (!in.is_open())
     {
         std::cerr << "Failed to open file: " << full_path << std::endl;
         BOOST_TEST(false);
+        return false;
+    }
+
+    return true;
+}
+
+// Fold one line into the running state and decide whether it is ours to run.
+// Returns true only for a test case of the requested operation that is ready to execute.
+inline bool accept_line(const test_line& parsed, const std::string& op, const std::size_t arity,
+                        scan_context& ctx, scan_counters& counters)
+{
+    if (parsed.kind == line_kind::directive)
+    {
+        apply_directive(parsed, ctx);
+        return false;
+    }
+
+    if (parsed.kind == line_kind::ignored)
+    {
+        return false;
+    }
+
+    if (parsed.kind == line_kind::parse_error)
+    {
+        ++counters.parse_error;
+        return false;
+    }
+
+    // Everything below is a test line, so only count it against the operation under test
+    if (parsed.op != op || parsed.operands.size() != arity)
+    {
+        return false;
+    }
+
+    if (parsed.kind == line_kind::disabled)
+    {
+        ++counters.skip_disabled;
+        return false;
+    }
+
+    if (parsed.kind == line_kind::hex_operand)
+    {
+        ++counters.skip_hex;
+        return false;
+    }
+
+    if (parsed.kind == line_kind::undefined_result)
+    {
+        ++counters.skip_undefined;
+        return false;
+    }
+
+    if (ctx.skip_block)
+    {
+        ++counters.skip_rounding;
+        return false;
+    }
+
+    return true;
+}
+
+} // namespace dectest
+} // namespace decimal
+} // namespace boost
+
+// Offer every line to all three IEEE types. fits_format decides which of them the test
+// actually means something for, so a precision-independent case (most of the suite) is
+// checked three times instead of once, and a precision-specific one still runs only
+// against the format it was written for.
+#define BOOST_DECIMAL_DECTEST_DISPATCH(body)                   \
+    body(boost::decimal::decimal32_t{});                       \
+    body(boost::decimal::decimal64_t{});                       \
+    body(boost::decimal::decimal128_t{});
+
+template <typename Function>
+void test_one_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
+{
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
+    {
         return;
     }
 
-    std::size_t num_tests_found {};
-    std::size_t invalid_tests {};
-    std::string line;
-    int current_precision = 16; // Default precision
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
+
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
 
     while (std::getline(in, line))
     {
-        // Skip commented lines. The dectest format uses "--" as a line
-        // comment marker (including for explicitly disabled test cases
-        // like "--ddqua1032 ...").
-        if (line.find("#") != std::string::npos)
-        {
-            continue;
-        }
-        {
-            std::size_t comment_pos {};
-            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
-            {
-                ++comment_pos;
-            }
-            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
-            {
-                continue;
-            }
-        }
+        const auto parsed {parse_line(line)};
 
-        // Check for precision specification
-        auto precision_pos = line.find("precision:");
-        if (precision_pos != std::string::npos)
-        {
-            auto precision_start = precision_pos + 10; // Skip "precision:"
-
-            // Skip whitespace
-            while (precision_start < line.length() && std::isspace(line[precision_start]))
-            {
-                precision_start++;
-            }
-
-            // Extract precision value
-            std::string precision_str;
-            while (precision_start < line.length() && std::isdigit(line[precision_start]))
-            {
-                precision_str += line[precision_start++];
-            }
-
-            if (!precision_str.empty())
-            {
-                current_precision = std::stoi(precision_str);
-            }
-            continue;
-        }
-
-        const auto first_space = line.find(" ");
-        const auto test_name = line.substr(0, first_space);
-
-        // Check if this line contains our function
-        const auto pos_test = line.find(function_name + " ");
-        if (pos_test == std::string::npos)
+        if (!accept_line(parsed, function_name, 1U, ctx, counters))
         {
             continue;
         }
 
-        ++num_tests_found;
-
-        // Find the arrow separator
-        const auto arrow_pos = line.find("->");
-        if (arrow_pos == std::string::npos)
+        auto applied {false};
+        const auto run = [&](auto tag)
         {
-            std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
-            ++invalid_tests;
-            continue;
-        }
+            using T = decltype(tag);
 
-        // Extract LHS value (between function name and ->)
-        auto lhs_start = pos_test + function_name.length() + 1; // Skip function name and space
-        auto lhs_end = arrow_pos;
-
-        // Trim whitespace and extract value
-        while (lhs_start < lhs_end && std::isspace(line[lhs_start]))
-        {
-            lhs_start++;
-        }
-
-        while (lhs_end > lhs_start && std::isspace(line[lhs_end - 1]))
-        {
-            lhs_end--;
-        }
-
-        std::string lhs_value = line.substr(lhs_start, lhs_end - lhs_start);
-
-        // Remove quotes if present
-        if (!lhs_value.empty() && lhs_value.front() == '\'' && lhs_value.back() == '\'')
-        {
-            lhs_value = lhs_value.substr(1, lhs_value.length() - 2);
-        }
-
-        // Extract RHS value (after ->)
-        auto rhs_start = arrow_pos + 2; // Skip "->"
-        auto rhs_end = line.length();
-
-        // Trim whitespace
-        while (rhs_start < rhs_end && std::isspace(line[rhs_start])) rhs_start++;
-        while (rhs_end > rhs_start && std::isspace(line[rhs_end - 1])) rhs_end--;
-
-        std::string rhs_value = line.substr(rhs_start, rhs_end - rhs_start);
-
-        // Remove quotes if present
-        if (!rhs_value.empty() && rhs_value.front() == '\'' && rhs_value.back() == '\'')
-        {
-            rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
-        }
-
-        // Select appropriate decimal type based on precision
-        try
-        {
-            if (current_precision <= 9)
+            if (!fits_format<T>(parsed, ctx))
             {
-                // Use decimal32_t
-                const boost::decimal::decimal32_t lhs {lhs_value};
-                const boost::decimal::decimal32_t rhs {rhs_value};
-                const auto f_lhs {f(lhs)};
-
-                if (isnan(lhs) && isnan(rhs))
-                {
-                    std::uint32_t lhs_bits;
-                    std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint32_t));
-
-                    std::uint32_t rhs_bits;
-                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint32_t));
-
-                    if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (ulp_tol != 0)
-                {
-                    const auto dist {ulp_distance(f_lhs, rhs)};
-                    if (!BOOST_TEST_LE(dist, ulp_tol))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_lhs << "\nExpected: " << rhs << std::endl;
-                    }
-                }
-                else if (!BOOST_TEST_EQ(f(lhs), rhs))
-                {
-                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                }
+                return;
             }
-            else if (current_precision <= 16)
+
+            applied = true;
+
+            try
             {
-                // Use decimal64_t
-                const boost::decimal::decimal64_t lhs {lhs_value};
-                const boost::decimal::decimal64_t rhs {rhs_value};
-                const auto f_lhs {f(lhs)};
+                const T lhs {parsed.operands[0]};
+                const T expected {parsed.expected};
+                const auto result {f(lhs)};
 
-                if (isnan(lhs) && isnan(rhs))
-                {
-                    std::uint64_t lhs_bits;
-                    std::memcpy(&lhs_bits, &f_lhs, sizeof(std::uint64_t));
-
-                    std::uint64_t rhs_bits;
-                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
-
-                    if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (ulp_tol != 0)
-                {
-                    const auto dist {ulp_distance(f_lhs, rhs)};
-                    if (!BOOST_TEST_LE(dist, ulp_tol))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_lhs << "\nExpected: " << rhs << std::endl;
-                    }
-                }
-                else if (!BOOST_TEST_EQ(f(lhs), rhs))
-                {
-                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                }
+                check_result(parsed.id, ctx.precision, result, expected, ulp_tol, false);
+                ++counters.verified;
             }
-            else
+            catch (...)
             {
-                #if defined(__GNUC__) && !defined(__clang__)
-                #  pragma GCC diagnostic push
-                #  pragma GCC diagnostic ignored "-Wclass-memaccess"
-                #  pragma GCC diagnostic ignored "-Wstringop-overread"
-                #endif
-
-                // Use decimal128_t
-                const boost::decimal::decimal128_t lhs {lhs_value};
-                const boost::decimal::decimal128_t rhs {rhs_value};
-                const auto f_lhs {f(lhs)};
-
-                if (isnan(lhs) && isnan(rhs))
-                {
-                    boost::int128::uint128_t lhs_bits;
-                    std::memcpy(&lhs_bits, &f_lhs, sizeof(boost::int128::uint128_t));
-
-                    boost::int128::uint128_t rhs_bits;
-                    std::memcpy(&rhs_bits, &rhs, sizeof(boost::int128::uint128_t));
-
-                    if (!BOOST_TEST_EQ(lhs_bits, rhs_bits))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (ulp_tol != 0)
-                {
-                    const auto dist {ulp_distance(f_lhs, rhs)};
-                    if (!BOOST_TEST_LE(dist, ulp_tol))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_lhs << "\nExpected: " << rhs << std::endl;
-                    }
-                }
-                else if (!BOOST_TEST_EQ(f(lhs), rhs))
-                {
-                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                }
-                
-                #ifdef __GNUC__
-                #  pragma GCC diagnostic pop
-                #endif
+                ++counters.skip_unconstructible;
             }
-        }
-        catch (...)
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
         {
-            // Invalid construction is supposed to throw
-            ++invalid_tests;
+            ++counters.skip_wrong_format;
         }
     }
 
-    BOOST_TEST_GT(num_tests_found, 0U);
-    BOOST_TEST_LT(invalid_tests, num_tests_found);
+    report_counters(file_path, function_name, counters);
 }
 
 // strict_cohort_compare: when true, in addition to mathematical equality the test verifies that
 // the result has the same quantum (cohort) as the expected rhs. Use this for operations like
 // quantize where IEEE 754-2008 specifies the exponent of the result, so a zero with the wrong
 // cohort must not silently pass.
-template <bool allow_rounding_changes = false, bool strict_cohort_compare = false, typename Function = std::minus<>()>
-void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0)
+template <bool strict_cohort_compare = false, typename Function = std::minus<>>
+void test_two_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
 {
-    const auto full_path {boost::decimal::dectest::where_file(file_path)};
-    if (full_path.empty())
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
     {
-        std::cerr << "Failed to find file: " << file_path << std::endl;
-        BOOST_TEST(false);
         return;
     }
 
-    std::ifstream in(full_path.c_str());
-    if (!in.is_open())
-    {
-        std::cerr << "Failed to open file: " << full_path << std::endl;
-        BOOST_TEST(false);
-        return;
-    }
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
 
-    std::size_t num_tests_found {};
-    std::size_t invalid_tests {};
-    std::string line;
-    int current_precision = 16;
-    bool skip = false;
-    BOOST_DECIMAL_ATTRIBUTE_UNUSED unsigned skip_counter {};
-    BOOST_DECIMAL_ATTRIBUTE_UNUSED unsigned total_skipped_tests {};
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
 
     while (std::getline(in, line))
     {
-        // Skip commented lines. The dectest format uses "--" as a line
-        // comment marker (including for explicitly disabled test cases
-        // like "--ddqua1032 ...").
-        if (line.find("#") != std::string::npos)
-        {
-            continue;
-        }
-        {
-            std::size_t comment_pos {};
-            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
-            {
-                ++comment_pos;
-            }
-            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
-            {
-                continue;
-            }
-        }
+        const auto parsed {parse_line(line)};
 
-        // Check for precision specification
-        // When the precision is specified we ust that one until it is specified again
-        // Some of these test sets assume precisions we don't offer so this is the best effort
-        auto precision_pos = line.find("precision:");
-        if (precision_pos != std::string::npos)
-        {
-            auto precision_start = precision_pos + 10; // Skip "precision:"
-
-            // Skip whitespace
-            while (precision_start < line.length() && std::isspace(line[precision_start]))
-            {
-                precision_start++;
-            }
-
-            // Extract precision value
-            std::string precision_str;
-            while (precision_start < line.length() && std::isdigit(line[precision_start]))
-            {
-                precision_str += line[precision_start++];
-            }
-
-            if (!precision_str.empty())
-            {
-                current_precision = std::stoi(precision_str);
-            }
-            continue;
-        }
-
-        // Check for rounding mode changes
-        BOOST_DECIMAL_IF_CONSTEXPR (allow_rounding_changes)
-        {
-            auto rounding_pos = line.find("rounding:");
-            if (rounding_pos != std::string::npos)
-            {
-                auto rounding_start = rounding_pos + 10;
-                auto rounding_end = line.length();
-
-                while (rounding_start < line.length() && std::isspace(line[rounding_start]))
-                {
-                    rounding_start++;
-                }
-
-                // Extract the rounding mode
-                const std::string rounding_str {line.substr(rounding_start, rounding_end - rounding_start - 1u)};
-
-                if (rounding_str == "floor")
-                {
-                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_downward);
-                    skip = false;
-                }
-                else if (rounding_str == "down")
-                {
-                    // dectest "down" rounds toward zero (truncation), distinct
-                    // from "floor" which rounds toward -infinity.
-                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_toward_zero);
-                    skip = false;
-                }
-                else if (rounding_str == "ceiling")
-                {
-                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_upward);
-                    skip = false;
-                }
-                else if (rounding_str == "up")
-                {
-                    // dectest "up" rounds away from zero unconditionally. This
-                    // is not an IEEE 754 rounding mode, so Boost.Decimal does
-                    // not expose it; tests in this block are skipped.
-                    skip = true;
-                }
-                else if (rounding_str == "half_up")
-                {
-                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_to_nearest_from_zero);
-                    skip = false;
-                }
-                else if (rounding_str == "half_even")
-                {
-                    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_to_nearest);
-                    skip = false;
-                }
-                else
-                {
-                    std::cerr << "\nInvalid rounding mode: " << rounding_str << std::endl;
-                    skip = true;
-                }
-
-                if (!skip && skip_counter > 0U)
-                {
-                    std::cerr << "Skipped: " << skip_counter << " due to invalid rounding mode.\n" << std::endl;
-                    num_tests_found += skip_counter;
-                    total_skipped_tests += skip_counter;
-                    skip_counter = 0U;
-                }
-
-                continue;
-            }
-        }
-
-        if (skip)
-        {
-            // Testing of unsupported rounding modes should be completely skipped
-            ++skip_counter;
-            continue;
-        }
-
-        const auto first_space = line.find(" ");
-        const auto test_name = line.substr(0, first_space);
-
-        // Check if this line contains our function
-        const auto pos_test = line.find(function_name + " ");
-        if (pos_test == std::string::npos)
+        if (!accept_line(parsed, function_name, 2U, ctx, counters))
         {
             continue;
         }
 
-        ++num_tests_found;
-
-        // Find the arrow separator
-        const auto arrow_pos = line.find("->");
-        if (arrow_pos == std::string::npos)
+        auto applied {false};
+        const auto run = [&](auto tag)
         {
-            std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
-            ++invalid_tests;
-            continue;
-        }
+            using T = decltype(tag);
 
-        // Extract the substring containing both LHS values
-        auto operands_start = pos_test + function_name.length() + 1;
-        auto operands_end = arrow_pos;
-
-        // Trim trailing whitespace
-        while (operands_end > operands_start && std::isspace(line[operands_end - 1]))
-        {
-            operands_end--;
-        }
-
-        std::string operands_str = line.substr(operands_start, operands_end - operands_start);
-
-        // Parse the two operands from the string
-        std::string lhs1_value, lhs2_value;
-        std::size_t i = 0;
-
-        // Skip leading whitespace
-        while (i < operands_str.length() && std::isspace(operands_str[i]))
-        {
-            i++;
-        }
-
-        // Parse first operand
-        if (i < operands_str.length() && operands_str[i] == '\'')
-        {
-            // Quoted value
-            i++; // Skip opening quote
-            std::size_t quote_end = operands_str.find('\'', i);
-            if (quote_end != std::string::npos)
+            if (!fits_format<T>(parsed, ctx))
             {
-                lhs1_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1;
+                return;
             }
-        }
-        else
-        {
-            // Unquoted value
-            std::size_t start = i;
-            while (i < operands_str.length() && !std::isspace(operands_str[i]))
+
+            applied = true;
+
+            try
             {
-                i++;
+                const T lhs {parsed.operands[0]};
+                const T rhs {parsed.operands[1]};
+                const T expected {parsed.expected};
+                const auto result {f(lhs, rhs)};
+
+                check_result(parsed.id, ctx.precision, result, expected, ulp_tol, strict_cohort_compare);
+                ++counters.verified;
             }
-            lhs1_value = operands_str.substr(start, i - start);
-        }
-
-        // Skip whitespace between operands
-        while (i < operands_str.length() && std::isspace(operands_str[i]))
-        {
-            i++;
-        }
-
-        // Parse second operand
-        if (i < operands_str.length() && operands_str[i] == '\'')
-        {
-            // Quoted value
-            i++; // Skip opening quote
-            std::size_t quote_end = operands_str.find('\'', i);
-            if (quote_end != std::string::npos)
+            catch (...)
             {
-                lhs2_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1;
+                ++counters.skip_unconstructible;
             }
-        }
-        else
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
         {
-            // Unquoted value
-            std::size_t start = i;
-            while (i < operands_str.length() && !std::isspace(operands_str[i]))
-            {
-                i++;
-            }
-            lhs2_value = operands_str.substr(start, i - start);
-        }
-
-        // Extract RHS value (after ->)
-        auto rhs_start = arrow_pos + 2; // Skip "->"
-        auto rhs_end = line.length();
-
-        // Trim whitespace
-        while (rhs_start < rhs_end && std::isspace(line[rhs_start]))
-        {
-            rhs_start++;
-        }
-        while (rhs_end > rhs_start && std::isspace(line[rhs_end - 1]))
-        {
-            rhs_end--;
-        }
-
-        std::string rhs_value = line.substr(rhs_start, rhs_end - rhs_start);
-
-        // Remove quotes if present
-        if (!rhs_value.empty() && rhs_value.front() == '\'' && rhs_value.back() == '\'')
-        {
-            rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
-        }
-
-        // Select appropriate decimal type based on precision
-        try
-        {
-            if (current_precision <= 9)
-            {
-                // Use decimal32_t
-                const boost::decimal::decimal32_t lhs1 {lhs1_value};
-                const boost::decimal::decimal32_t lhs2 {lhs2_value};
-                const boost::decimal::decimal32_t rhs {rhs_value};
-                const auto f_result {f(lhs1, lhs2)};  // Generic lambda works here
-
-                if ((isnan(lhs1) && isnan(lhs2)) || isnan(rhs))
-                {
-                    std::uint32_t result_bits;
-                    std::memcpy(&result_bits, &f_result, sizeof(std::uint32_t));
-
-                    std::uint32_t rhs_bits;
-                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint32_t));
-
-                    if (!BOOST_TEST_EQ(result_bits, rhs_bits))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (ulp_tol != 0)
-                {
-                    const auto dist {ulp_distance(f_result, rhs)};
-                    if (!BOOST_TEST_LE(dist, ulp_tol))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_result << "\nExpected: " << rhs << std::endl;
-                    }
-                }
-                else if (!BOOST_TEST_EQ(f_result, rhs))  // Generic lambda works here
-                {
-                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                }
-                BOOST_DECIMAL_IF_CONSTEXPR (strict_cohort_compare)
-                {
-                    if (!BOOST_TEST(boost::decimal::samequantum(f_result, rhs)))
-                    {
-                        std::cerr << "Failed cohort: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-            }
-            else if (current_precision <= 16)
-            {
-                // Use decimal64_t
-                const boost::decimal::decimal64_t lhs1 {lhs1_value};
-                const boost::decimal::decimal64_t lhs2 {lhs2_value};
-                const boost::decimal::decimal64_t rhs {rhs_value};
-                const auto f_result {f(lhs1, lhs2)};
-
-                if ((isnan(lhs1) && isnan(lhs2)) || isnan(rhs))
-                {
-                    std::uint64_t result_bits;
-                    std::memcpy(&result_bits, &f_result, sizeof(std::uint64_t));
-
-                    std::uint64_t rhs_bits;
-                    std::memcpy(&rhs_bits, &rhs, sizeof(std::uint64_t));
-
-                    if (!BOOST_TEST_EQ(result_bits, rhs_bits))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (ulp_tol != 0)
-                {
-                    const auto dist {ulp_distance(f_result, rhs)};
-                    if (!BOOST_TEST_LE(dist, ulp_tol))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_result << "\nExpected: " << rhs << std::endl;
-                    }
-                }
-                else if (!BOOST_TEST_EQ(f_result, rhs))
-                {
-                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                }
-                BOOST_DECIMAL_IF_CONSTEXPR (strict_cohort_compare)
-                {
-                    if (!BOOST_TEST(boost::decimal::samequantum(f_result, rhs)))
-                    {
-                        std::cerr << "Failed cohort: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-            }
-            else
-            {
-                #if defined(__GNUC__) && !defined(__clang__)
-                #  pragma GCC diagnostic push
-                #  pragma GCC diagnostic ignored "-Wclass-memaccess"
-                #endif
-
-                // Use decimal128_t
-                const boost::decimal::decimal128_t lhs1 {lhs1_value};
-                const boost::decimal::decimal128_t lhs2 {lhs2_value};
-                const boost::decimal::decimal128_t rhs {rhs_value};
-                const auto f_result {f(lhs1, lhs2)};
-
-                if ((isnan(lhs1) && isnan(lhs2)) || isnan(rhs))
-                {
-                    boost::int128::uint128_t result_bits;
-                    std::memcpy(&result_bits, &f_result, sizeof(boost::int128::uint128_t));
-
-                    boost::int128::uint128_t rhs_bits;
-                    std::memcpy(&rhs_bits, &rhs, sizeof(boost::int128::uint128_t));
-
-                    if (!BOOST_TEST_EQ(result_bits, rhs_bits))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (ulp_tol != 0)
-                {
-                    const auto dist {ulp_distance(f_result, rhs)};
-                    if (!BOOST_TEST_LE(dist, ulp_tol))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << "\n"
-                                  << "Got: " << f_result << "\nExpected: " << rhs << std::endl;
-                    }
-                }
-                else if (!BOOST_TEST_EQ(f_result, rhs))
-                {
-                    std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                }
-                BOOST_DECIMAL_IF_CONSTEXPR (strict_cohort_compare)
-                {
-                    if (!BOOST_TEST(boost::decimal::samequantum(f_result, rhs)))
-                    {
-                        std::cerr << "Failed cohort: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-
-                #ifdef __GNUC__
-                #  pragma GCC diagnostic pop
-                #endif
-            }
-        }
-        catch (...)
-        {
-            // Invalid construction is supposed to throw
-            ++invalid_tests;
+            ++counters.skip_wrong_format;
         }
     }
 
-    if (skip_counter > 0U)
-    {
-        std::cerr << "Skipped: " << skip_counter << " due to invalid rounding mode.\n";
-        total_skipped_tests += skip_counter;
-    }
-
-    std::cerr << "\nTotal number of tests: " << num_tests_found << "\n";
-    std::cerr << "Total number of skipped tests: " << total_skipped_tests << "\n" << std::endl;
-
-    BOOST_TEST_GT(num_tests_found, 0U);
-    BOOST_TEST_LT(invalid_tests, num_tests_found);
+    report_counters(file_path, function_name, counters);
 }
 
+template <typename Function>
+void test_three_arg_harness(const std::string& file_path, const std::string& function_name, Function f, const std::size_t ulp_tol = 0U)
+{
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
+    {
+        return;
+    }
+
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
+
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
+
+    while (std::getline(in, line))
+    {
+        const auto parsed {parse_line(line)};
+
+        if (!accept_line(parsed, function_name, 3U, ctx, counters))
+        {
+            continue;
+        }
+
+        auto applied {false};
+        const auto run = [&](auto tag)
+        {
+            using T = decltype(tag);
+
+            if (!fits_format<T>(parsed, ctx))
+            {
+                return;
+            }
+
+            applied = true;
+
+            try
+            {
+                const T first {parsed.operands[0]};
+                const T second {parsed.operands[1]};
+                const T third {parsed.operands[2]};
+                const T expected {parsed.expected};
+                const auto result {f(first, second, third)};
+
+                check_result(parsed.id, ctx.precision, result, expected, ulp_tol, false);
+                ++counters.verified;
+            }
+            catch (...)
+            {
+                ++counters.skip_unconstructible;
+            }
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
+        {
+            ++counters.skip_wrong_format;
+        }
+    }
+
+    report_counters(file_path, function_name, counters);
+}
+
+// compare / comparesig: the expected result is -1, 0 or 1. Anything else (NaN with an
+// Invalid_operation condition) needs a signalling compare we do not model.
 inline void test_comparisons(const std::string& file_path, const std::string& function_name)
 {
-    const auto full_path {boost::decimal::dectest::where_file(file_path)};
-    if (full_path.empty())
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
     {
-        std::cerr << "Failed to find file: " << file_path << std::endl;
-        BOOST_TEST(false);
         return;
     }
 
-    std::ifstream in(full_path.c_str());
-    if (!in.is_open())
-    {
-        std::cerr << "Failed to open file: " << full_path << std::endl;
-        BOOST_TEST(false);
-        return;
-    }
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
 
-    std::size_t num_tests_found {};
-    std::size_t invalid_tests {};
-    std::string line;
-    int current_precision = 16;
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
 
     while (std::getline(in, line))
     {
-        // Skip commented lines. The dectest format uses "--" as a line
-        // comment marker (including for explicitly disabled test cases
-        // like "--ddqua1032 ...").
-        if (line.find("#") != std::string::npos)
-        {
-            continue;
-        }
-        {
-            std::size_t comment_pos {};
-            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
-            {
-                ++comment_pos;
-            }
-            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
-            {
-                continue;
-            }
-        }
+        const auto parsed {parse_line(line)};
 
-        // Check for precision specification
-        // When the precision is specified we ust that one until it is specified again
-        // Some of these test sets assume precisions we don't offer so this is the best effort
-        auto precision_pos = line.find("precision:");
-        if (precision_pos != std::string::npos)
-        {
-            auto precision_start = precision_pos + 10; // Skip "precision:"
-
-            // Skip whitespace
-            while (precision_start < line.length() && std::isspace(line[precision_start]))
-            {
-                precision_start++;
-            }
-
-            // Extract precision value
-            std::string precision_str;
-            while (precision_start < line.length() && std::isdigit(line[precision_start]))
-            {
-                precision_str += line[precision_start++];
-            }
-
-            if (!precision_str.empty())
-            {
-                current_precision = std::stoi(precision_str);
-            }
-            continue;
-        }
-
-        const auto first_space = line.find(" ");
-        const auto test_name = line.substr(0, first_space);
-
-        // Check if this line contains our function
-        const auto pos_test = line.find(function_name + " ");
-        if (pos_test == std::string::npos)
+        if (!accept_line(parsed, function_name, 2U, ctx, counters))
         {
             continue;
         }
 
-        ++num_tests_found;
-
-        // Find the arrow separator
-        const auto arrow_pos = line.find("->");
-        if (arrow_pos == std::string::npos)
+        if (parsed.expected != "0" && parsed.expected != "1" && parsed.expected != "-1")
         {
-            std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
-            ++invalid_tests;
+            ++counters.skip_unsupported;
             continue;
         }
 
-        // Extract the substring containing both LHS values
-        auto operands_start = pos_test + function_name.length() + 1;
-        auto operands_end = arrow_pos;
-
-        // Trim trailing whitespace
-        while (operands_end > operands_start && std::isspace(line[operands_end - 1]))
+        auto applied {false};
+        const auto run = [&](auto tag)
         {
-            operands_end--;
-        }
+            using T = decltype(tag);
 
-        std::string operands_str = line.substr(operands_start, operands_end - operands_start);
-
-        // Parse the two operands from the string
-        std::string lhs1_value, lhs2_value;
-        std::size_t i = 0;
-
-        // Skip leading whitespace
-        while (i < operands_str.length() && std::isspace(operands_str[i]))
-        {
-            i++;
-        }
-
-        // Parse first operand
-        if (i < operands_str.length() && operands_str[i] == '\'')
-        {
-            // Quoted value
-            i++; // Skip opening quote
-            std::size_t quote_end = operands_str.find('\'', i);
-            if (quote_end != std::string::npos)
+            if (!fits_format<T>(parsed, ctx))
             {
-                lhs1_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1;
+                return;
             }
-        }
-        else
-        {
-            // Unquoted value
-            std::size_t start = i;
-            while (i < operands_str.length() && !std::isspace(operands_str[i]))
+
+            applied = true;
+
+            try
             {
-                i++;
-            }
-            lhs1_value = operands_str.substr(start, i - start);
-        }
+                const T lhs {parsed.operands[0]};
+                const T rhs {parsed.operands[1]};
 
-        // Skip whitespace between operands
-        while (i < operands_str.length() && std::isspace(operands_str[i]))
-        {
-            i++;
-        }
-
-        // Parse second operand
-        if (i < operands_str.length() && operands_str[i] == '\'')
-        {
-            // Quoted value
-            i++; // Skip opening quote
-            std::size_t quote_end = operands_str.find('\'', i);
-            if (quote_end != std::string::npos)
-            {
-                lhs2_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1;
-            }
-        }
-        else
-        {
-            // Unquoted value
-            std::size_t start = i;
-            while (i < operands_str.length() && !std::isspace(operands_str[i]))
-            {
-                i++;
-            }
-            lhs2_value = operands_str.substr(start, i - start);
-        }
-
-        // Extract RHS value (after ->)
-        auto rhs_start = arrow_pos + 2; // Skip "->"
-        auto rhs_end = line.length();
-
-        // Trim whitespace
-        while (rhs_start < rhs_end && std::isspace(line[rhs_start]))
-        {
-            rhs_start++;
-        }
-        while (rhs_end > rhs_start && std::isspace(line[rhs_end - 1]))
-        {
-            rhs_end--;
-        }
-
-        std::string rhs_value = line.substr(rhs_start, rhs_end - rhs_start);
-
-        // Remove quotes if present
-        if (!rhs_value.empty() && rhs_value.front() == '\'' && rhs_value.back() == '\'')
-        {
-            rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
-        }
-
-        // Select appropriate decimal type based on precision
-        try
-        {
-            const std::string eq = "0";
-            const std::string gt = "1";
-            const std::string lt = "-1";
-
-            if (current_precision <= 9)
-            {
-                // Use decimal32_t
-                const boost::decimal::decimal32_t lhs1 {lhs1_value};
-                const boost::decimal::decimal32_t lhs2 {lhs2_value};
-
-                if (rhs_value == eq)
+                bool ok {};
+                if (parsed.expected == "0")
                 {
-                    if (!BOOST_TEST_EQ(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
+                    ok = BOOST_TEST_EQ(lhs, rhs);
                 }
-                else if (rhs_value == gt)
+                else if (parsed.expected == "1")
                 {
-                    if (!BOOST_TEST_GT(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == lt)
-                {
-                    if (!BOOST_TEST_LT(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
+                    ok = BOOST_TEST_GT(lhs, rhs);
                 }
                 else
                 {
-                    throw std::logic_error("Invalid comparison");
+                    ok = BOOST_TEST_LT(lhs, rhs);
                 }
-            }
-            else if (current_precision <= 16)
-            {
-                // Use decimal64_t
-                const boost::decimal::decimal64_t lhs1 {lhs1_value};
-                const boost::decimal::decimal64_t lhs2 {lhs2_value};
 
-                if (rhs_value == eq)
+                if (!ok)
                 {
-                    if (!BOOST_TEST_EQ(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
+                    std::cerr << "Failed test: " << parsed.id << " (precision: " << ctx.precision << ")" << std::endl;
                 }
-                else if (rhs_value == gt)
-                {
-                    if (!BOOST_TEST_GT(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == lt)
-                {
-                    if (!BOOST_TEST_LT(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else
-                {
-                    throw std::logic_error("Invalid comparison");
-                }
-            }
-            else
-            {
-                // Use decimal128_t
-                const boost::decimal::decimal128_t lhs1 {lhs1_value};
-                const boost::decimal::decimal128_t lhs2 {lhs2_value};
 
-                if (rhs_value == eq)
-                {
-                    if (!BOOST_TEST_EQ(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == gt)
-                {
-                    if (!BOOST_TEST_GT(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == lt)
-                {
-                    if (!BOOST_TEST_LT(lhs1, lhs2))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else
-                {
-                    throw std::logic_error("Invalid comparison");
-                }
+                ++counters.verified;
             }
-        }
-        catch (...)
+            catch (...)
+            {
+                ++counters.skip_unconstructible;
+            }
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
         {
-            // Invalid construction is supposed to throw
-            ++invalid_tests;
+            ++counters.skip_wrong_format;
         }
     }
 
-    BOOST_TEST_GT(num_tests_found, 0U);
-    BOOST_TEST_LT(invalid_tests, num_tests_found);
+    report_counters(file_path, function_name, counters);
 }
 
+// comparetotal: boost::decimal::comparetotal(lhs, rhs) is true when lhs is ordered before rhs.
 inline void test_comparetotal(const std::string& file_path, const std::string& function_name)
 {
-    const auto full_path {boost::decimal::dectest::where_file(file_path)};
-    if (full_path.empty())
+    using namespace boost::decimal::dectest;
+
+    std::ifstream in {};
+    if (!open_test_file(file_path, in))
     {
-        std::cerr << "Failed to find file: " << file_path << std::endl;
-        BOOST_TEST(false);
         return;
     }
 
-    std::ifstream in(full_path.c_str());
-    if (!in.is_open())
-    {
-        std::cerr << "Failed to open file: " << full_path << std::endl;
-        BOOST_TEST(false);
-        return;
-    }
+    boost::decimal::fesetround(boost::decimal::rounding_mode::fe_dec_default);
 
-    std::size_t num_tests_found {};
-    std::size_t invalid_tests {};
-    std::string line;
-    int current_precision = 16;
+    scan_context ctx {};
+    scan_counters counters {};
+    std::string line {};
 
     while (std::getline(in, line))
     {
-        // Skip commented lines. The dectest format uses "--" as a line
-        // comment marker (including for explicitly disabled test cases
-        // like "--ddqua1032 ...").
-        if (line.find("#") != std::string::npos)
-        {
-            continue;
-        }
-        {
-            std::size_t comment_pos {};
-            while (comment_pos < line.size() && std::isspace(static_cast<unsigned char>(line[comment_pos])))
-            {
-                ++comment_pos;
-            }
-            if (comment_pos + 1 < line.size() && line[comment_pos] == '-' && line[comment_pos + 1] == '-')
-            {
-                continue;
-            }
-        }
+        const auto parsed {parse_line(line)};
 
-        // Check for precision specification
-        // When the precision is specified we ust that one until it is specified again
-        // Some of these test sets assume precisions we don't offer so this is the best effort
-        auto precision_pos = line.find("precision:");
-        if (precision_pos != std::string::npos)
-        {
-            auto precision_start = precision_pos + 10; // Skip "precision:"
-
-            // Skip whitespace
-            while (precision_start < line.length() && std::isspace(line[precision_start]))
-            {
-                precision_start++;
-            }
-
-            // Extract precision value
-            std::string precision_str;
-            while (precision_start < line.length() && std::isdigit(line[precision_start]))
-            {
-                precision_str += line[precision_start++];
-            }
-
-            if (!precision_str.empty())
-            {
-                current_precision = std::stoi(precision_str);
-            }
-            continue;
-        }
-
-        const auto first_space = line.find(" ");
-        const auto test_name = line.substr(0, first_space);
-
-        // Check if this line contains our function
-        const auto pos_test = line.find(function_name + " ");
-        if (pos_test == std::string::npos)
+        if (!accept_line(parsed, function_name, 2U, ctx, counters))
         {
             continue;
         }
 
-        ++num_tests_found;
-
-        // Find the arrow separator
-        const auto arrow_pos = line.find("->");
-        if (arrow_pos == std::string::npos)
+        if (parsed.expected != "0" && parsed.expected != "1" && parsed.expected != "-1")
         {
-            std::cerr << "Invalid format: missing '->' in line: " << line << std::endl;
-            ++invalid_tests;
+            ++counters.skip_unsupported;
             continue;
         }
 
-        // Extract the substring containing both LHS values
-        auto operands_start = pos_test + function_name.length() + 1;
-        auto operands_end = arrow_pos;
-
-        // Trim trailing whitespace
-        while (operands_end > operands_start && std::isspace(line[operands_end - 1]))
+        auto applied {false};
+        const auto run = [&](auto tag)
         {
-            operands_end--;
-        }
+            using T = decltype(tag);
 
-        std::string operands_str = line.substr(operands_start, operands_end - operands_start);
-
-        // Parse the two operands from the string
-        std::string lhs1_value, lhs2_value;
-        std::size_t i = 0;
-
-        // Skip leading whitespace
-        while (i < operands_str.length() && std::isspace(operands_str[i]))
-        {
-            i++;
-        }
-
-        // Parse first operand
-        if (i < operands_str.length() && operands_str[i] == '\'')
-        {
-            // Quoted value
-            i++; // Skip opening quote
-            std::size_t quote_end = operands_str.find('\'', i);
-            if (quote_end != std::string::npos)
+            if (!fits_format<T>(parsed, ctx))
             {
-                lhs1_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1;
+                return;
             }
-        }
-        else
-        {
-            // Unquoted value
-            std::size_t start = i;
-            while (i < operands_str.length() && !std::isspace(operands_str[i]))
+
+            applied = true;
+
+            try
             {
-                i++;
-            }
-            lhs1_value = operands_str.substr(start, i - start);
-        }
+                const T lhs {parsed.operands[0]};
+                const T rhs {parsed.operands[1]};
 
-        // Skip whitespace between operands
-        while (i < operands_str.length() && std::isspace(operands_str[i]))
-        {
-            i++;
-        }
+                const auto forward {boost::decimal::comparetotal(lhs, rhs)};
+                const auto reverse {boost::decimal::comparetotal(rhs, lhs)};
 
-        // Parse second operand
-        if (i < operands_str.length() && operands_str[i] == '\'')
-        {
-            // Quoted value
-            i++; // Skip opening quote
-            std::size_t quote_end = operands_str.find('\'', i);
-            if (quote_end != std::string::npos)
-            {
-                lhs2_value = operands_str.substr(i, quote_end - i);
-                i = quote_end + 1;
-            }
-        }
-        else
-        {
-            // Unquoted value
-            std::size_t start = i;
-            while (i < operands_str.length() && !std::isspace(operands_str[i]))
-            {
-                i++;
-            }
-            lhs2_value = operands_str.substr(start, i - start);
-        }
-
-        // Extract RHS value (after ->)
-        auto rhs_start = arrow_pos + 2; // Skip "->"
-        auto rhs_end = line.length();
-
-        // Trim whitespace
-        while (rhs_start < rhs_end && std::isspace(line[rhs_start]))
-        {
-            rhs_start++;
-        }
-        while (rhs_end > rhs_start && std::isspace(line[rhs_end - 1]))
-        {
-            rhs_end--;
-        }
-
-        std::string rhs_value = line.substr(rhs_start, rhs_end - rhs_start);
-
-        // Remove quotes if present
-        if (!rhs_value.empty() && rhs_value.front() == '\'' && rhs_value.back() == '\'')
-        {
-            rhs_value = rhs_value.substr(1, rhs_value.length() - 2);
-        }
-
-        // Select appropriate decimal type based on precision
-        try
-        {
-            const std::string eq = "0";
-            const std::string gt = "1";
-            const std::string lt = "-1";
-
-            if (current_precision <= 9)
-            {
-                // Use decimal32_t
-                const boost::decimal::decimal32_t lhs1 {lhs1_value};
-                const boost::decimal::decimal32_t lhs2 {lhs2_value};
-
-                if (rhs_value == eq)
+                bool ok {};
+                if (parsed.expected == "0")
                 {
-                    if ((isinf(lhs1) && isinf(lhs2) && (signbit(lhs1) == signbit(lhs2))) || (isnan(lhs1) && isnan(lhs2)))
+                    // Infinities of one sign and NaNs are indistinguishable to comparetotal,
+                    // so only require that it answers the same way in both directions
+                    if ((isinf(lhs) && isinf(rhs) && (signbit(lhs) == signbit(rhs))) || (isnan(lhs) && isnan(rhs)))
                     {
-                        if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2) == boost::decimal::comparetotal(lhs2, lhs1)))
-                        {
-                            std::cerr << "Failed test: " << test_name << " (" << test_name << ")" << std::endl;
-                        }
+                        ok = BOOST_TEST(forward == reverse);
                     }
-                    else if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
+                    else
                     {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
+                        ok = BOOST_TEST(forward) && BOOST_TEST(reverse);
                     }
                 }
-                else if (rhs_value == gt)
+                else if (parsed.expected == "1")
                 {
-                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == lt)
-                {
-                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
+                    ok = BOOST_TEST(reverse);
                 }
                 else
                 {
-                    throw std::logic_error("Invalid comparison");
+                    ok = BOOST_TEST(forward);
                 }
-            }
-            else if (current_precision <= 16)
-            {
-                // Use decimal64_t
-                const boost::decimal::decimal64_t lhs1 {lhs1_value};
-                const boost::decimal::decimal64_t lhs2 {lhs2_value};
 
-                if (rhs_value == eq)
+                if (!ok)
                 {
-                    if ((isinf(lhs1) && isinf(lhs2) && (signbit(lhs1) == signbit(lhs2))) || (isnan(lhs1) && isnan(lhs2)))
-                    {
-                        if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2) == boost::decimal::comparetotal(lhs2, lhs1)))
-                        {
-                            std::cerr << "Failed test: " << test_name << " (" << test_name << ")" << std::endl;
-                        }
-                    }
-                    else if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
+                    std::cerr << "Failed test: " << parsed.id << " (precision: " << ctx.precision << ")" << std::endl;
                 }
-                else if (rhs_value == gt)
-                {
-                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == lt)
-                {
-                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else
-                {
-                    throw std::logic_error("Invalid comparison");
-                }
-            }
-            else
-            {
-                // Use decimal128_t
-                const boost::decimal::decimal128_t lhs1 {lhs1_value};
-                const boost::decimal::decimal128_t lhs2 {lhs2_value};
 
-                if (rhs_value == eq)
-                {
-                    if ((isinf(lhs1) && isinf(lhs2) && (signbit(lhs1) == signbit(lhs2))) || (isnan(lhs1) && isnan(lhs2)))
-                    {
-                        if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2) == boost::decimal::comparetotal(lhs2, lhs1)))
-                        {
-                            std::cerr << "Failed test: " << test_name << " (" << test_name << ")" << std::endl;
-                        }
-                    }
-                    else if (!(BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)) && BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1))))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == gt)
-                {
-                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs2, lhs1)))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else if (rhs_value == lt)
-                {
-                    if (!BOOST_TEST(boost::decimal::comparetotal(lhs1, lhs2)))
-                    {
-                        std::cerr << "Failed test: " << test_name << " (precision: " << current_precision << ")" << std::endl;
-                    }
-                }
-                else
-                {
-                    throw std::logic_error("Invalid comparison");
-                }
+                ++counters.verified;
             }
-        }
-        catch (...)
+            catch (...)
+            {
+                ++counters.skip_unconstructible;
+            }
+        };
+
+        BOOST_DECIMAL_DECTEST_DISPATCH(run)
+
+        if (!applied)
         {
-            // Invalid construction is supposed to throw
-            ++invalid_tests;
+            ++counters.skip_wrong_format;
         }
     }
 
-    BOOST_TEST_GT(num_tests_found, 0U);
-    BOOST_TEST_LT(invalid_tests, num_tests_found);
+    report_counters(file_path, function_name, counters);
 }
 
 #endif // BOOST_DECIMAL_DECTEST_TEST_HARNESS_HPP

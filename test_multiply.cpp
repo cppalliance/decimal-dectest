@@ -17,8 +17,8 @@ int main()
 
     #ifndef BOOST_DECIMAL_NO_CONSTEVAL_DETECTION
 
-    test_two_arg_harness<true>("dectest/ddMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
-    test_two_arg_harness<true>("dectest/dqMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
+    test_two_arg_harness("dectest/ddMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
+    test_two_arg_harness("dectest/dqMultiply.decTest", "multiply", [](const auto x, const auto y) { return x * y; });
 
     #endif
 
