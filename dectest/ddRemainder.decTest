@@ -573,10 +573,15 @@ ddrem969 remainder 123e1   9876543210987654 -> 1230
 ddrem980 remainder 123e1 1000E299 -> 1.23E+3  -- 123E+1 internally
 
 -- overflow and underflow tests [from divide]
-ddrem1051 remainder  1e+277  1e-311 ->  NaN Division_impossible
-ddrem1052 remainder  1e+277 -1e-311 ->  NaN Division_impossible
-ddrem1053 remainder -1e+277  1e-311 ->  NaN Division_impossible
-ddrem1054 remainder -1e+277 -1e-311 ->  NaN Division_impossible
+# C fmod and IEEE 754 remainder are exact, so the result is zero
+#ddrem1051 remainder  1e+277  1e-311 ->  NaN Division_impossible
+ddrem1051 remainder  1e+277  1e-311 ->  0E-311
+#ddrem1052 remainder  1e+277 -1e-311 ->  NaN Division_impossible
+ddrem1052 remainder  1e+277 -1e-311 ->  0E-311
+#ddrem1053 remainder -1e+277  1e-311 ->  NaN Division_impossible
+ddrem1053 remainder -1e+277  1e-311 -> -0E-311
+#ddrem1054 remainder -1e+277 -1e-311 ->  NaN Division_impossible
+ddrem1054 remainder -1e+277 -1e-311 -> -0E-311
 ddrem1055 remainder  1e-277  1e+311 ->  1E-277
 ddrem1056 remainder  1e-277 -1e+311 ->  1E-277
 ddrem1057 remainder -1e-277  1e+311 -> -1E-277
